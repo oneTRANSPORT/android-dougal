@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/OneM2MSdk.iml" filepath="$PROJECT_DIR$/OneM2MSdk.iml" />
+      <module fileurl="file://$PROJECT_DIR$/oneM2MSdk/oneM2MSdk.iml" filepath="$PROJECT_DIR$/oneM2MSdk/oneM2MSdk.iml" />
+    </modules>
+  </component>
+</project>
