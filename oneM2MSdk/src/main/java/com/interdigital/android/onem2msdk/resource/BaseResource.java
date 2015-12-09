@@ -2,28 +2,104 @@ package com.interdigital.android.onem2msdk.resource;
 
 import android.content.Context;
 
+import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 import com.interdigital.android.onem2msdk.RI;
 import com.interdigital.android.onem2msdk.network.BaseRequest;
 
-import java.util.List;
 import java.util.Map;
 
 public class BaseResource {
 
-    private Context context;
-    private RI ri;
-    private Map<String, String> requestPropertyValues;
-    private int responseCode;
-    private String responseText;
-    private Map<String, List<String>> responsePropertyValues;
+    @SerializedName("ri")
+    private String resourceId;
+    @SerializedName("rn")
+    private String resourceName;
+    @SerializedName("ty")
+    private String resourceType;
+    @SerializedName("pi")
+    private String parentId;
+    @SerializedName("ct")
+    private String creationTime;
+    @SerializedName("lt")
+    private String lastModifiedTime;
+    @SerializedName("et")
+    private String expiryTime;
+    @SerializedName("acpi")
+    private String[] accessControlPolicyIds;
+    @SerializedName("lbl")
+    private String[] labels;
 
-    public BaseResource(Context context, RI ri, Map<String, String> propertyValues) {
-        BaseRequest baseRequest = new BaseRequest(context, 0, "https:" + ri.getRiString(),
-                BaseRequest.METHOD_GET, propertyValues);
-        responseCode = baseRequest.connect();
-        responseText = baseRequest.getResponseText();
-        responsePropertyValues = baseRequest.getHeaderMap();
+    public String getResourceId() {
+        return resourceId;
     }
 
-    // TODO Merge baseRequest routines into here?  Method inflateFromServer()?
+    public void setResourceId(String resourceId) {
+        this.resourceId = resourceId;
+    }
+
+    public String getResourceName() {
+        return resourceName;
+    }
+
+    public void setResourceName(String resourceName) {
+        this.resourceName = resourceName;
+    }
+
+    public String getResourceType() {
+        return resourceType;
+    }
+
+    public void setResourceType(String resourceType) {
+        this.resourceType = resourceType;
+    }
+
+    public String getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
+    }
+
+    public String getCreationTime() {
+        return creationTime;
+    }
+
+    public void setCreationTime(String creationTime) {
+        this.creationTime = creationTime;
+    }
+
+    public String getLastModifiedTime() {
+        return lastModifiedTime;
+    }
+
+    public void setLastModifiedTime(String lastModifiedTime) {
+        this.lastModifiedTime = lastModifiedTime;
+    }
+
+    public String getExpiryTime() {
+        return expiryTime;
+    }
+
+    public void setExpiryTime(String expiryTime) {
+        this.expiryTime = expiryTime;
+    }
+
+    public String[] getAccessControlPolicyIds() {
+        return accessControlPolicyIds;
+    }
+
+    public void setAccessControlPolicyIds(String[] accessControlPolicyIds) {
+        this.accessControlPolicyIds = accessControlPolicyIds;
+    }
+
+    public String[] getLabels() {
+        return labels;
+    }
+
+    public void setLabels(String[] labels) {
+        this.labels = labels;
+    }
 }
+
