@@ -1,4 +1,4 @@
-package com.interdigital.android.onem2msdk;
+package com.interdigital.android.onem2msdk.network.response;
 
 
 import com.google.gson.annotations.SerializedName;
@@ -8,7 +8,7 @@ import com.interdigital.android.onem2msdk.resource.CommonServicesEntity;
 import java.util.List;
 import java.util.Map;
 
-public class Response {
+public class ResponseHolder {
 
     private int statusCode;
     private Map<String, List<String>> propertyValues; // HTTP response headers.

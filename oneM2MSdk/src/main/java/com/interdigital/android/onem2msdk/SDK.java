@@ -3,7 +3,8 @@ package com.interdigital.android.onem2msdk;
 import android.content.Context;
 
 import com.google.gson.Gson;
-import com.interdigital.android.onem2msdk.network.BaseRequest;
+import com.interdigital.android.onem2msdk.network.request.BaseRequest;
+import com.interdigital.android.onem2msdk.network.response.ResponseHolder;
 
 import java.util.Map;
 
@@ -27,20 +28,36 @@ public class SDK {
         return requestId++;
     }
 
-    public Response getResource(Context context, RI ri, Map<String, String> propertyValues) {
+    public ResponseHolder getResource(Context context, RI ri, Map<String, String> propertyValues) {
         propertyValues.put("X-M2M-RI", String.valueOf(SDK.getInstance().getUniqueRequestId()));
         BaseRequest baseRequest = new BaseRequest(context, 0, "https:" + ri.getRiString(),
-                BaseRequest.METHOD_GET, propertyValues);
+                BaseRequest.METHOD_GET, propertyValues, null);
         int statusCode = baseRequest.connect();
         String text = baseRequest.getResponseText();
         Gson gson = new Gson();
-        Response response = gson.fromJson(text, Response.class);
-        if (response == null) {
+        ResponseHolder responseHolder = gson.fromJson(text, ResponseHolder.class);
+        if (responseHolder == null) {
             return null;
         }
-        response.setStatusCode(statusCode);
-        response.setPropertyValues(baseRequest.getHeaderMap());
-        return response;
+        responseHolder.setStatusCode(statusCode);
+        responseHolder.setPropertyValues(baseRequest.getHeaderMap());
+        return responseHolder;
     }
 
+    public ResponseHolder postResource(Context context, RI ri, Map<String, String> propertyValues,
+                                       String body) {
+        propertyValues.put("X-M2M-RI", String.valueOf(SDK.getInstance().getUniqueRequestId()));
+        BaseRequest baseRequest = new BaseRequest(context, 0, "https:" + ri.getRiString(),
+                BaseRequest.METHOD_POST, propertyValues, body);
+        int statusCode = baseRequest.connect();
+        String text = baseRequest.getResponseText();
+        Gson gson = new Gson();
+        ResponseHolder responseHolder = gson.fromJson(text, ResponseHolder.class);
+        if (responseHolder == null) {
+            return null;
+        }
+        responseHolder.setStatusCode(statusCode);
+        responseHolder.setPropertyValues(baseRequest.getHeaderMap());
+        return responseHolder;
+    }
 }

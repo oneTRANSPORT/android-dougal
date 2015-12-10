@@ -2,10 +2,12 @@ package com.interdigital.android.onem2msdk.resource;
 
 import android.content.Context;
 
+import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import com.interdigital.android.onem2msdk.RI;
-import com.interdigital.android.onem2msdk.Response;
 import com.interdigital.android.onem2msdk.SDK;
+import com.interdigital.android.onem2msdk.network.request.RequestHolder;
+import com.interdigital.android.onem2msdk.network.response.ResponseHolder;
 
 import java.util.HashMap;
 
@@ -18,11 +20,11 @@ public class ApplicationEntity extends BaseResource {
     @SerializedName("rr")
     private boolean requestReachable;
 
-    public static ApplicationEntity get(Context context, RI ri, String aeId) {
+    public static ApplicationEntity requestGet(Context context, RI ri, String aeId) {
         HashMap<String, String> propertyValues = new HashMap<>();
         propertyValues.put("X-M2M-Origin", aeId);
-        Response response = SDK.getInstance().getResource(context, ri, propertyValues);
-        return response.getApplicationEntity();
+        ResponseHolder responseHolder = SDK.getInstance().getResource(context, ri, propertyValues);
+        return responseHolder.getApplicationEntity();
     }
 
 //    {"m2m:ae":
@@ -39,6 +41,21 @@ public class ApplicationEntity extends BaseResource {
 //         }
 //    }
 
+    public static ApplicationEntity requestCreate(Context context, RI ri, String applicationId) {
+        ApplicationEntity applicationEntity = new ApplicationEntity();
+        applicationEntity.setApplicationId(applicationId);
+        RequestHolder requestHolder = new RequestHolder();
+        requestHolder.setApplicationEntity(applicationEntity);
+        Gson gson = new Gson();
+        String json = gson.toJson(requestHolder);
+        HashMap<String, String> propertyValues = new HashMap<>();
+        propertyValues.put("X-M2M-Origin", "C-TMP-AE-ID");
+        propertyValues.put("Content-Type", "application/json; ty=2");
+        propertyValues.put("X-M2M-NM", applicationId);
+        ResponseHolder responseHolder = SDK.getInstance().postResource(context, ri, propertyValues, json);
+        return responseHolder.getApplicationEntity();
+
+    }
 
     public String getId() {
         return id;

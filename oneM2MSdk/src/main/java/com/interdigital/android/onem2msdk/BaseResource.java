@@ -2,8 +2,7 @@ package com.interdigital.android.onem2msdk;
 
 import android.content.Context;
 
-import com.google.gson.annotations.SerializedName;
-import com.interdigital.android.onem2msdk.network.BaseRequest;
+import com.interdigital.android.onem2msdk.network.request.BaseRequest;
 
 import org.json.JSONException;
 
@@ -31,7 +30,7 @@ public class BaseResource {
 
     public void getFromServer(RI ri, Map<String, String> propertyValues) throws JSONException {
         BaseRequest baseRequest = new BaseRequest(context, 0, "https:" + ri.getRiString(),
-                BaseRequest.METHOD_GET, propertyValues);
+                BaseRequest.METHOD_GET, propertyValues, null);
         responseCode = baseRequest.connect();
         responseText = baseRequest.getResponseText();
         responsePropertyValues = baseRequest.getHeaderMap();

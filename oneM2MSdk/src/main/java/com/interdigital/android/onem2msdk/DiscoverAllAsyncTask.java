@@ -4,7 +4,7 @@
 //import android.os.AsyncTask;
 //import android.widget.TextView;
 //
-//import com.interdigital.android.onem2msdk.network.BaseRequest;
+//import com.interdigital.android.onem2msdk.network.request.BaseRequest;
 //
 //public class DiscoverAllAsyncTask extends AsyncTask<Void, Void, Void> {
 //

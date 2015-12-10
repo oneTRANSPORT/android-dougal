@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.google.gson.annotations.SerializedName;
 import com.interdigital.android.onem2msdk.RI;
-import com.interdigital.android.onem2msdk.Response;
+import com.interdigital.android.onem2msdk.network.response.ResponseHolder;
 import com.interdigital.android.onem2msdk.SDK;
 
 import java.util.HashMap;
@@ -23,8 +23,8 @@ public class CommonServicesEntity extends BaseResource {
     public static CommonServicesEntity get(Context context, RI ri, String aeId) {
         HashMap<String, String> propertyValues = new HashMap<>();
         propertyValues.put("X-M2M-Origin", aeId);
-        Response response = SDK.getInstance().getResource(context, ri, propertyValues);
-        return response.getCommonServicesEntity();
+        ResponseHolder responseHolder = SDK.getInstance().getResource(context, ri, propertyValues);
+        return responseHolder.getCommonServicesEntity();
     }
 
 //{"m2m:cb":                                                CSE_BASE

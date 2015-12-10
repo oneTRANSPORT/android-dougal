@@ -1,13 +1,6 @@
 package com.interdigital.android.onem2msdk.resource;
 
-import android.content.Context;
-
-import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
-import com.interdigital.android.onem2msdk.RI;
-import com.interdigital.android.onem2msdk.network.BaseRequest;
-
-import java.util.Map;
 
 public class BaseResource {
 

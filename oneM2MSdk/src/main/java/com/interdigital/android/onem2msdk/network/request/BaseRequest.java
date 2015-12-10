@@ -1,4 +1,4 @@
-package com.interdigital.android.onem2msdk.network;
+package com.interdigital.android.onem2msdk.network.request;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.net.URL;
@@ -41,17 +42,19 @@ public class BaseRequest {
     private String url;
     private String method;
     private Map<String, String> propertyValues;
+    private String body;
     private String contentType = null;
     private String responseText = null;
     private Map<String, List<String>> headerMap;
 
     public BaseRequest(@NonNull Context context, int pkcs12Resource, @NonNull String url,
-                       @NonNull String method, Map<String, String> propertyValues) {
+                       @NonNull String method, Map<String, String> propertyValues, String body) {
         this.context = context;
         this.pkcs12Resource = pkcs12Resource;
         this.url = url;
         this.method = method;
         this.propertyValues = propertyValues;
+        this.body = body;
     }
 
     public int connect() {
@@ -153,6 +156,9 @@ public class BaseRequest {
                     return true;
                 }
             });
+            if (body != null) {
+                addBody(urlConnection);
+            }
         }
         return urlConnection;
     }
@@ -167,6 +173,19 @@ public class BaseRequest {
             baos.write(buffer, 0, count);
         }
         return new String(baos.toByteArray());
+    }
+
+    private void addBody(HttpsURLConnection urlConnection) {
+        urlConnection.setDoInput(true);
+        urlConnection.setDoOutput(true);
+        try {
+            OutputStream os = urlConnection.getOutputStream();
+            os.write(body.getBytes("UTF-8"));
+            os.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }
