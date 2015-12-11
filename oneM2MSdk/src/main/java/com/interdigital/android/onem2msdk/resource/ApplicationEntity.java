@@ -4,8 +4,8 @@ import android.content.Context;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
-import com.interdigital.android.onem2msdk.RI;
 import com.interdigital.android.onem2msdk.SDK;
+import com.interdigital.android.onem2msdk.network.RI;
 import com.interdigital.android.onem2msdk.network.request.RequestHolder;
 import com.interdigital.android.onem2msdk.network.response.ResponseHolder;
 
@@ -20,7 +20,8 @@ public class ApplicationEntity extends BaseResource {
     @SerializedName("rr")
     private boolean requestReachable;
 
-    public static ApplicationEntity requestGet(Context context, RI ri, String aeId) {
+    // TODO Replace RI with fqdn, cseName and aeName?
+    public static ApplicationEntity get(Context context, RI ri, String aeId) {
         HashMap<String, String> propertyValues = new HashMap<>();
         propertyValues.put("X-M2M-Origin", aeId);
         ResponseHolder responseHolder = SDK.getInstance().getResource(context, ri, propertyValues);
@@ -41,7 +42,7 @@ public class ApplicationEntity extends BaseResource {
 //         }
 //    }
 
-    public static ApplicationEntity requestCreate(Context context, RI ri, String applicationId) {
+    public static ApplicationEntity create(Context context, RI ri, String aeId, String applicationId) {
         ApplicationEntity applicationEntity = new ApplicationEntity();
         applicationEntity.setApplicationId(applicationId);
         RequestHolder requestHolder = new RequestHolder();
@@ -49,12 +50,20 @@ public class ApplicationEntity extends BaseResource {
         Gson gson = new Gson();
         String json = gson.toJson(requestHolder);
         HashMap<String, String> propertyValues = new HashMap<>();
-        propertyValues.put("X-M2M-Origin", "C-TMP-AE-ID");
+        propertyValues.put("X-M2M-Origin", aeId);
         propertyValues.put("Content-Type", "application/json; ty=2");
         propertyValues.put("X-M2M-NM", applicationId);
         ResponseHolder responseHolder = SDK.getInstance().postResource(context, ri, propertyValues, json);
         return responseHolder.getApplicationEntity();
 
+    }
+
+    public static Discovery discoverAll(Context context, String fqdn, String cseName, String aeId) {
+        RI ri = new RI(fqdn, cseName + "?fu=1&rty=ae");
+        HashMap<String, String> propertyValues = new HashMap<>();
+        propertyValues.put("X-M2M-Origin", aeId);
+        ResponseHolder responseHolder = SDK.getInstance().getResource(context, ri, propertyValues);
+        return responseHolder.getDiscovery();
     }
 
     public String getId() {

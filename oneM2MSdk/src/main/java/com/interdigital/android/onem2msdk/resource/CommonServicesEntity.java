@@ -3,7 +3,7 @@ package com.interdigital.android.onem2msdk.resource;
 import android.content.Context;
 
 import com.google.gson.annotations.SerializedName;
-import com.interdigital.android.onem2msdk.RI;
+import com.interdigital.android.onem2msdk.network.RI;
 import com.interdigital.android.onem2msdk.network.response.ResponseHolder;
 import com.interdigital.android.onem2msdk.SDK;
 

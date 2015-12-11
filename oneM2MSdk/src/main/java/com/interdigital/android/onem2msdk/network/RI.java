@@ -1,4 +1,4 @@
-package com.interdigital.android.onem2msdk;
+package com.interdigital.android.onem2msdk.network;
 
 import android.support.annotation.NonNull;
 
@@ -24,7 +24,6 @@ public class RI {
         }
         this.ri = ri;
     }
-
 
     public String getRiString() { // TODO Url?
         return ri;

@@ -3,6 +3,7 @@ package com.interdigital.android.onem2msdk;
 import android.content.Context;
 
 import com.google.gson.Gson;
+import com.interdigital.android.onem2msdk.network.RI;
 import com.interdigital.android.onem2msdk.network.request.BaseRequest;
 import com.interdigital.android.onem2msdk.network.response.ResponseHolder;
 
