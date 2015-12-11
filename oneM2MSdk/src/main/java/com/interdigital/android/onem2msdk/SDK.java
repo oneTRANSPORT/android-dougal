@@ -7,6 +7,7 @@ import com.interdigital.android.onem2msdk.network.RI;
 import com.interdigital.android.onem2msdk.network.request.BaseRequest;
 import com.interdigital.android.onem2msdk.network.response.ResponseHolder;
 
+import java.util.List;
 import java.util.Map;
 
 public class SDK {
@@ -25,12 +26,11 @@ public class SDK {
         return instance;
     }
 
-    public synchronized long getUniqueRequestId() {
-        return requestId++;
+    public synchronized String getUniqueRequestId() {
+        return String.valueOf(requestId++);
     }
 
-    public ResponseHolder getResource(Context context, RI ri, Map<String, String> propertyValues) {
-        propertyValues.put("X-M2M-RI", String.valueOf(SDK.getInstance().getUniqueRequestId()));
+    public ResponseHolder getResource(Context context, RI ri, Map<String, List<String>> propertyValues) {
         BaseRequest baseRequest = new BaseRequest(context, 0, "https:" + ri.getRiString(),
                 BaseRequest.METHOD_GET, propertyValues, null);
         int statusCode = baseRequest.connect();
@@ -45,9 +45,8 @@ public class SDK {
         return responseHolder;
     }
 
-    public ResponseHolder postResource(Context context, RI ri, Map<String, String> propertyValues,
-                                       String body) {
-        propertyValues.put("X-M2M-RI", String.valueOf(SDK.getInstance().getUniqueRequestId()));
+    public ResponseHolder postResource(
+            Context context, RI ri, Map<String, List<String>> propertyValues, String body) {
         BaseRequest baseRequest = new BaseRequest(context, 0, "https:" + ri.getRiString(),
                 BaseRequest.METHOD_POST, propertyValues, body);
         int statusCode = baseRequest.connect();

@@ -41,14 +41,14 @@ public class BaseRequest {
     private int pkcs12Resource;
     private String url;
     private String method;
-    private Map<String, String> propertyValues;
+    private Map<String, List<String>> propertyValues;
     private String body;
     private String contentType = null;
     private String responseText = null;
     private Map<String, List<String>> headerMap;
 
     public BaseRequest(@NonNull Context context, int pkcs12Resource, @NonNull String url,
-                       @NonNull String method, Map<String, String> propertyValues, String body) {
+                       @NonNull String method, Map<String, List<String>> propertyValues, String body) {
         this.context = context;
         this.pkcs12Resource = pkcs12Resource;
         this.url = url;
@@ -145,10 +145,13 @@ public class BaseRequest {
                     return new PasswordAuthentication("pthomas", "EKFYGUCC".toCharArray());
                 }
             });
-            Iterator<String> iterator = propertyValues.keySet().iterator();
-            while (iterator.hasNext()) {
-                String key = iterator.next();
-                urlConnection.setRequestProperty(key, propertyValues.get(key));
+            Iterator<String> keyIterator = propertyValues.keySet().iterator();
+            while (keyIterator.hasNext()) {
+                String key = keyIterator.next();
+                List<String> values = propertyValues.get(key);
+                for (int i = 0; i < values.size(); i++) {
+                    urlConnection.setRequestProperty(key, values.get(i));
+                }
             }
             urlConnection.setRequestProperty("Accept", "application/vnd.onem2m-res+json");
             urlConnection.setHostnameVerifier(new HostnameVerifier() {

@@ -4,10 +4,6 @@ import android.content.Context;
 
 import com.google.gson.annotations.SerializedName;
 import com.interdigital.android.onem2msdk.network.RI;
-import com.interdigital.android.onem2msdk.network.response.ResponseHolder;
-import com.interdigital.android.onem2msdk.SDK;
-
-import java.util.HashMap;
 
 public class CommonServicesEntity extends BaseResource {
 
@@ -20,27 +16,10 @@ public class CommonServicesEntity extends BaseResource {
     @SerializedName("srt")
     private int[] supportedResourceTypes;
 
-    public static CommonServicesEntity get(Context context, RI ri, String aeId) {
-        HashMap<String, String> propertyValues = new HashMap<>();
-        propertyValues.put("X-M2M-Origin", aeId);
-        ResponseHolder responseHolder = SDK.getInstance().getResource(context, ri, propertyValues);
-        return responseHolder.getCommonServicesEntity();
+    public static CommonServicesEntity get(Context context, String fqdn, String cseName, String aeId) {
+        RI ri = new RI(fqdn, "/" + cseName);
+        return get(context, ri, aeId).getCommonServicesEntity();
     }
-
-//{"m2m:cb":                                                CSE_BASE
-//        {"acpi":["/ONET-CSE-01Acp"],     ACCESS_CONTROL_POLICY_IDS
-//        "csi":"ONET-CSE-01",                     CSE_ID
-//        "cst":1,                                                CSE_TYPE
-//        "ct":"20151118T094448",                CREATION_TIME
-//        "lbl":["ONET-CSE-01"],                   ??? LABELS (from members)
-//        "lt":"20151118T094448",                 LAST_MODIFIED_TIME
-//        "poa":["http://127.0.0.1:9011"],     POINT_OF_ACCESS
-//        "ri":"ONET-CSE-01",                        RESOURCE_ID
-//        "rn":"ONETCSE01",                          RESOURCE_NAME
-//        "srt":[1,2,3,4,9,11,12,13,14,15,16,17,18,19,20,23,10001,
-// 10002,10003,10004,10009,10013,10014,10016,10018],  SUPPORTED_RESOURCE_TYPE
-//        "ty":5}                                                 RESOURCE_TYPE (from parameters)
-//        }
 
     public String getId() {
         return id;
@@ -74,3 +53,18 @@ public class CommonServicesEntity extends BaseResource {
         this.supportedResourceTypes = supportedResourceTypes;
     }
 }
+
+//{"m2m:cb":                                                CSE_BASE
+//        {"acpi":["/ONET-CSE-01Acp"],     ACCESS_CONTROL_POLICY_IDS
+//        "csi":"ONET-CSE-01",                     CSE_ID
+//        "cst":1,                                                CSE_TYPE
+//        "ct":"20151118T094448",                CREATION_TIME
+//        "lbl":["ONET-CSE-01"],                   ??? LABELS (from members)
+//        "lt":"20151118T094448",                 LAST_MODIFIED_TIME
+//        "poa":["http://127.0.0.1:9011"],     POINT_OF_ACCESS
+//        "ri":"ONET-CSE-01",                        RESOURCE_ID
+//        "rn":"ONETCSE01",                          RESOURCE_NAME
+//        "srt":[1,2,3,4,9,11,12,13,14,15,16,17,18,19,20,23,10001,
+// 10002,10003,10004,10009,10013,10014,10016,10018],  SUPPORTED_RESOURCE_TYPE
+//        "ty":5}                                                 RESOURCE_TYPE (from parameters)
+//        }

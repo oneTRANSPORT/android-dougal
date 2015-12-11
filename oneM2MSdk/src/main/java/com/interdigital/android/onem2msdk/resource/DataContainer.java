@@ -3,11 +3,7 @@ package com.interdigital.android.onem2msdk.resource;
 import android.content.Context;
 
 import com.google.gson.annotations.SerializedName;
-import com.interdigital.android.onem2msdk.SDK;
 import com.interdigital.android.onem2msdk.network.RI;
-import com.interdigital.android.onem2msdk.network.response.ResponseHolder;
-
-import java.util.HashMap;
 
 public class DataContainer extends BaseResource {
 
@@ -26,27 +22,18 @@ public class DataContainer extends BaseResource {
 
     public static DataContainer getByName(Context context, String fqdn, String cseName, String aeName, String dcName, String aeId) {
         RI ri = new RI(fqdn, cseName + "/" + aeName + "/" + dcName);
-        HashMap<String, String> propertyValues = new HashMap<>();
-        propertyValues.put("X-M2M-Origin", aeId);
-        ResponseHolder responseHolder = SDK.getInstance().getResource(context, ri, propertyValues);
-        return responseHolder.getDataContainer();
+        return get(context, ri, aeId).getDataContainer();
     }
 
     public static Discovery discoverByAe(Context context,
                                          String fqdn, String cseName, String aeName, String aeId) {
         RI ri = new RI(fqdn, cseName + "/" + aeName + "?fu=1&rty=3");
-        HashMap<String, String> propertyValues = new HashMap<>();
-        propertyValues.put("X-M2M-Origin", aeId);
-        ResponseHolder responseHolder = SDK.getInstance().getResource(context, ri, propertyValues);
-        return responseHolder.getDiscovery();
+        return discover(context, ri, aeId);
     }
 
     public static Discovery discoverAll(Context context, String fqdn, String cseName, String aeId) {
         RI ri = new RI(fqdn, cseName + "?fu=1&rty=3");
-        HashMap<String, String> propertyValues = new HashMap<>();
-        propertyValues.put("X-M2M-Origin", aeId);
-        ResponseHolder responseHolder = SDK.getInstance().getResource(context, ri, propertyValues);
-        return responseHolder.getDiscovery();
+        return discover(context, ri, aeId);
     }
 
     public long getCurrentByteSize() {

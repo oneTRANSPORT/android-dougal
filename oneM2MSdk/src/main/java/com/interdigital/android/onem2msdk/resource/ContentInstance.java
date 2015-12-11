@@ -3,13 +3,11 @@ package com.interdigital.android.onem2msdk.resource;
 import android.content.Context;
 
 import com.google.gson.annotations.SerializedName;
-import com.interdigital.android.onem2msdk.SDK;
 import com.interdigital.android.onem2msdk.network.RI;
-import com.interdigital.android.onem2msdk.network.response.ResponseHolder;
-
-import java.util.HashMap;
 
 public class ContentInstance extends BaseResource {
+
+    private static final String LAST_CI = "la";
 
     @SerializedName("cnf")
     private String contentInfo;
@@ -23,36 +21,30 @@ public class ContentInstance extends BaseResource {
     public static ContentInstance getByName(Context context, String fqdn,
                                             String cseName, String aeName, String dcName, String ciName, String aeId) {
         RI ri = new RI(fqdn, cseName + "/" + aeName + "/" + dcName + "/" + ciName);
-        HashMap<String, String> propertyValues = new HashMap<>();
-        propertyValues.put("X-M2M-Origin", aeId);
-        ResponseHolder responseHolder = SDK.getInstance().getResource(context, ri, propertyValues);
-        return responseHolder.getContentInstance();
+        return get(context, ri, aeId).getContentInstance();
+    }
+
+    public static ContentInstance getLast(Context context, String fqdn,
+                                          String cseName, String aeName, String dcName, String aeId) {
+        RI ri = new RI(fqdn, cseName + "/" + aeName + "/" + dcName + "/" + LAST_CI);
+        return get(context, ri, aeId).getContentInstance();
     }
 
     public static Discovery discoverByDc(Context context,
                                          String fqdn, String cseName, String aeName, String dcName, String aeId) {
         RI ri = new RI(fqdn, cseName + "/" + aeName + "/" + dcName + "?fu=1&rty=4");
-        HashMap<String, String> propertyValues = new HashMap<>();
-        propertyValues.put("X-M2M-Origin", aeId);
-        ResponseHolder responseHolder = SDK.getInstance().getResource(context, ri, propertyValues);
-        return responseHolder.getDiscovery();
+        return discover(context, ri, aeId);
     }
 
     public static Discovery discoverByAe(Context context,
                                          String fqdn, String cseName, String aeName, String aeId) {
         RI ri = new RI(fqdn, cseName + "/" + aeName + "?fu=1&rty=4");
-        HashMap<String, String> propertyValues = new HashMap<>();
-        propertyValues.put("X-M2M-Origin", aeId);
-        ResponseHolder responseHolder = SDK.getInstance().getResource(context, ri, propertyValues);
-        return responseHolder.getDiscovery();
+        return discover(context, ri, aeId);
     }
 
     public static Discovery discoverAll(Context context, String fqdn, String cseName, String aeId) {
         RI ri = new RI(fqdn, cseName + "?fu=1&rty=4");
-        HashMap<String, String> propertyValues = new HashMap<>();
-        propertyValues.put("X-M2M-Origin", aeId);
-        ResponseHolder responseHolder = SDK.getInstance().getResource(context, ri, propertyValues);
-        return responseHolder.getDiscovery();
+        return discover(context, ri, aeId);
     }
 
     public String getContentInfo() {
@@ -86,6 +78,7 @@ public class ContentInstance extends BaseResource {
     public void setStateTag(String stateTag) {
         this.stateTag = stateTag;
     }
+
 }
 
 //{"m2m:cin":{

@@ -1,6 +1,18 @@
 package com.interdigital.android.onem2msdk.resource;
 
+import android.content.Context;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
+import com.interdigital.android.onem2msdk.SDK;
+import com.interdigital.android.onem2msdk.network.RI;
+import com.interdigital.android.onem2msdk.network.request.RequestHolder;
+import com.interdigital.android.onem2msdk.network.response.ResponseHolder;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class BaseResource {
 
@@ -93,6 +105,35 @@ public class BaseResource {
 
     public void setLabels(String[] labels) {
         this.labels = labels;
+    }
+
+    // TODO Inject request holder here?
+    protected static ResponseHolder get(Context context, RI ri, String aeId) {
+        HashMap<String, List<String>> propertyValues = createOriginProperty(aeId);
+        return SDK.getInstance().getResource(context, ri, propertyValues);
+    }
+
+    public static ResponseHolder post(Context context, RI ri, RequestHolder requestHolder) {
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        String json = gson.toJson(requestHolder);
+        return SDK.getInstance().postResource(context, ri, requestHolder.getPropertyValues(), json);
+    }
+
+    protected static Discovery discover(Context context, RI ri, String aeId) {
+        HashMap<String, List<String>> propertyValues = createOriginProperty(aeId);
+        ResponseHolder responseHolder = SDK.getInstance().getResource(context, ri, propertyValues);
+        return responseHolder.getDiscovery();
+    }
+
+    protected static HashMap<String, List<String>> createOriginProperty(String origin) {
+        HashMap<String, List<String>> propertyValues = new HashMap<>();
+        ArrayList<String> originList = new ArrayList<>();
+        originList.add(origin);
+        ArrayList<String> requestIdList = new ArrayList<>();
+        requestIdList.add(SDK.getInstance().getUniqueRequestId());
+        propertyValues.put("X-M2M-Origin", originList);
+        propertyValues.put("X-M2M-RI", requestIdList);
+        return propertyValues;
     }
 }
 
