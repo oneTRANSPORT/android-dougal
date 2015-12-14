@@ -119,6 +119,11 @@ public class BaseResource {
         return SDK.getInstance().postResource(context, ri, requestHolder.getPropertyValues(), json);
     }
 
+    public static ResponseHolder delete(Context context, RI ri, String aeId) {
+        HashMap<String, List<String>> propertyValues = createOriginProperty(aeId);
+        return SDK.getInstance().deleteResource(context, ri, propertyValues);
+    }
+
     protected static Discovery discover(Context context, RI ri, String aeId) {
         HashMap<String, List<String>> propertyValues = createOriginProperty(aeId);
         ResponseHolder responseHolder = SDK.getInstance().getResource(context, ri, propertyValues);

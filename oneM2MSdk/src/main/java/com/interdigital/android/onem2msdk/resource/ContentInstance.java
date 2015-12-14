@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.google.gson.annotations.SerializedName;
 import com.interdigital.android.onem2msdk.network.RI;
+import com.interdigital.android.onem2msdk.network.request.RequestHolder;
 
 public class ContentInstance extends BaseResource {
 
@@ -28,6 +29,20 @@ public class ContentInstance extends BaseResource {
                                           String cseName, String aeName, String dcName, String aeId) {
         RI ri = new RI(fqdn, cseName + "/" + aeName + "/" + dcName + "/" + LAST_CI);
         return get(context, ri, aeId).getContentInstance();
+    }
+
+    public static ContentInstance create(Context context, String fqdn,
+                                         String cseName, String aeName, String dcName, String ciName, String aeId) {
+        RI ri = new RI(fqdn, cseName + "/" + aeName + "/" + dcName);
+        ContentInstance contentInstance = new ContentInstance();
+        contentInstance.setContentInfo("text/plain:0");
+        contentInstance.setContent("banana");
+        RequestHolder requestHolder = new RequestHolder();
+        requestHolder.setContentInstance(contentInstance);
+        requestHolder.putOriginProperty(aeId);
+        requestHolder.putContentTypeProperty("application/json; ty=4");
+        requestHolder.putNameProperty(ciName);
+        return post(context, ri, requestHolder).getContentInstance();
     }
 
     public static Discovery discoverByDc(Context context,

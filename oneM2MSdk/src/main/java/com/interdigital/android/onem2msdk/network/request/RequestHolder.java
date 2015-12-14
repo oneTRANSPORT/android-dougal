@@ -4,6 +4,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.interdigital.android.onem2msdk.SDK;
 import com.interdigital.android.onem2msdk.resource.ApplicationEntity;
+import com.interdigital.android.onem2msdk.resource.ContentInstance;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,6 +20,9 @@ public class RequestHolder {
     @Expose
     @SerializedName("m2m:ae")
     private ApplicationEntity applicationEntity;
+    @Expose
+    @SerializedName("m2m:cin")
+    private ContentInstance contentInstance;
 
     private HashMap<String, List<String>> propertyValues =
             new HashMap<>();
@@ -29,6 +33,10 @@ public class RequestHolder {
 
     public void setApplicationEntity(ApplicationEntity applicationEntity) {
         this.applicationEntity = applicationEntity;
+    }
+
+    public void setContentInstance(ContentInstance contentInstance) {
+        this.contentInstance = contentInstance;
     }
 
     public void putOriginProperty(String origin) {

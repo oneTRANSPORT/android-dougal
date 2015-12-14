@@ -2,10 +2,10 @@ package com.interdigital.android.onem2msdk.resource;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Discovery extends BaseResource{
+public class Discovery extends BaseResource {
 
     @SerializedName("discoveredURI")
-private String[] discoveredUri;
+    private String[] discoveredUri;
     @SerializedName("truncated")
     private boolean truncated;
 

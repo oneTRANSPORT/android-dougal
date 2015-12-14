@@ -38,6 +38,12 @@ public class ApplicationEntity extends BaseResource {
         return post(context, ri, requestHolder).getApplicationEntity();
     }
 
+    public static int delete(Context context,
+                             String fqdn, String cseName, String aeName, String aeId) {
+        RI ri = new RI(fqdn, "/" + cseName + "/" + aeName);
+        return delete(context, ri, aeId).getStatusCode();
+    }
+
     public static Discovery discoverAll(Context context, String fqdn, String cseName, String aeId) {
         RI ri = new RI(fqdn, cseName + "?fu=1&rty=ae");
         return discover(context, ri, aeId);

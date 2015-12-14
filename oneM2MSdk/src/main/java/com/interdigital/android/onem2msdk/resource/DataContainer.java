@@ -20,7 +20,8 @@ public class DataContainer extends BaseResource {
     @SerializedName("st")
     private String stateTag;
 
-    public static DataContainer getByName(Context context, String fqdn, String cseName, String aeName, String dcName, String aeId) {
+    public static DataContainer getByName(Context context,
+                                          String fqdn, String cseName, String aeName, String dcName, String aeId) {
         RI ri = new RI(fqdn, cseName + "/" + aeName + "/" + dcName);
         return get(context, ri, aeId).getDataContainer();
     }
