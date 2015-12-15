@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.interdigital.android.onem2msdk.SDK;
 import com.interdigital.android.onem2msdk.network.RI;
@@ -16,22 +17,31 @@ import java.util.List;
 
 public class BaseResource {
 
+    @Expose
     @SerializedName("ri")
     private String resourceId;
+    @Expose
     @SerializedName("rn")
     private String resourceName;
+    @Expose
     @SerializedName("ty")
     private String resourceType;
+    @Expose
     @SerializedName("pi")
     private String parentId;
+    @Expose
     @SerializedName("ct")
     private String creationTime;
+    @Expose
     @SerializedName("lt")
     private String lastModifiedTime;
+    @Expose
     @SerializedName("et")
     private String expiryTime;
+    @Expose
     @SerializedName("acpi")
     private String[] accessControlPolicyIds;
+    @Expose
     @SerializedName("lbl")
     private String[] labels;
 
