@@ -2,6 +2,7 @@ package com.interdigital.android.onem2msdk.resource;
 
 import android.content.Context;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.interdigital.android.onem2msdk.network.RI;
 import com.interdigital.android.onem2msdk.network.request.RequestHolder;
@@ -10,12 +11,16 @@ public class ContentInstance extends BaseResource {
 
     private static final String LAST_CI = "la";
 
+    @Expose
     @SerializedName("cnf")
     private String contentInfo;
+    @Expose
     @SerializedName("con")
     private String content;
+    @Expose
     @SerializedName("cs")
     private long contentSize;
+    @Expose
     @SerializedName("st")
     private String stateTag;
 
@@ -31,18 +36,23 @@ public class ContentInstance extends BaseResource {
         return get(context, ri, aeId).getContentInstance();
     }
 
+
     public static ContentInstance create(Context context, String fqdn,
-                                         String cseName, String aeName, String dcName, String ciName, String aeId) {
+                                         String cseName, String aeName, String dcName, String aeId, String content) {
         RI ri = new RI(fqdn, cseName + "/" + aeName + "/" + dcName);
         ContentInstance contentInstance = new ContentInstance();
-        contentInstance.setContentInfo("text/plain:0");
-        contentInstance.setContent("banana");
+        // TODO Is this needed?
+//        contentInstance.setContentInfo("application/json:0");
+        contentInstance.setContent(content);
         RequestHolder requestHolder = new RequestHolder();
         requestHolder.setContentInstance(contentInstance);
         requestHolder.putOriginProperty(aeId);
-        requestHolder.putContentTypeProperty("application/json; ty=4");
-        requestHolder.putNameProperty(ciName);
-        return post(context, ri, requestHolder).getContentInstance();
+//        requestHolder.putContentTypeProperty("application/json; ty=4");
+        requestHolder.putContentTypeProperty("application/vnd.onem2m-res+xml; ty=4");
+        // TODO Assume an anonymous CI name for now.
+        // The server will create a new CI name and add it to the data container.
+//        requestHolder.putNameProperty(ciName);
+        return postCin(context, ri, requestHolder).getContentInstance();
     }
 
     public static Discovery discoverByDc(Context context,

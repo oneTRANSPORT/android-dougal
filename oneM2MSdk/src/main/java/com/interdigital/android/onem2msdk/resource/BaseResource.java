@@ -17,6 +17,17 @@ import java.util.List;
 
 public class BaseResource {
 
+    // Seems that this should contain no new line characters.
+    private static final String CIN_HEADER =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
+                    + "<m2m:cin xmlns:m2m=\"http://www.onem2m.org/xml/protocols\""
+                    + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+                    + " xsi:schemaLocation=\"http://www.onem2m.org/xml/protocols CDT-cin-v1_0_0.xsd\""
+                    + " rn=\"cin\">"
+                    + "<cnf>text/plain:0</cnf>"
+                    + "<con>";
+    private static final String CIN_FOOTER = "</con></m2m:cin>";
+
     @Expose
     @SerializedName("ri")
     private String resourceId;
@@ -127,6 +138,14 @@ public class BaseResource {
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         String json = gson.toJson(requestHolder);
         return SDK.getInstance().postResource(context, ri, requestHolder.getPropertyValues(), json);
+    }
+
+    public static ResponseHolder postCin(Context context, RI ri, RequestHolder requestHolder) {
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        String json = gson.toJson(requestHolder);
+        // We must wrap the content instance JSON in an XML envelope.
+        return SDK.getInstance().postResource(context, ri, requestHolder.getPropertyValues(),
+                CIN_HEADER + json + CIN_FOOTER);
     }
 
     public static ResponseHolder delete(Context context, RI ri, String aeId) {
