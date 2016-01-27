@@ -1,6 +1,5 @@
 package com.interdigital.android.onem2msdk.network.response;
 
-
 import com.google.gson.annotations.SerializedName;
 import com.interdigital.android.onem2msdk.resource.ApplicationEntity;
 import com.interdigital.android.onem2msdk.resource.CommonServicesEntity;
@@ -15,6 +14,7 @@ public class ResponseHolder {
 
     private int statusCode;
     private Map<String, List<String>> propertyValues; // HTTP response headers.
+    // TODO Should these have @Expose?
     @SerializedName("m2m:cb")
     private CommonServicesEntity commonServicesEntity;
     @SerializedName("m2m:ae")
