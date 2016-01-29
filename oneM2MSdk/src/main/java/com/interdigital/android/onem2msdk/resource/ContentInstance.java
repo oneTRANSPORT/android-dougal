@@ -6,6 +6,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.interdigital.android.onem2msdk.network.RI;
 import com.interdigital.android.onem2msdk.network.request.RequestHolder;
+import com.interdigital.android.onem2msdk.network.response.ResponseHolder;
 
 public class ContentInstance extends BaseResource {
 
@@ -52,7 +53,11 @@ public class ContentInstance extends BaseResource {
         // TODO Assume an anonymous CI name for now.
         // The server will create a new CI name and add it to the data container.
 //        requestHolder.putNameProperty(ciName);
-        return postCin(context, ri, requestHolder).getContentInstance();
+        ResponseHolder responseHolder = postCin(context, ri, requestHolder);
+        if (responseHolder == null) {
+            return null;
+        }
+        return responseHolder.getContentInstance();
     }
 
     public static Discovery discoverByDc(Context context,

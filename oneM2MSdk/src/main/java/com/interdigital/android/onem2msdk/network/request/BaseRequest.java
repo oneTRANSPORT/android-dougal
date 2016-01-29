@@ -137,8 +137,8 @@ public class BaseRequest {
         if (urlConnection != null) {
             urlConnection.setSSLSocketFactory(sslContext.getSocketFactory());
             urlConnection.setRequestMethod(method);
-            urlConnection.setConnectTimeout(1500);
-            urlConnection.setReadTimeout(1500);
+            urlConnection.setConnectTimeout(5000);
+            urlConnection.setReadTimeout(5000);
             // TODO Make this more generic.
             Authenticator.setDefault(new Authenticator() {
                 protected PasswordAuthentication getPasswordAuthentication() {
