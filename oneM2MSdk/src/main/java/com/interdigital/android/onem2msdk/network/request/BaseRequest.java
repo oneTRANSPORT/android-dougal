@@ -75,6 +75,10 @@ public class BaseRequest {
                 contentType = httpsURLConnection.getContentType();
             } else {
                 httpURLConnection = getHttpUrlConnection(requestedUrl);
+                responseCode = httpURLConnection.getResponseCode();
+                responseText = extractResponseText(httpURLConnection);
+                headerMap = httpURLConnection.getHeaderFields();
+                contentType = httpURLConnection.getContentType();
             }
 //        } catch (KeyStoreException e) {
 //            e.printStackTrace();
@@ -187,7 +191,7 @@ public class BaseRequest {
         return urlConnection;
     }
 
-    private String extractResponseText(HttpsURLConnection urlConnection) throws IOException {
+    private String extractResponseText(HttpURLConnection urlConnection) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         byte[] buffer = new byte[8192];
         InputStream is;
