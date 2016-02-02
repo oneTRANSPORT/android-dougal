@@ -13,13 +13,13 @@ public class RI {
 
     // Unstructured or structured relative RI.
     // May not begin with '/'.
-    public RI(String fqdn, @NonNull String ri) {
+    public RI(String fqdn, int port, @NonNull String ri) {
         String slash = File.separator;
         if (fqdn != null) {
             if (ri.startsWith(slash)) {
-                ri = slash + slash + fqdn + ri;
+                ri = slash + slash + fqdn + ":" + port + ri;
             } else {
-                ri = slash + slash + fqdn + slash + ri;
+                ri = slash + slash + fqdn + ":" + port + slash + ri;
             }
         }
         this.ri = ri;

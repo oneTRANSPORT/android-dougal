@@ -30,8 +30,8 @@ public class DataContainer extends BaseResource {
     private String stateTag;
 
     public static DataContainer create(Context context,
-                                       String fqdn, String cseName, String aeName, String dcName, String aeId) {
-        RI ri = new RI(fqdn, "/" + cseName + "/" + aeName);
+                                       String fqdn, int port, String cseName, String aeName, String dcName, String aeId) {
+        RI ri = new RI(fqdn, port, "/" + cseName + "/" + aeName);
         DataContainer dataContainer = new DataContainer();
         dataContainer.setResourceName("cnt");
         dataContainer.setLabels(new String[]{"TestLabel1"});
@@ -48,19 +48,19 @@ public class DataContainer extends BaseResource {
     }
 
     public static DataContainer getByName(Context context,
-                                          String fqdn, String cseName, String aeName, String dcName, String aeId) {
-        RI ri = new RI(fqdn, cseName + "/" + aeName + "/" + dcName);
+                                          String fqdn, int port, String cseName, String aeName, String dcName, String aeId) {
+        RI ri = new RI(fqdn, port, cseName + "/" + aeName + "/" + dcName);
         return get(context, ri, aeId).getDataContainer();
     }
 
     public static Discovery discoverByAe(Context context,
-                                         String fqdn, String cseName, String aeName, String aeId) {
-        RI ri = new RI(fqdn, cseName + "/" + aeName + "?fu=1&rty=3");
+                                         String fqdn, int port, String cseName, String aeName, String aeId) {
+        RI ri = new RI(fqdn, port, cseName + "/" + aeName + "?fu=1&rty=3");
         return discover(context, ri, aeId);
     }
 
-    public static Discovery discoverAll(Context context, String fqdn, String cseName, String aeId) {
-        RI ri = new RI(fqdn, cseName + "?fu=1&rty=3");
+    public static Discovery discoverAll(Context context, String fqdn, int port, String cseName, String aeId) {
+        RI ri = new RI(fqdn, port, cseName + "?fu=1&rty=3");
         return discover(context, ri, aeId);
     }
 

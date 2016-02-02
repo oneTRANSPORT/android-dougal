@@ -20,14 +20,14 @@ public class ApplicationEntity extends BaseResource {
     private boolean requestReachable;
 
     public static ApplicationEntity get(Context context,
-                                        String fqdn, String cseName, String aeName, String aeId) {
-        RI ri = new RI(fqdn, "/" + cseName + "/" + aeName);
+                                        String fqdn, int port, String cseName, String aeName, String aeId) {
+        RI ri = new RI(fqdn, port, "/" + cseName + "/" + aeName);
         return get(context, ri, aeId).getApplicationEntity();
     }
 
     public static ApplicationEntity create(Context context,
-                                           String fqdn, String cseName, String aeName, String aeId) {
-        RI ri = new RI(fqdn, "/" + cseName);
+                                           String fqdn, int port, String cseName, String aeName, String aeId) {
+        RI ri = new RI(fqdn, port, "/" + cseName);
         ApplicationEntity applicationEntity = new ApplicationEntity();
         applicationEntity.setApplicationId(aeName);
         RequestHolder requestHolder = new RequestHolder();
@@ -39,13 +39,13 @@ public class ApplicationEntity extends BaseResource {
     }
 
     public static int delete(Context context,
-                             String fqdn, String cseName, String aeName, String aeId) {
-        RI ri = new RI(fqdn, "/" + cseName + "/" + aeName);
+                             String fqdn, int port, String cseName, String aeName, String aeId) {
+        RI ri = new RI(fqdn, port, "/" + cseName + "/" + aeName);
         return delete(context, ri, aeId).getStatusCode();
     }
 
-    public static Discovery discoverAll(Context context, String fqdn, String cseName, String aeId) {
-        RI ri = new RI(fqdn, cseName + "?fu=1&rty=ae");
+    public static Discovery discoverAll(Context context, String fqdn, int port, String cseName, String aeId) {
+        RI ri = new RI(fqdn, port, cseName + "?fu=1&rty=ae");
         return discover(context, ri, aeId);
     }
 

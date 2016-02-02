@@ -13,6 +13,7 @@ import java.util.Map;
 public class SDK {
 
     private static final String PREFIX_HTTPS = "https:";
+    private static final String PREFIX_HTTP = "http:";
     private static SDK instance;
     private static long requestId = 0L;
 
@@ -32,7 +33,7 @@ public class SDK {
     }
 
     public ResponseHolder getResource(Context context, RI ri, Map<String, List<String>> propertyValues) {
-        BaseRequest baseRequest = new BaseRequest(context, 0, PREFIX_HTTPS + ri.getRiString(),
+        BaseRequest baseRequest = new BaseRequest(context, 0, PREFIX_HTTP + ri.getRiString(),
                 BaseRequest.METHOD_GET, propertyValues, null);
         int statusCode = baseRequest.connect();
         String text = baseRequest.getResponseText();
@@ -48,7 +49,7 @@ public class SDK {
 
     public ResponseHolder postResource(
             Context context, RI ri, Map<String, List<String>> propertyValues, String body) {
-        BaseRequest baseRequest = new BaseRequest(context, 0, PREFIX_HTTPS + ri.getRiString(),
+        BaseRequest baseRequest = new BaseRequest(context, 0, PREFIX_HTTP + ri.getRiString(),
                 BaseRequest.METHOD_POST, propertyValues, body);
         int statusCode = baseRequest.connect();
         String text = baseRequest.getResponseText();
@@ -64,7 +65,7 @@ public class SDK {
 
     public ResponseHolder deleteResource(
             Context context, RI ri, Map<String, List<String>> propertyValues) {
-        BaseRequest baseRequest = new BaseRequest(context, 0, PREFIX_HTTPS + ri.getRiString(),
+        BaseRequest baseRequest = new BaseRequest(context, 0, PREFIX_HTTP + ri.getRiString(),
                 BaseRequest.METHOD_DELETE, propertyValues, null);
         int statusCode = baseRequest.connect();
         ResponseHolder responseHolder = new ResponseHolder();

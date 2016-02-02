@@ -16,8 +16,9 @@ public class CommonServicesEntity extends BaseResource {
     @SerializedName("srt")
     private int[] supportedResourceTypes;
 
-    public static CommonServicesEntity get(Context context, String fqdn, String cseName, String aeId) {
-        RI ri = new RI(fqdn, "/" + cseName);
+    public static CommonServicesEntity get(Context context, String fqdn, int port,
+                                           String cseName, String aeId) {
+        RI ri = new RI(fqdn, port, "/" + cseName);
         return get(context, ri, aeId).getCommonServicesEntity();
     }
 

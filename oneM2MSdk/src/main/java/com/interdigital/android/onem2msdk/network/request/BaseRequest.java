@@ -8,7 +8,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Authenticator;
+import java.net.HttpURLConnection;
 import java.net.PasswordAuthentication;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
@@ -58,17 +60,22 @@ public class BaseRequest {
     }
 
     public int connect() {
-        HttpsURLConnection urlConnection = null;
+        HttpsURLConnection httpsURLConnection = null;
+        HttpURLConnection httpURLConnection = null;
         int responseCode = 0;
         try {
 //            KeyManager[] keyManagers = getKeyManagers();
-            SSLContext sslContext = getSslContext(null);
             URL requestedUrl = new URL(url);
-            urlConnection = getHttpsURLConnection(sslContext, requestedUrl);
-            responseCode = urlConnection.getResponseCode();
-            responseText = extractResponseText(urlConnection);
-            headerMap = urlConnection.getHeaderFields();
-            contentType = urlConnection.getContentType();
+            if (url.startsWith("https")) {
+                SSLContext sslContext = getSslContext(null);
+                httpsURLConnection = getHttpsURLConnection(sslContext, requestedUrl);
+                responseCode = httpsURLConnection.getResponseCode();
+                responseText = extractResponseText(httpsURLConnection);
+                headerMap = httpsURLConnection.getHeaderFields();
+                contentType = httpsURLConnection.getContentType();
+            } else {
+                httpURLConnection = getHttpUrlConnection(requestedUrl);
+            }
 //        } catch (KeyStoreException e) {
 //            e.printStackTrace();
 //        } catch (CertificateException e) {
@@ -82,8 +89,11 @@ public class BaseRequest {
         } catch (KeyManagementException e) {
             e.printStackTrace();
         } finally {
-            if (urlConnection != null) {
-                urlConnection.disconnect();
+            if (httpURLConnection != null) {
+                httpURLConnection.disconnect();
+            }
+            if (httpsURLConnection != null) {
+                httpsURLConnection.disconnect();
             }
         }
         return responseCode;
@@ -131,37 +141,48 @@ public class BaseRequest {
         return sslContext;
     }
 
+    private HttpURLConnection getHttpUrlConnection(URL requestedUrl)
+            throws IOException {
+        HttpURLConnection httpURLConnection = (HttpURLConnection) requestedUrl.openConnection();
+        if (httpURLConnection != null) {
+            setHttpParameters(httpURLConnection);
+            addBody(httpURLConnection);
+        }
+        return httpURLConnection;
+    }
+
+    private void setHttpParameters(HttpURLConnection httpURLConnection) throws ProtocolException {
+        httpURLConnection.setRequestMethod(method);
+        httpURLConnection.setConnectTimeout(5000);
+        httpURLConnection.setReadTimeout(5000);
+        Authenticator.setDefault(new Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication("pthomas", "EKFYGUCC".toCharArray());
+            }
+        });
+        Iterator<String> keyIterator = propertyValues.keySet().iterator();
+        while (keyIterator.hasNext()) {
+            String key = keyIterator.next();
+            List<String> values = propertyValues.get(key);
+            for (int i = 0; i < values.size(); i++) {
+                httpURLConnection.setRequestProperty(key, values.get(i));
+            }
+        }
+        httpURLConnection.setRequestProperty("Accept", "application/vnd.onem2m-res+json");
+    }
+
     private HttpsURLConnection getHttpsURLConnection(SSLContext sslContext, URL requestedUrl)
             throws IOException {
         HttpsURLConnection urlConnection = (HttpsURLConnection) requestedUrl.openConnection();
         if (urlConnection != null) {
             urlConnection.setSSLSocketFactory(sslContext.getSocketFactory());
-            urlConnection.setRequestMethod(method);
-            urlConnection.setConnectTimeout(5000);
-            urlConnection.setReadTimeout(5000);
-            // TODO Make this more generic.
-            Authenticator.setDefault(new Authenticator() {
-                protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication("pthomas", "EKFYGUCC".toCharArray());
-                }
-            });
-            Iterator<String> keyIterator = propertyValues.keySet().iterator();
-            while (keyIterator.hasNext()) {
-                String key = keyIterator.next();
-                List<String> values = propertyValues.get(key);
-                for (int i = 0; i < values.size(); i++) {
-                    urlConnection.setRequestProperty(key, values.get(i));
-                }
-            }
-            urlConnection.setRequestProperty("Accept", "application/vnd.onem2m-res+json");
+            setHttpParameters(urlConnection);
             urlConnection.setHostnameVerifier(new HostnameVerifier() {
                 public boolean verify(String hostname, SSLSession session) {
                     return true;
                 }
             });
-            if (body != null) {
-                addBody(urlConnection);
-            }
+            addBody(urlConnection);
         }
         return urlConnection;
     }
@@ -178,17 +199,18 @@ public class BaseRequest {
         return new String(baos.toByteArray());
     }
 
-    private void addBody(HttpsURLConnection urlConnection) {
-        urlConnection.setDoInput(true);
-        urlConnection.setDoOutput(true);
-        try {
-            OutputStream os = urlConnection.getOutputStream();
-            os.write(body.getBytes("UTF-8"));
-            os.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+    private void addBody(HttpURLConnection urlConnection) {
+        if (body != null) {
+            urlConnection.setDoInput(true);
+            urlConnection.setDoOutput(true);
+            try {
+                OutputStream os = urlConnection.getOutputStream();
+                os.write(body.getBytes("UTF-8"));
+                os.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-
     }
 
 }

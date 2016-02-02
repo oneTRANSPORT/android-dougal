@@ -25,22 +25,22 @@ public class ContentInstance extends BaseResource {
     @SerializedName("st")
     private String stateTag;
 
-    public static ContentInstance getByName(Context context, String fqdn,
+    public static ContentInstance getByName(Context context, String fqdn, int port,
                                             String cseName, String aeName, String dcName, String ciName, String aeId) {
-        RI ri = new RI(fqdn, cseName + "/" + aeName + "/" + dcName + "/" + ciName);
+        RI ri = new RI(fqdn, port, cseName + "/" + aeName + "/" + dcName + "/" + ciName);
         return get(context, ri, aeId).getContentInstance();
     }
 
-    public static ContentInstance getLast(Context context, String fqdn,
+    public static ContentInstance getLast(Context context, String fqdn, int port,
                                           String cseName, String aeName, String dcName, String aeId) {
-        RI ri = new RI(fqdn, cseName + "/" + aeName + "/" + dcName + "/" + LAST_CI);
+        RI ri = new RI(fqdn, port, cseName + "/" + aeName + "/" + dcName + "/" + LAST_CI);
         return get(context, ri, aeId).getContentInstance();
     }
 
 
-    public static ContentInstance create(Context context, String fqdn,
+    public static ContentInstance create(Context context, String fqdn, int port,
                                          String cseName, String aeName, String dcName, String aeId, String content) {
-        RI ri = new RI(fqdn, cseName + "/" + aeName + "/" + dcName);
+        RI ri = new RI(fqdn, port, cseName + "/" + aeName + "/" + dcName);
         ContentInstance contentInstance = new ContentInstance();
         // TODO Is this needed?
 //        contentInstance.setContentInfo("application/json:0");
@@ -61,19 +61,19 @@ public class ContentInstance extends BaseResource {
     }
 
     public static Discovery discoverByDc(Context context,
-                                         String fqdn, String cseName, String aeName, String dcName, String aeId) {
-        RI ri = new RI(fqdn, cseName + "/" + aeName + "/" + dcName + "?fu=1&rty=4");
+                                         String fqdn, int port, String cseName, String aeName, String dcName, String aeId) {
+        RI ri = new RI(fqdn, port, cseName + "/" + aeName + "/" + dcName + "?fu=1&rty=4");
         return discover(context, ri, aeId);
     }
 
     public static Discovery discoverByAe(Context context,
-                                         String fqdn, String cseName, String aeName, String aeId) {
-        RI ri = new RI(fqdn, cseName + "/" + aeName + "?fu=1&rty=4");
+                                         String fqdn, int port, String cseName, String aeName, String aeId) {
+        RI ri = new RI(fqdn, port, cseName + "/" + aeName + "?fu=1&rty=4");
         return discover(context, ri, aeId);
     }
 
-    public static Discovery discoverAll(Context context, String fqdn, String cseName, String aeId) {
-        RI ri = new RI(fqdn, cseName + "?fu=1&rty=4");
+    public static Discovery discoverAll(Context context, String fqdn, int port, String cseName, String aeId) {
+        RI ri = new RI(fqdn, port, cseName + "?fu=1&rty=4");
         return discover(context, ri, aeId);
     }
 
