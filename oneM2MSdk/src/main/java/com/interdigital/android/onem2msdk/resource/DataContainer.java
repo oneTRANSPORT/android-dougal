@@ -29,8 +29,8 @@ public class DataContainer extends BaseResource {
     @SerializedName("st")
     private String stateTag;
 
-    public static DataContainer create(Context context,
-                                       String fqdn, int port, String cseName, String aeName, String dcName, String aeId) {
+    public static DataContainer create(Context context, String fqdn, int port, boolean useHttps,
+                                       String cseName, String aeName, String dcName, String aeId) {
         RI ri = new RI(fqdn, port, "/" + cseName + "/" + aeName);
         DataContainer dataContainer = new DataContainer();
         dataContainer.setResourceName("cnt");
@@ -40,28 +40,29 @@ public class DataContainer extends BaseResource {
         requestHolder.putOriginProperty(aeId);
         requestHolder.putContentTypeProperty("application/json; ty=3");
         requestHolder.putNameProperty(dcName);
-        ResponseHolder responseHolder = post(context, ri, requestHolder);
+        ResponseHolder responseHolder = post(context, ri, useHttps, requestHolder);
         if (responseHolder != null) {
             return responseHolder.getDataContainer();
         }
         return null;
     }
 
-    public static DataContainer getByName(Context context,
-                                          String fqdn, int port, String cseName, String aeName, String dcName, String aeId) {
+    public static DataContainer getByName(Context context, String fqdn, int port, boolean useHttps,
+                                          String cseName, String aeName, String dcName, String aeId) {
         RI ri = new RI(fqdn, port, cseName + "/" + aeName + "/" + dcName);
-        return get(context, ri, aeId).getDataContainer();
+        return get(context, ri, useHttps, aeId).getDataContainer();
     }
 
-    public static Discovery discoverByAe(Context context,
-                                         String fqdn, int port, String cseName, String aeName, String aeId) {
+    public static Discovery discoverByAe(Context context, String fqdn, int port, boolean useHttps,
+                                         String cseName, String aeName, String aeId) {
         RI ri = new RI(fqdn, port, cseName + "/" + aeName + "?fu=1&rty=3");
-        return discover(context, ri, aeId);
+        return discover(context, ri, useHttps, aeId);
     }
 
-    public static Discovery discoverAll(Context context, String fqdn, int port, String cseName, String aeId) {
+    public static Discovery discoverAll(Context context, String fqdn, int port, boolean useHttps,
+                                        String cseName, String aeId) {
         RI ri = new RI(fqdn, port, cseName + "?fu=1&rty=3");
-        return discover(context, ri, aeId);
+        return discover(context, ri, useHttps, aeId);
     }
 
     public long getCurrentByteSize() {

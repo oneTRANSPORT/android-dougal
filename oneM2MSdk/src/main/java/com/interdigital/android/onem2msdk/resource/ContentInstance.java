@@ -25,20 +25,20 @@ public class ContentInstance extends BaseResource {
     @SerializedName("st")
     private String stateTag;
 
-    public static ContentInstance getByName(Context context, String fqdn, int port,
+    public static ContentInstance getByName(Context context, String fqdn, int port, boolean useHttps,
                                             String cseName, String aeName, String dcName, String ciName, String aeId) {
         RI ri = new RI(fqdn, port, cseName + "/" + aeName + "/" + dcName + "/" + ciName);
-        return get(context, ri, aeId).getContentInstance();
+        return get(context, ri, useHttps, aeId).getContentInstance();
     }
 
-    public static ContentInstance getLast(Context context, String fqdn, int port,
+    public static ContentInstance getLast(Context context, String fqdn, int port, boolean useHttps,
                                           String cseName, String aeName, String dcName, String aeId) {
         RI ri = new RI(fqdn, port, cseName + "/" + aeName + "/" + dcName + "/" + LAST_CI);
-        return get(context, ri, aeId).getContentInstance();
+        return get(context, ri, useHttps, aeId).getContentInstance();
     }
 
 
-    public static ContentInstance create(Context context, String fqdn, int port,
+    public static ContentInstance create(Context context, String fqdn, int port, boolean useHttps,
                                          String cseName, String aeName, String dcName, String aeId, String content) {
         RI ri = new RI(fqdn, port, cseName + "/" + aeName + "/" + dcName);
         ContentInstance contentInstance = new ContentInstance();
@@ -53,28 +53,29 @@ public class ContentInstance extends BaseResource {
         // TODO Assume an anonymous CI name for now.
         // The server will create a new CI name and add it to the data container.
 //        requestHolder.putNameProperty(ciName);
-        ResponseHolder responseHolder = postCin(context, ri, requestHolder);
+        ResponseHolder responseHolder = postCin(context, ri, useHttps, requestHolder);
         if (responseHolder == null) {
             return null;
         }
         return responseHolder.getContentInstance();
     }
 
-    public static Discovery discoverByDc(Context context,
-                                         String fqdn, int port, String cseName, String aeName, String dcName, String aeId) {
+    public static Discovery discoverByDc(Context context, String fqdn, int port, boolean useHttps,
+                                         String cseName, String aeName, String dcName, String aeId) {
         RI ri = new RI(fqdn, port, cseName + "/" + aeName + "/" + dcName + "?fu=1&rty=4");
-        return discover(context, ri, aeId);
+        return discover(context, ri, useHttps, aeId);
     }
 
-    public static Discovery discoverByAe(Context context,
-                                         String fqdn, int port, String cseName, String aeName, String aeId) {
+    public static Discovery discoverByAe(Context context, String fqdn, int port, boolean useHttps,
+                                         String cseName, String aeName, String aeId) {
         RI ri = new RI(fqdn, port, cseName + "/" + aeName + "?fu=1&rty=4");
-        return discover(context, ri, aeId);
+        return discover(context, ri, useHttps, aeId);
     }
 
-    public static Discovery discoverAll(Context context, String fqdn, int port, String cseName, String aeId) {
+    public static Discovery discoverAll(Context context, String fqdn, int port, boolean useHttps,
+                                        String cseName, String aeId) {
         RI ri = new RI(fqdn, port, cseName + "?fu=1&rty=4");
-        return discover(context, ri, aeId);
+        return discover(context, ri, useHttps, aeId);
     }
 
     public String getContentInfo() {

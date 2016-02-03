@@ -129,33 +129,36 @@ public class BaseResource {
     }
 
     // TODO Inject request holder here?
-    protected static ResponseHolder get(Context context, RI ri, String aeId) {
+    protected static ResponseHolder get(Context context, RI ri, boolean useHttps, String aeId) {
         HashMap<String, List<String>> propertyValues = createOriginProperty(aeId);
-        return SDK.getInstance().getResource(context, ri, propertyValues);
+        return SDK.getInstance().getResource(context, ri, useHttps, propertyValues);
     }
 
-    public static ResponseHolder post(Context context, RI ri, RequestHolder requestHolder) {
+    public static ResponseHolder post(Context context, RI ri, boolean useHttps,
+                                      RequestHolder requestHolder) {
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         String json = gson.toJson(requestHolder);
-        return SDK.getInstance().postResource(context, ri, requestHolder.getPropertyValues(), json);
+        return SDK.getInstance().postResource(context, ri, useHttps, requestHolder.getPropertyValues(), json);
     }
 
-    public static ResponseHolder postCin(Context context, RI ri, RequestHolder requestHolder) {
+    public static ResponseHolder postCin(Context context, RI ri, boolean useHttps,
+                                         RequestHolder requestHolder) {
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         String json = gson.toJson(requestHolder);
         // We must wrap the content instance JSON in an XML envelope.
-        return SDK.getInstance().postResource(context, ri, requestHolder.getPropertyValues(),
+        return SDK.getInstance().postResource(context, ri, useHttps, requestHolder.getPropertyValues(),
                 CIN_HEADER + json + CIN_FOOTER);
     }
 
-    public static ResponseHolder delete(Context context, RI ri, String aeId) {
+    public static ResponseHolder delete(Context context, RI ri, boolean useHttps, String aeId) {
         HashMap<String, List<String>> propertyValues = createOriginProperty(aeId);
-        return SDK.getInstance().deleteResource(context, ri, propertyValues);
+        return SDK.getInstance().deleteResource(context, ri, useHttps, propertyValues);
     }
 
-    protected static Discovery discover(Context context, RI ri, String aeId) {
+    protected static Discovery discover(Context context, RI ri, boolean useHttps, String aeId) {
         HashMap<String, List<String>> propertyValues = createOriginProperty(aeId);
-        ResponseHolder responseHolder = SDK.getInstance().getResource(context, ri, propertyValues);
+        ResponseHolder responseHolder = SDK.getInstance().getResource(context, ri, useHttps,
+                propertyValues);
         return responseHolder.getDiscovery();
     }
 
