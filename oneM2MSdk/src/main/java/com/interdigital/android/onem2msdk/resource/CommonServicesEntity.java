@@ -17,9 +17,9 @@ public class CommonServicesEntity extends BaseResource {
     private int[] supportedResourceTypes;
 
     public static CommonServicesEntity get(Context context, String fqdn, int port, boolean useHttps,
-                                           String cseName, String aeId) {
+                                           String cseName, String aeId, String userName, String password) {
         RI ri = new RI(fqdn, port, "/" + cseName);
-        return get(context, ri, useHttps, aeId).getCommonServicesEntity();
+        return get(context, ri, useHttps, aeId, userName, password).getCommonServicesEntity();
     }
 
     public String getId() {

@@ -33,11 +33,11 @@ public class SDK {
     }
 
     public ResponseHolder getResource(Context context, RI ri, boolean useHttps,
-                                      Map<String, List<String>> propertyValues) {
+                                      Map<String, List<String>> propertyValues, String userName, String password) {
         String url = createUrl(ri, useHttps);
         BaseRequest baseRequest = new BaseRequest(context, 0, url, BaseRequest.METHOD_GET,
                 propertyValues, null);
-        int statusCode = baseRequest.connect();
+        int statusCode = baseRequest.connect(userName, password);
         String text = baseRequest.getResponseText();
         Gson gson = new Gson();
         ResponseHolder responseHolder = gson.fromJson(text, ResponseHolder.class);
@@ -50,11 +50,12 @@ public class SDK {
     }
 
     public ResponseHolder postResource(
-            Context context, RI ri, boolean useHttps, Map<String, List<String>> propertyValues, String body) {
+            Context context, RI ri, boolean useHttps, Map<String, List<String>> propertyValues, String body,
+            String userName, String password) {
         String url = createUrl(ri, useHttps);
         BaseRequest baseRequest = new BaseRequest(context, 0, url, BaseRequest.METHOD_POST,
                 propertyValues, body);
-        int statusCode = baseRequest.connect();
+        int statusCode = baseRequest.connect(userName, password);
         String text = baseRequest.getResponseText();
         Gson gson = new Gson();
         ResponseHolder responseHolder = gson.fromJson(text, ResponseHolder.class);
@@ -67,11 +68,12 @@ public class SDK {
     }
 
     public ResponseHolder deleteResource(
-            Context context, RI ri, boolean useHttps, Map<String, List<String>> propertyValues) {
+            Context context, RI ri, boolean useHttps, Map<String, List<String>> propertyValues,
+            String userName, String password) {
         String url = createUrl(ri, useHttps);
         BaseRequest baseRequest = new BaseRequest(context, 0, url, BaseRequest.METHOD_DELETE,
                 propertyValues, null);
-        int statusCode = baseRequest.connect();
+        int statusCode = baseRequest.connect(userName, password);
         ResponseHolder responseHolder = new ResponseHolder();
         responseHolder.setStatusCode(statusCode);
         responseHolder.setPropertyValues(baseRequest.getHeaderMap());

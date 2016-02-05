@@ -26,20 +26,23 @@ public class ContentInstance extends BaseResource {
     private String stateTag;
 
     public static ContentInstance getByName(Context context, String fqdn, int port, boolean useHttps,
-                                            String cseName, String aeName, String dcName, String ciName, String aeId) {
+                                            String cseName, String aeName, String dcName, String ciName, String aeId,
+                                            String userName, String password) {
         RI ri = new RI(fqdn, port, cseName + "/" + aeName + "/" + dcName + "/" + ciName);
-        return get(context, ri, useHttps, aeId).getContentInstance();
+        return get(context, ri, useHttps, aeId, userName, password).getContentInstance();
     }
 
     public static ContentInstance getLast(Context context, String fqdn, int port, boolean useHttps,
-                                          String cseName, String aeName, String dcName, String aeId) {
+                                          String cseName, String aeName, String dcName, String aeId,
+                                          String userName, String password) {
         RI ri = new RI(fqdn, port, cseName + "/" + aeName + "/" + dcName + "/" + LAST_CI);
-        return get(context, ri, useHttps, aeId).getContentInstance();
+        return get(context, ri, useHttps, aeId, userName, password).getContentInstance();
     }
 
 
     public static ContentInstance create(Context context, String fqdn, int port, boolean useHttps,
-                                         String cseName, String aeName, String dcName, String aeId, String content) {
+                                         String cseName, String aeName, String dcName, String aeId, String content,
+                                         String userName, String password) {
         RI ri = new RI(fqdn, port, cseName + "/" + aeName + "/" + dcName);
         ContentInstance contentInstance = new ContentInstance();
         // TODO Is this needed?
@@ -53,7 +56,7 @@ public class ContentInstance extends BaseResource {
         // TODO Assume an anonymous CI name for now.
         // The server will create a new CI name and add it to the data container.
 //        requestHolder.putNameProperty(ciName);
-        ResponseHolder responseHolder = postCin(context, ri, useHttps, requestHolder);
+        ResponseHolder responseHolder = postCin(context, ri, useHttps, requestHolder, userName, password);
         if (responseHolder == null) {
             return null;
         }
@@ -61,21 +64,22 @@ public class ContentInstance extends BaseResource {
     }
 
     public static Discovery discoverByDc(Context context, String fqdn, int port, boolean useHttps,
-                                         String cseName, String aeName, String dcName, String aeId) {
+                                         String cseName, String aeName, String dcName, String aeId,
+                                         String userName, String password) {
         RI ri = new RI(fqdn, port, cseName + "/" + aeName + "/" + dcName + "?fu=1&rty=4");
-        return discover(context, ri, useHttps, aeId);
+        return discover(context, ri, useHttps, aeId, userName, password);
     }
 
     public static Discovery discoverByAe(Context context, String fqdn, int port, boolean useHttps,
-                                         String cseName, String aeName, String aeId) {
+                                         String cseName, String aeName, String aeId, String userName, String password) {
         RI ri = new RI(fqdn, port, cseName + "/" + aeName + "?fu=1&rty=4");
-        return discover(context, ri, useHttps, aeId);
+        return discover(context, ri, useHttps, aeId, userName, password);
     }
 
     public static Discovery discoverAll(Context context, String fqdn, int port, boolean useHttps,
-                                        String cseName, String aeId) {
+                                        String cseName, String aeId, String userName, String password) {
         RI ri = new RI(fqdn, port, cseName + "?fu=1&rty=4");
-        return discover(context, ri, useHttps, aeId);
+        return discover(context, ri, useHttps, aeId, userName, password);
     }
 
     public String getContentInfo() {

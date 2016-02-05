@@ -20,13 +20,14 @@ public class ApplicationEntity extends BaseResource {
     private boolean requestReachable;
 
     public static ApplicationEntity get(Context context,
-                                        String fqdn, int port, boolean useHttps, String cseName, String aeName, String aeId) {
+                                        String fqdn, int port, boolean useHttps, String cseName, String aeName, String aeId,
+                                        String userName, String password) {
         RI ri = new RI(fqdn, port, "/" + cseName + "/" + aeName);
-        return get(context, ri, useHttps, aeId).getApplicationEntity();
+        return get(context, ri, useHttps, aeId, userName, password).getApplicationEntity();
     }
 
     public static ApplicationEntity create(Context context, String fqdn, int port, boolean useHttps,
-                                           String cseName, String aeName, String aeId) {
+                                           String cseName, String aeName, String aeId, String userName, String password) {
         RI ri = new RI(fqdn, port, "/" + cseName);
         ApplicationEntity applicationEntity = new ApplicationEntity();
         applicationEntity.setApplicationId(aeName);
@@ -35,19 +36,20 @@ public class ApplicationEntity extends BaseResource {
         requestHolder.putOriginProperty(aeId);
         requestHolder.putContentTypeProperty("application/json; ty=2");
         requestHolder.putNameProperty(aeName);
-        return post(context, ri, useHttps, requestHolder).getApplicationEntity();
+        return post(context, ri, useHttps, requestHolder, userName, password).getApplicationEntity();
     }
 
     public static int delete(Context context,
-                             String fqdn, int port, boolean useHttps, String cseName, String aeName, String aeId) {
+                             String fqdn, int port, boolean useHttps, String cseName, String aeName, String aeId,
+                             String userName, String password) {
         RI ri = new RI(fqdn, port, "/" + cseName + "/" + aeName);
-        return delete(context, ri, useHttps, aeId).getStatusCode();
+        return delete(context, ri, useHttps, aeId, userName, password).getStatusCode();
     }
 
     public static Discovery discoverAll(Context context, String fqdn, int port, boolean useHttps,
-                                        String cseName, String aeId) {
+                                        String cseName, String aeId, String userName, String password) {
         RI ri = new RI(fqdn, port, cseName + "?fu=1&rty=ae");
-        return discover(context, ri, useHttps, aeId);
+        return discover(context, ri, useHttps, aeId, userName, password);
     }
 
     public String getId() {

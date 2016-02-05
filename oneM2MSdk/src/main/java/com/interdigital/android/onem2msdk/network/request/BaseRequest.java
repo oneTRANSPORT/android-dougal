@@ -59,7 +59,7 @@ public class BaseRequest {
         this.body = body;
     }
 
-    public int connect() {
+    public int connect(String userName, String password) {
         HttpsURLConnection httpsURLConnection = null;
         HttpURLConnection httpURLConnection = null;
         int responseCode = 0;
@@ -68,13 +68,13 @@ public class BaseRequest {
             URL requestedUrl = new URL(url);
             if (url.startsWith("https")) {
                 SSLContext sslContext = getSslContext(null);
-                httpsURLConnection = getHttpsURLConnection(sslContext, requestedUrl);
+                httpsURLConnection = getHttpsURLConnection(sslContext, requestedUrl, userName, password);
                 responseCode = httpsURLConnection.getResponseCode();
                 responseText = extractResponseText(httpsURLConnection);
                 headerMap = httpsURLConnection.getHeaderFields();
                 contentType = httpsURLConnection.getContentType();
             } else {
-                httpURLConnection = getHttpUrlConnection(requestedUrl);
+                httpURLConnection = getHttpUrlConnection(requestedUrl, userName, password);
                 responseCode = httpURLConnection.getResponseCode();
                 responseText = extractResponseText(httpURLConnection);
                 headerMap = httpURLConnection.getHeaderFields();
@@ -145,23 +145,24 @@ public class BaseRequest {
         return sslContext;
     }
 
-    private HttpURLConnection getHttpUrlConnection(URL requestedUrl)
-            throws IOException {
+    private HttpURLConnection getHttpUrlConnection(URL requestedUrl,
+                                                   String userName, String password) throws IOException {
         HttpURLConnection httpURLConnection = (HttpURLConnection) requestedUrl.openConnection();
         if (httpURLConnection != null) {
-            setHttpParameters(httpURLConnection);
+            setHttpParameters(httpURLConnection, userName, password);
             addBody(httpURLConnection);
         }
         return httpURLConnection;
     }
 
-    private void setHttpParameters(HttpURLConnection httpURLConnection) throws ProtocolException {
+    private void setHttpParameters(HttpURLConnection httpURLConnection,
+                                   final String userName, final String password) throws ProtocolException {
         httpURLConnection.setRequestMethod(method);
         httpURLConnection.setConnectTimeout(5000);
         httpURLConnection.setReadTimeout(5000);
         Authenticator.setDefault(new Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("pthomas", "EKFYGUCC".toCharArray());
+                return new PasswordAuthentication(userName, password.toCharArray());
             }
         });
         Iterator<String> keyIterator = propertyValues.keySet().iterator();
@@ -175,12 +176,12 @@ public class BaseRequest {
         httpURLConnection.setRequestProperty("Accept", "application/vnd.onem2m-res+json");
     }
 
-    private HttpsURLConnection getHttpsURLConnection(SSLContext sslContext, URL requestedUrl)
-            throws IOException {
+    private HttpsURLConnection getHttpsURLConnection(SSLContext sslContext, URL requestedUrl,
+                                                     String userName, String password) throws IOException {
         HttpsURLConnection urlConnection = (HttpsURLConnection) requestedUrl.openConnection();
         if (urlConnection != null) {
             urlConnection.setSSLSocketFactory(sslContext.getSocketFactory());
-            setHttpParameters(urlConnection);
+            setHttpParameters(urlConnection, userName, password);
             urlConnection.setHostnameVerifier(new HostnameVerifier() {
                 public boolean verify(String hostname, SSLSession session) {
                     return true;
