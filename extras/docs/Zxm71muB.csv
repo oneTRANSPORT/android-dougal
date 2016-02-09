@@ -1,0 +1,116 @@
+Card ID,Card Name,Card URL,Card Description,Labels,Members,Due Date,Attachment Count,Attachment Links,Checklist Item Total Count,Checklist Item Completed Count,Vote Count,Comment Count,Last Activity Date,List ID,List Name,Board ID,Board Name,Archived
+5697b2dfeac82632ee6d2137,Application,https://trello.com/c/ZhUZBD0N/20-application,"## What is a Application?
+
+An application is a oneM2M client which interacts with the oneM2M server. 
+
+## Questions for each role
+
+- *What is the user's end goal for using the system?*
+
+  1. Consume data
+  2. Create new data sets",,,,0,,0,0,0,0,2016-01-14T14:39:26.309Z,5697a656699ea63b2af5f849,Actors,5697a656699ea63b2af5f848,User Stories - oneM2M SDK General,false
+5697b2e57019df9ef7f2659e,Developer,https://trello.com/c/8Xmu5wnm/21-developer,"## What is a <user role>?
+
+Description of the role
+
+## Questions for each role
+
+- *How often will the user use the system?*
+
+  Brief description
+- *What is the user's level of experience with the domain?*
+
+  Brief description
+- *What is the user's level of proficiency with computers in general?*
+
+  Brief description
+- *What is the user's end goal for using the system?*
+
+  1. End goal 
+  2. End goal",,,,0,,0,0,0,0,2016-01-14T14:38:29.860Z,5697a656699ea63b2af5f849,Actors,5697a656699ea63b2af5f848,User Stories - oneM2M SDK General,false
+5697b2eb6f602eaaf33b8867,Administrator,https://trello.com/c/NfyOf1gt/22-administrator,"## What is a <user role>?
+
+Description of the role
+
+## Questions for each role
+
+- *How often will the user use the system?*
+
+  Brief description
+- *What is the user's level of experience with the domain?*
+
+  Brief description
+- *What is the user's level of proficiency with computers in general?*
+
+  Brief description
+- *What is the user's end goal for using the system?*
+
+  1. End goal 
+  2. End goal",,,,0,,0,0,0,0,2016-01-14T14:38:35.230Z,5697a656699ea63b2af5f849,Actors,5697a656699ea63b2af5f848,User Stories - oneM2M SDK General,false
+5697a656699ea63b2af5f855,Role template,https://trello.com/c/958eotmd/1-role-template,"## What is a <user role>?
+
+Description of the role
+
+## Questions for each role
+
+- *How often will the user use the system?*
+
+  Brief description
+- *What is the user's level of experience with the domain?*
+
+  Brief description
+- *What is the user's level of proficiency with computers in general?*
+
+  Brief description
+- *What is the user's end goal for using the system?*
+
+  1. End goal 
+  2. End goal",,,,0,,0,0,0,0,2016-01-14T13:44:54.624Z,5697a656699ea63b2af5f849,Actors,5697a656699ea63b2af5f848,User Stories - oneM2M SDK General,false
+5697b651a4479171a10d1c5d,Assumptions,https://trello.com/c/fOaVVQrS/28-assumptions,"'- Access will be via the HTTP API 
+- JSON will be used not XML
+- Basic Authentication over SSL
+- Modelling of the API will be over oneM2M entities, rather than oneTRANSPORT models - there is no abstraction of the oneM2M stuff. E.g. a container API, rather than a car park API
+- All server development is complete ;-)
+- Applications do not need to clean-up their data containers when they are deleted
+- Notifications would use the native mechanism, rather than being HTTP push - because HTTP push would have an impact on battery life
+- Credit checks need to be made against another external server. Or the oneTRANSPORT server could contain the credit for the user.
+- When retrieving usage information, it is not-granular and only shows the total application usage
+- There is no geographical filtering for discovery of data containers
+- It is not possible to support external location service in the API, as each one could be different
+- The server is available for development
+- Estimates do not contain unit tests, the unit tests would include 50%
+- Example application demonstrates creating an app, creating a container and adding some device data. ","Admin (red), Applications (yellow), Data containers (green), Discovery (orange), Framework (pink), Groups (purple), Location (lime), Subscriptions (blue), Usage and charging (sky)",,,0,,0,0,0,0,2016-01-14T16:30:57.530Z,5697a656699ea63b2af5f849,Actors,5697a656699ea63b2af5f848,User Stories - oneM2M SDK General,false
+5697c228d7ec52556d3cbdf0,Asynchronous or Synchronous,https://trello.com/c/KFMKxW21/31-asynchronous-or-synchronous,The majority of API calls will be re-using a core HTTP library.,,,,0,,0,0,0,0,2016-01-14T15:44:11.769Z,5697a656699ea63b2af5f849,Actors,5697a656699ea63b2af5f848,User Stories - oneM2M SDK General,false
+5697a65c37b2f0c5f3578df4,(3) As an application I want to receive subscription notifications when content changes,https://trello.com/c/DmmknVTk/2-3-as-an-application-i-want-to-receive-subscription-notifications-when-content-changes,,Subscriptions (blue),,,0,,0,0,0,0,2016-01-14T15:55:46.264Z,5697a656699ea63b2af5f84a,Ideas,5697a656699ea63b2af5f848,User Stories - oneM2M SDK General,false
+5697a6821c8dee75c826c82a,(2) As an application I want to update multiple data containers in a single request (bulk) for ease-of-use and to reduce bandwidth costs,https://trello.com/c/nUk9h31r/3-2-as-an-application-i-want-to-update-multiple-data-containers-in-a-single-request-bulk-for-ease-of-use-and-to-reduce-bandwidth-c,,Groups (purple),,,0,,0,0,0,0,2016-01-14T16:27:41.993Z,5697a656699ea63b2af5f84a,Ideas,5697a656699ea63b2af5f848,User Stories - oneM2M SDK General,false
+5697a6a8f8ac70cb1e9da0cc,As a developer I want to charge applications for access to my data container,https://trello.com/c/OJcCyqJC/4-as-a-developer-i-want-to-charge-applications-for-access-to-my-data-container,,Usage and charging (sky),,,0,,0,0,0,0,2016-01-14T14:44:45.793Z,5697a656699ea63b2af5f84a,Ideas,5697a656699ea63b2af5f848,User Stories - oneM2M SDK General,false
+5697a91f7ff59f2b2ce9dbd1,(5) As an application I want to be blocked from access to the server if I  have run out of credit so that I don't run up crazy charges,https://trello.com/c/94lttBsF/5-5-as-an-application-i-want-to-be-blocked-from-access-to-the-server-if-i-have-run-out-of-credit-so-that-i-don-t-run-up-crazy-char,,Usage and charging (sky),,,0,,0,0,0,0,2016-01-14T16:00:21.295Z,5697a656699ea63b2af5f84a,Ideas,5697a656699ea63b2af5f848,User Stories - oneM2M SDK General,false
+5697b13db4dd8ca58a2548a0,(2) As a developer I want to create a container to upload  data to so that I can share this with other applications,https://trello.com/c/b3YQ7739/9-2-as-a-developer-i-want-to-create-a-container-to-upload-data-to-so-that-i-can-share-this-with-other-applications,,Data containers (green),,,0,,0,0,0,0,2016-01-14T15:45:31.145Z,5697a656699ea63b2af5f84a,Ideas,5697a656699ea63b2af5f848,User Stories - oneM2M SDK General,false
+5697ae17e44b024007c44e33,(2) As an application I want to send data to a container to create new data so that I can share with with other applications,https://trello.com/c/6ZwASzSs/6-2-as-an-application-i-want-to-send-data-to-a-container-to-create-new-data-so-that-i-can-share-with-with-other-applications,,Data containers (green),,,0,,0,0,0,0,2016-01-14T15:45:41.381Z,5697a656699ea63b2af5f84a,Ideas,5697a656699ea63b2af5f848,User Stories - oneM2M SDK General,false
+5697ae2f2e253b04a196ddec,(2) As a developer I want to see how much data my application has used,https://trello.com/c/A2fiEk0W/8-2-as-a-developer-i-want-to-see-how-much-data-my-application-has-used,,Usage and charging (sky),,,0,,0,0,0,0,2016-01-14T16:02:16.119Z,5697a656699ea63b2af5f84a,Ideas,5697a656699ea63b2af5f848,User Stories - oneM2M SDK General,false
+5697b1461386fb7ff5dd19b6,As a developer I want to contribute data to a data container,https://trello.com/c/ss69SZEV/10-as-a-developer-i-want-to-contribute-data-to-a-data-container,,Data containers (green),,,0,,0,0,0,0,2016-01-14T14:46:03.770Z,5697a656699ea63b2af5f84a,Ideas,5697a656699ea63b2af5f848,User Stories - oneM2M SDK General,true
+5697b15612b5b5ec58ab1cf3,As a developer I want to retrieve the latest content from a data container,https://trello.com/c/yVqNl3qn/11-as-a-developer-i-want-to-retrieve-the-latest-content-from-a-data-container,,,,,0,,0,0,0,0,2016-01-14T14:51:06.357Z,5697a656699ea63b2af5f84a,Ideas,5697a656699ea63b2af5f848,User Stories - oneM2M SDK General,true
+5697b1605d71934727519246,(1) As a developer I want to find out the type of data in a data container so that I only request usable data from my container,https://trello.com/c/JBE5Waxc/12-1-as-a-developer-i-want-to-find-out-the-type-of-data-in-a-data-container-so-that-i-only-request-usable-data-from-my-container,,Data containers (green),,,0,,0,0,0,0,2016-01-14T15:45:54.092Z,5697a656699ea63b2af5f84a,Ideas,5697a656699ea63b2af5f848,User Stories - oneM2M SDK General,false
+5697b16e519712f41e4a1d35,(3) As a developer I want to discover what other data containers are available on the server so that my application can dynamically use more data sets,https://trello.com/c/Ny2eyAL8/13-3-as-a-developer-i-want-to-discover-what-other-data-containers-are-available-on-the-server-so-that-my-application-can-dynamicall,,Discovery (orange),,,0,,0,0,0,0,2016-01-14T15:49:18.350Z,5697a656699ea63b2af5f84a,Ideas,5697a656699ea63b2af5f848,User Stories - oneM2M SDK General,false
+5697b1834d20d5204b725eec,(3) As a developer I want to discover what other data containers containing a certain type of content are available on the server,https://trello.com/c/R1nbgKOm/14-3-as-a-developer-i-want-to-discover-what-other-data-containers-containing-a-certain-type-of-content-are-available-on-the-server,,Discovery (orange),,,0,,0,0,0,0,2016-01-14T15:49:32.339Z,5697a656699ea63b2af5f84a,Ideas,5697a656699ea63b2af5f848,User Stories - oneM2M SDK General,false
+5697b1d9caf0c5c82ae46f54,(5) As a developer I want to tell the server that I have an application which will consume and contribute data,https://trello.com/c/RUwW1NY4/15-5-as-a-developer-i-want-to-tell-the-server-that-i-have-an-application-which-will-consume-and-contribute-data,,Applications (yellow),,,0,,0,0,0,0,2016-01-14T15:47:27.486Z,5697a656699ea63b2af5f84a,Ideas,5697a656699ea63b2af5f848,User Stories - oneM2M SDK General,false
+5697b1f32ad93987003ad1bb,(2) As a developer I want to retrieve the last uploaded item to the container so that I don't need to retrieve all data from the container,https://trello.com/c/9CWCRKT9/16-2-as-a-developer-i-want-to-retrieve-the-last-uploaded-item-to-the-container-so-that-i-don-t-need-to-retrieve-all-data-from-the-c,,Data containers (green),,,0,,0,0,0,0,2016-01-14T15:46:08.521Z,5697a656699ea63b2af5f84a,Ideas,5697a656699ea63b2af5f848,User Stories - oneM2M SDK General,false
+5697b2a1a2a1eb7b8053884b,As an administrator I want to block application's access to the server if they violate terms and conditions,https://trello.com/c/htHSvRXe/17-as-an-administrator-i-want-to-block-application-s-access-to-the-server-if-they-violate-terms-and-conditions,,Admin (red),,,0,,0,0,0,0,2016-01-14T14:46:56.341Z,5697a656699ea63b2af5f84a,Ideas,5697a656699ea63b2af5f848,User Stories - oneM2M SDK General,false
+5697b2b8ebcd3f162fa9d6c7,(2) As a developer I want to remove my application from the server if it is no longer valid or it has reach end of life,https://trello.com/c/usr7Zcna/18-2-as-a-developer-i-want-to-remove-my-application-from-the-server-if-it-is-no-longer-valid-or-it-has-reach-end-of-life,,Applications (yellow),,,0,,0,0,0,1,2016-01-14T15:48:23.923Z,5697a656699ea63b2af5f84a,Ideas,5697a656699ea63b2af5f848,User Stories - oneM2M SDK General,false
+5697b2ca0d064d3af5e12b6e,(1) As a developer I want to remove data containers from the server as they are no longer valid or no longer meet my application's need,https://trello.com/c/zEYklZfl/19-1-as-a-developer-i-want-to-remove-data-containers-from-the-server-as-they-are-no-longer-valid-or-no-longer-meet-my-application-s,,Data containers (green),,,0,,0,0,0,0,2016-01-14T15:46:21.925Z,5697a656699ea63b2af5f84a,Ideas,5697a656699ea63b2af5f848,User Stories - oneM2M SDK General,false
+5697b5353b4bfd5b18669390,(2) As a developer I want to create a group of data containers so that they can be retrieved or updated at the same time,https://trello.com/c/qC2meSPA/23-2-as-a-developer-i-want-to-create-a-group-of-data-containers-so-that-they-can-be-retrieved-or-updated-at-the-same-time,,Groups (purple),,,0,,0,0,0,0,2016-01-14T15:52:28.353Z,5697a656699ea63b2af5f84a,Ideas,5697a656699ea63b2af5f848,User Stories - oneM2M SDK General,false
+5697b597ae447b88a1b1ba2e,(1) As a developer I want to delete a group of data containers from the server as they are no longer valid or meet my applications needs,https://trello.com/c/sxMgK6YO/24-1-as-a-developer-i-want-to-delete-a-group-of-data-containers-from-the-server-as-they-are-no-longer-valid-or-meet-my-applications,,Groups (purple),,,0,,0,0,0,0,2016-01-14T15:52:43.765Z,5697a656699ea63b2af5f84a,Ideas,5697a656699ea63b2af5f848,User Stories - oneM2M SDK General,false
+5697b5c25e999d9066afaab3,(2) As a developer I want to add and remove data containers to an existing group so that I can manage the distribution of data,https://trello.com/c/743GmIpA/25-2-as-a-developer-i-want-to-add-and-remove-data-containers-to-an-existing-group-so-that-i-can-manage-the-distribution-of-data,,Groups (purple),,,0,,0,0,0,0,2016-01-14T15:53:56.667Z,5697a656699ea63b2af5f84a,Ideas,5697a656699ea63b2af5f848,User Stories - oneM2M SDK General,false
+5697b60e25079ef0a9162c61,(1) As a developer I want to modify the data container after creation so that it better describes my application logic,https://trello.com/c/VtKL2voa/26-1-as-a-developer-i-want-to-modify-the-data-container-after-creation-so-that-it-better-describes-my-application-logic,,Data containers (green),,,0,,0,0,0,0,2016-01-14T15:46:33.037Z,5697a656699ea63b2af5f84a,Ideas,5697a656699ea63b2af5f848,User Stories - oneM2M SDK General,false
+5697b64198a9f0bb75afc709,As a developer I want my application to be able to subscribe to changes on data containers so that I receive changes when they happen,https://trello.com/c/KSpV75sx/27-as-a-developer-i-want-my-application-to-be-able-to-subscribe-to-changes-on-data-containers-so-that-i-receive-changes-when-they-h,,Subscriptions (blue),,,0,,0,0,0,0,2016-01-14T15:57:32.804Z,5697a656699ea63b2af5f84a,Ideas,5697a656699ea63b2af5f848,User Stories - oneM2M SDK General,true
+5697b686cb46c587592e4cab,(2) As a developer I want to specify the location of an particular data container,https://trello.com/c/CtOKwciO/29-2-as-a-developer-i-want-to-specify-the-location-of-an-particular-data-container,,Location (lime),,,0,,0,0,0,0,2016-01-14T16:04:46.092Z,5697a656699ea63b2af5f84a,Ideas,5697a656699ea63b2af5f848,User Stories - oneM2M SDK General,false
+5697b69bb209652e2aea7a2f,As an application I want to retrieve the location of a data container from an external system or service,https://trello.com/c/xmkhGZDV/30-as-an-application-i-want-to-retrieve-the-location-of-a-data-container-from-an-external-system-or-service,,Location (lime),,,0,,0,0,0,0,2016-01-14T14:54:33.253Z,5697a656699ea63b2af5f84a,Ideas,5697a656699ea63b2af5f848,User Stories - oneM2M SDK General,false
+5697c270d9c270712ea7f060,(3) Asynchronous framework,https://trello.com/c/Rcp1s8SB/32-3-asynchronous-framework,,Framework (pink),,,0,,0,0,0,0,2016-01-14T15:45:08.931Z,5697a656699ea63b2af5f84a,Ideas,5697a656699ea63b2af5f848,User Stories - oneM2M SDK General,false
+5697c3fa977e564a41b7f007,(3) Error handling framework,https://trello.com/c/F7otbbnh/33-3-error-handling-framework,,Framework (pink),,,0,,0,0,0,0,2016-01-14T15:51:37.253Z,5697a656699ea63b2af5f84a,Ideas,5697a656699ea63b2af5f848,User Stories - oneM2M SDK General,false
+5697c54f5203c943e147fdee,"(2) As an application I want to create subscriptions to data containers, so that I receive notifications when the content changes",https://trello.com/c/Q0VMuexl/34-2-as-an-application-i-want-to-create-subscriptions-to-data-containers-so-that-i-receive-notifications-when-the-content-changes,,Subscriptions (blue),,,0,,0,0,0,0,2016-01-14T15:57:40.141Z,5697a656699ea63b2af5f84a,Ideas,5697a656699ea63b2af5f848,User Stories - oneM2M SDK General,false
+5697c5612ba27395f30cf788,(1) As an application I want to remove subscriptions when I no longer need to use the data,https://trello.com/c/5J7wHVxI/35-1-as-an-application-i-want-to-remove-subscriptions-when-i-no-longer-need-to-use-the-data,,Subscriptions (blue),,,0,,0,0,0,0,2016-01-14T15:57:47.775Z,5697a656699ea63b2af5f84a,Ideas,5697a656699ea63b2af5f848,User Stories - oneM2M SDK General,false
+5697cd1202901f5df30c1a79,(13) As a developer I want to have an simple example application which uses the SDK,https://trello.com/c/qRNrgo1D/37-13-as-a-developer-i-want-to-have-an-simple-example-application-which-uses-the-sdk,,Framework (pink),,,0,,0,0,0,0,2016-01-14T16:32:50.105Z,5697a656699ea63b2af5f84a,Ideas,5697a656699ea63b2af5f848,User Stories - oneM2M SDK General,false
+5697cc54974c12d92ee18db3,As an application I want to bulk upload data to multiple containers,https://trello.com/c/oW4JVxS5/36-as-an-application-i-want-to-bulk-upload-data-to-multiple-containers,,,,,0,,0,0,0,0,2016-01-14T16:27:21.691Z,5697a656699ea63b2af5f84a,Ideas,5697a656699ea63b2af5f848,User Stories - oneM2M SDK General,true
+5697cd6b75d9d2cf0a0339e6,(2) As a developer I want the example application to upload battery information to the oneM2M server so that I can adapt the example for my own application,https://trello.com/c/15zrXuPa/38-2-as-a-developer-i-want-the-example-application-to-upload-battery-information-to-the-onem2m-server-so-that-i-can-adapt-the-examp,,Framework (pink),,,0,,0,0,0,0,2016-01-14T16:33:15.831Z,5697a656699ea63b2af5f84a,Ideas,5697a656699ea63b2af5f848,User Stories - oneM2M SDK General,false
+5697cd7b42570c097f3ab526,(2) As a developer I want the example application to upload location information to the oneM2M server so that I can adapt the example for my own application,https://trello.com/c/HXm0LBJ8/39-2-as-a-developer-i-want-the-example-application-to-upload-location-information-to-the-onem2m-server-so-that-i-can-adapt-the-exam,,Framework (pink),,,0,,0,0,0,0,2016-01-14T16:33:20.500Z,5697a656699ea63b2af5f84a,Ideas,5697a656699ea63b2af5f848,User Stories - oneM2M SDK General,false
+5697d017c6ee76d24a479e20,(21) Server-side modifications for subscriptions,https://trello.com/c/qPgjulzj/40-21-server-side-modifications-for-subscriptions,,Subscriptions (blue),,,0,,0,0,0,0,2016-01-14T16:43:16.960Z,5697a656699ea63b2af5f84a,Ideas,5697a656699ea63b2af5f848,User Stories - oneM2M SDK General,false

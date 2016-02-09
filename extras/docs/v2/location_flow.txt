@@ -1,0 +1,30 @@
+Location flow
+-------------
+
+CREATE
+
+1. AE sends request with mandatory locationSource attribute set.
+2. CSE creates locationPolicy and container resources.
+   CSE sets locationID on the container.
+   CSE sets locationContainerID on the locationPolicy.
+3. CSE either:
+     contacts location server and receives a location fix, or
+     acquires location from internal GPS or similar, or
+     contacts nearby server and gets location fix.
+4. CSE stores location information in a CI in container and sends back response.
+5. Every update interval, a new CI is refreshed.
+
+CREATE with geo-fence
+
+1. AE sends request with geographicalTargetArea and geofenceEventCriteria.
+2. As above.
+3. CSE gets location fix as above, calculates geofence events.
+4. CSE stores geofence events in a CI in container and sends back response.
+5. As above.
+
+
+Questions
+
+What are the formats of geographicalTargetArea, geofenceEventCriteria?
+What is stored in the CI in each case?
+

@@ -1,0 +1,10 @@
+vnd.onem2m-res+xml	m2m:resource
+vnd.onem2m-res+json	m2m:resource
+vnd.onem2m-ntfy+xml	m2m:notification or m2m:aggregatedNotification
+vnd.onem2m-ntfy+json	m2m:notification or m2m:aggregatedNotification
+vnd.onem2m-attrs+xml	m2m:attributeList
+vnd.onem2m-attrs+json	m2m:attributeList
+vnd.onem2m-preq+xml	m2m:requestPrimitive
+vnd.onem2m-preq+json	m2m:requestPrimitive
+vnd.onem2m-prsp+xml	m2m:responsePrimitive
+vnd.onem2m-prsp+json	m2m:responsePrimitive

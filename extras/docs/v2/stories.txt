@@ -1,0 +1,199 @@
+Announcements
+As an AE I want to create or update a resource announcement resource on the CSE.
+As an AE I want to retrieve a resource announcement from the CSE.
+As an AE I want to delete a resource announcement from the CSE.
+As an AE I want to announce an attribute on the CSE.
+As an AE I want to de-announce the announced attribute.
+
+Applications
+(5) As a developer I want to tell the server that I have an application which will consume and contribute data
+(2) As a developer I want to remove my application from the server if it is no longer valid or it has reached end of life
+x As an AE I want to configure, troubleshoot and upgrade the CSE.
+x As an AE I want to be started or stopped by a CSE.
+
+Device management
+x As an AE I want to send hardware and software details to a CSE.
+x As an AE I want to send battery status information to a CSE.
+x As an AE I want to send memory consumption information to a CSE.
+
+Communication management and delivery handling
+As an AE I want to send a request identifier with every request.
+As an AE I want to register with a CSE.
+As an app I want to obtain a globally-unique app-ID in the CSE context.
+As an AE I want to send data to CSEs.
+As an AE I want to retrieve data synchronously from CSEs.
+As an AE I want to retrieve data asynchronously from CSEs.
+As an app I want to retrieve the response code from a request.
+As an app I want to retrieve any content returned by the request.
+As an AE I want to retrieve a (non-blocking) request from the CSE.
+As an AE I want to delete a request from the CSE in order to prevent further processing.
+As an AE I want to update data on a CSE.
+As an AE I want to delete data from CSEs.
+As an AE I want to deregister from a CSE.
+x As an AE I want to receive notifications for updates to which I have subscribed.
+
+Data containers
+(2) As a developer I want to create a container to upload data to so that I can share this with other applications
+(2) As an application I want to send data to a container to create new data so that I can share with with other applications
+()  As a developer I want to contribute data to a data container
+(1) As a developer I want to find out the type of data in a data container so that I only request usable data from my container
+(2) As a developer I want to retrieve the last uploaded item to the container so that I don't need to retrieve all data from the container
+(1) As a developer I want to remove data containers from the server as they are no longer valid or no longer meet my application's need
+(1) As a developer I want to modify the data container after creation so that it better describes my application logic
+As an AE I want to retrieve data securely from DCs.
+As an AE I want to delete data securely from DCs.
+x As an AE I want to retrieve the latest contentInstance in a specified dataContainer.
+As an AE I want to delete the latest contentInstance in a specified dataContainer.
+As an AE I want to retrieve the oldest contentInstance in a specified dataContainer.
+As an AE I want to delete the oldest contentInstance in a specified dataContainer.
+
+Discovery
+(3) As a developer I want to discover what other data containers are available on the server so that my application can dynamically use more data sets
+(3) As a developer I want to discover what other data containers containing a certain type of content are available on the server
+As an AE I want to discover resources stored on CSEs.
+As an AE I want to filter my discovery query by keyword, location, identifier and semantics.
+
+Framework
+(3)  Asynchronous framework
+(3)  Error handling framework
+(13) As a developer I want to have a simple example application which uses the SDK
+(2)  As a developer I want the example application to upload battery information to the oneM2M server so that I can adapt the example for my own application
+(2)  As a developer I want the example application to upload location information to the oneM2M server so that I can adapt the example for my own application
+
+Groups
+(2) As an application I want to update multiple data containers in a single request (bulk) for ease-of-use and to reduce bandwidth costs
+(2) As a developer I want to create a group of data containers so that they can be retrieved or updated at the same time
+(1) As a developer I want to delete a group of data containers from the server as they are no longer valid or meet my applications needs
+(2) As a developer I want to add and remove data containers to an existing group so that I can manage the distribution of data
+As an AE I want to create a group of devices, applications or resources.
+As an AE I want to add, retrieve and delete new members to/from a group.
+As an AE I want to delete a group.
+As an AE I want to add, retrieve and delete a group from another group.
+As an AE I want to subscribe to a group so that I can receive notifications from any group member.
+As an AE I want to forward a request to all group members.
+As an AE I want to get an aggregated response back from the CSE managing a group.
+As an AE I want to create a fan-out resource from a group.
+As an AE I want to retrieve a resource from a fan-out point.
+As an AE I want to update resources from a fan-out point for a group.
+As an AE I want to delete resources from a fan-out point.
+
+Location
+(2) As a developer I want to specify the location of an particular data container
+()  As an application I want to retrieve the location of a data container from an external system or service
+As an AE I want to obtain geographical information about other nodes.
+As an AE I want to create a location policy resource on a CSE.
+As an AE I want to retrieve a location policy resource on a CSE.
+As an AE I want to update a location policy resource on a CSE.
+As an AE I want to delete a location policy resource on a CSE.
+--> Check extra docs
+
+Management objects
+x As an AE I want to create, retrieve, update and delete a management object on the CSE.
+
+Management commands (external management systems)
+x As an AE I want to create, retrieve, update and delete a management command on the CSE.
+x As an AE I want to cancel an initiated management command on a CSE.
+x As an AE I want to retrieve a management command.
+x As an AE I want to delete a management command.
+
+Miscellaneous
+x As an AE I want to create a serviceSubscribedAppRule resource on the CSE.
+x As an AE I want to retrieve a serviceSubscribedAppRule resource from the CSE.
+x As an AE I want to update a serviceSubscribedAppRule resource on the CSE.
+x As an AE I want to delete a serviceSubscribedAppRule resource from the CSE.
+
+Security
+As an AE I want to sent HTTPS basic authentication credentials to the CSE so that it can trust me.
+As an AE I want to deal gracefully with requests that fail because I have not been granted access to resources.
+As an AE I want to create an accessControlPolicy resource on the CSE.
+As an AE I want to retrieve an accessControlPolicy resource from the CSE.
+As an AE I want to update an accessControlPolicy resource on the CSE.
+As an AE I want to delete an accessControlPolicy resource from the CSE.
+x As an AE I may need a security credential to use OneM2M services.
+x As an AE I want to establish a security context with a CSE so that I can consume services.
+
+Subscriptions
+(3)  As an application I want to receive subscription notifications when content changes
+()   As a developer I want my application to be able to subscribe to changes on data containers so that I receive changes when they happen
+(2)  As an application I want to create subscriptions to data containers, so that I receive notifications when the content changes
+(1)  As an application I want to remove subscriptions when I no longer need to use the data
+(21) Server-side modifications for subscriptions
+As an AE I want to subscribe to resources on a CSE so that I can be notified of changes.
+As an AE I want to retrieve a subscription resource.
+As an AE I want to update a subscription resource.
+As an AE I want to delete a subscription resource.
+x As an AE I want to set a rate limit on individual subscriptions.
+As an AE I want to receive notifications from a CSE about resource changes.
+As an AE I want to subscribe to a fan-out point so that I received notifications from all the members.
+As an AE I want to unsubscribe to a fan-out point so that I stop receiving notifications from all the members.
+x As an AE I want to create a polling channel on a CSE so that I can receive requests with no incoming connections.
+x As an AE I want to retrieve a polling channel resource from a CSE.
+x As an AE I want to update a polling channel resource on a CSE.
+x As an AE I want to delete a polling channel resource on a CSE.
+x As an AE I want to set up a long-polling mechanism on a polling channel.
+x As an AE I want to create a node on the CSE.
+x As an AE I want to retrieve a node from the CSE.
+x As an AE I want to update a node on the CSE.
+x As an AE I want to delete a node on the CSE.
+
+Usage and charging
+x ()  As a developer I want to charge applications for access to my data container
+x (5) As an application I want to be blocked from access to the server if I  have run out of credit so that I don't run up crazy charges
+x (2) As a developer I want to see how much data my application has used
+x As an AE I want to create a statsConfig resource on the CSE.
+x As an AE I want to retrieve a statsConfig resource from the CSE.
+x As an AE I want to update a statsConfig resource on the CSE.
+x As an AE I want to delete a statsConfig resource from the CSE.
+x As an AE I want to create an eventConfig resource as a child of a statsConfig resource on the CSE.
+x As an AE I want to retrieve an eventConfig resource from the CSE.
+x As an AE I want to update an eventConfig resource on the CSE.
+x As an AE I want to delete an eventConfig resource from the CSE.
+x As an AE I want to create a statsCollect resource on the CSE.
+x As an AE I want to retrieve a statsCollect resource from the CSE.
+x As an AE I want to update a statsCollect resource on the CSE.
+x As an AE I want to delete a statsCollect resource from the CSE.
+x As an AE I want to create a m2mServiceSubscriptionProfile resource on the CSE.
+x As an AE I want to retrieve a m2mServiceSubscriptionProfile resource from the CSE.
+x As an AE I want to update a m2mServiceSubscriptionProfile resource on the CSE.
+x As an AE I want to delete a m2mServiceSubscriptionProfile resource from the CSE.
+x As an AE I want to create a serviceSubscribedNode resource as a child of the m2mServiceSubscriptionProfile resource on the CSE.
+x As an AE I want to retrieve a serviceSubscribedNode resource from the CSE.
+x As an AE I want to update a serviceSubscribedNode resource from the CSE.
+x As an AE I want to delete a serviceSubscribedNode resource from the CSE.
+
+UPDATED STORIES
+---------------
+
+Announcements
+
+Application and service layer management
+
+Communication management and delivery handling
+
+Data management and repository
+
+Device management
+
+Discovery
+
+Group management
+
+Location
+
+Location policy
+
+Management objects
+
+Management commands (external management systems)
+
+Miscellaneous
+
+Registration
+
+Request management
+
+Security
+
+Service charging and accounting
+
+Subscription and notification
