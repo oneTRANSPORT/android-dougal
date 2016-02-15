@@ -329,30 +329,169 @@ still exists, and if not then can re-register.
 
 ### Content provider API
 
-Right from the beginning, the Android framework has exposed a content provider
-interface for storing and retrieving app data.  Content providers work with
-tabular data, like SQL tables, and return cursors containing data that can be
-injected into activities, fragments and adapters via cursor loaders.
+The object-oriented SDK described above can implement all the functionality
+in the oneM2M specification, but there are some efficiency problems that might
+be important when the amount of data retrieved from the CSE becomes large.
 
-Although the hierarchical or named containers and content instances stored on
-the CSE don't map directly to any tabular data structure, it is quite possible
-that single containers or groups of containers could form rows of a table that
-could be returned in a cursor.
+In common with many NoSQL databases these days, the API generates objects from
+JSON content.  There is an overhead to parsing JSON strings and creating
+objects, and those objects must also be garbage-collected at some point in the
+future.  Quite a lot of those objects may be small, increasing the cost of
+object overhead.
 
-In one scheme, a content instance could contain a JSON representation of a
-database row.  Older content instances would form more rows.  Selecting
-oldest or latest for example, would return one row.  Querying for a range of
-values, perhaps over a time interval for example, will give a set of rows
-returned.
+To mitigate the performance issues, we can pack more data into individual CIs
+so that less JSON parsing is required and fewer objects are created.  We have
+looked at a scheme that packs SQL dump data into content instances.  This can
+be unpacked into an in-memory database on the client and accessed through a
+content provider.  As well as being an efficient transport mechanism, once the
+data is in a database, it can be quickly sorted and grouped before a cursor is
+exported for injection into a list or other adapter view.
 
-Alternatively, each content instance could form a table cell, and a group of
-containers yields a row of content instance values.
+#### Database schema
 
-Clearly more advanced SQL operations like joins will not be possible on the
-CSE.  However, returned data could be injected into an in-memory Sqlite table
-or set of tables and then operations like join, sort and group by, would be
-possible.
+SQLite is a database engine that is supported natively on Android and iOS.  We
+have been testing with some carpark data from Buckinghamshire, first organised
+as a set of containers on the CSE encapsulating individual data values, and
+secondly as one container with a single SQL database dump in each content
+instance.
 
-#### Performance
+In the first case, the CSE provides these URLs for data pertaining to the
+Desborough Road carpark in High Wycombe.
 
+         Item                                                        Value  Size
+        /ONETCSE01/Feed_Import/BUCK-DesboroughRd/almostFullDecreasing    0   478
+        /ONETCSE01/Feed_Import/BUCK-DesboroughRd/almostFullIncreasing    0   478
+        /ONETCSE01/Feed_Import/BUCK-DesboroughRd/entranceFull            0   478
+        /ONETCSE01/Feed_Import/BUCK-DesboroughRd/fullDecreasing          0   478
+        /ONETCSE01/Feed_Import/BUCK-DesboroughRd/fullIncreasing          0   478
+        /ONETCSE01/Feed_Import/BUCK-DesboroughRd/latitude       51.6324043   486
+        /ONETCSE01/Feed_Import/BUCK-DesboroughRd/longitude    -0.759920359   489
+        /ONETCSE01/Feed_Import/BUCK-DesboroughRd/totalParkingCapacity  201   479
+
+The total download size for one carpark is 3844 bytes and eight transfers are
+required.  We can put all this information into one container and that gives
+a download size of about 550 bytes.  Gzip compression could reduce this to 380
+bytes for one carpark record.
+
+Converting this into a normalised SQL database requires two tables:
+
+        create table if not exists county (_id integer primary key autoincrement,
+                                           name text not null);
+
+        create table if not exists carpark (_id integer primary key autoincrement,
+                                            county_id integer not null,
+                                            name text not null,
+                                            almost_full_decreasing integer not null,
+                                            almost_full_increasing integer not null,
+                                            entrance_full integer not null,
+                                            full_decreasing integer not null,
+                                            full_increasing integer not null,
+                                            latitude real not null,
+                                            longitude real not null,
+                                            total_parking_capacity integer not null);
+
+The county table only has one row as all the carparks in the set are from the
+same county:
+
+        insert into county (name) values ('Buckinghamshire');
+
+We have 12 example carparks, data made up, to insert into the second table:
+
+        insert into carpark (county_id,...,total_parking_capacity)
+                     values (1,'Desborough',0,0,0,0,0,51.62821,-0.7502827,316);
+                 ... values (1,'DesboroughRd',0,0,0,0,0,51.62821,-0.7502827,316);
+                 ... values (1,'Dovecot',0,0,0,0,0,51.62821,-0.7502827,316);
+                 ... values (1,'Easton_Street',0,0,0,0,0,51.62821,-0.7502827,316);
+                 ... values (1,'Eden',0,0,0,0,0,51.62821,-0.7502827,316);
+                 ... values (1,'Exchange_St',0,0,0,0,0,51.62821,-0.7502827,316);
+                 ... values (1,'Friars_Square',0,0,0,0,0,51.62821,-0.7502827,316);
+                 ... values (1,'Friarscroft',0,0,0,0,0,51.62821,-0.7502827,316);
+                 ... values (1,'Hampden_House',0,0,0,0,0,51.62821,-0.7502827,316);
+                 ... values (1,'Swan',0,0,0,0,0,51.62821,-0.7502827,316);
+                 ... values (1,'Upper_Hundreds',0,0,0,0,0,51.62821,-0.7502827,316);
+                 ... values (1,'Walton_Street_MSCP',0,0,0,0,0,51.62821,-0.7502827,316);
+
+Content providers work best with data in single tables, so we will need a SQL
+view to hide the join:
+
+        create view if not exists county_carpark
+            as select carpark._id as _id,
+                      county.name as county,
+                      carpark.name as name,
+                      almost_full_decreasing,
+                      almost_full_increasing,
+                      entrance_full,
+                      full_decreasing,
+                      full_increasing,
+                      latitude,
+                      longitude,
+                      total_parking_capacity
+                 from carpark,county
+                where county._id=county_id;
+
+As a SQLite database, the above rows add up to a 20480-byte file.  Obviously
+there is some overhead for the table structures.  As a SQL script, the data
+runs out to 3622 bytes, and when this is compressed and Base64-encoded for
+text transport, we end up with 649 bytes in total.  Adding 478 bytes for JSON
+overhead gives 93 bytes per record, a 75% reduction in size.
+
+For a complete solution, we would need to create a database dump for every new
+content instance.  But the export should be very fast, and on the client it is
+efficient to merge multiple content instances if needed.
+
+As an aside, the 20480-byte binary database file compresses down to 965 bytes,
+so that might have been an option for the content instance payload.  However,
+SQLite cannot open a byte array like that in the memory of the Android device.
+
+We could arrange to cache the database file, and then open that to get at the
+data directly.  This saves the small amount of time that would be taken by the
+database being created on the client, but on the downside the file needs to
+be created and managed.
+
+Another problem with the raw database file is that it is hard to merge with
+another database file.  Suppose we were to retrieve several content instances
+from a container (maybe as a result of some filter criteria), then if they are
+returned as dump files it is easy to merge the content.
+
+#### Content provider implementation
+
+Android content providers work well with tabular data, so are better suited
+to working with SQL tables than JSON objects.  Data received from a content
+provider is stored in a cursor and that may be injected into an adapter
+view quite easily.  Filtering, sorting and grouping before creating the cursor
+is also possible, according to the usual SQL rules.
+
+Although the content provider is launched very early on in the app start-up
+process, no databases are created until a query is made.  Usually a content
+provider manages a set of tables in one database, but in this case we will
+look after as many databases as is needed to store the data for a particular
+domain.  A query URL now looks like this:
+
+        content://<authority>/<database>/<table name>
+
+To create and manage a SQLite database on Android, the pattern is to extend
+the `SQLiteOpenHelper` class with routines for creating a new database.
+As the content provider manages multiple databases, we have a hash map that
+stores a SQLiteOpenHelper for every database name.
+
+When a query is made, if a SQLiteOpenHelper for the selected database does not
+exist then a new object is instantiated.  This queries the CSE for the latest
+data, deserialises the content into a SQL dump document and creates a database
+from that.
+
+A select statement is executed on the database and the resulting cursor,
+containing all columns and rows, is returned to the calling routine.  We
+inject this into a list via Android loaders, just to show it does work.
+
+It is only a simple example.  A full implementation would also support
+filtering, sorting and so on.  We would also need to consider merging
+content instances from the same container and possibly making use of caching
+to improve performance further.
+
+Probably this kind of higher-level solution would be most suited to a
+domain-specific SDK layer above the object-oriented API described earlier.
+For example, a oneTransport content provider could access preformatted
+tabular transport data and the app developer would not need to know about the
+underlying data structure.  As long as a cursor is made available to the app
+then everything can be taken from that.
 
