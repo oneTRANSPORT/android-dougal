@@ -253,28 +253,10 @@ presumably with the oneM2M SDK installed.  It would be possible for a CSE to
 create an interface to GCM and send notifications to devices depending on
 subscriptions that had been created.
 
-These notifications are at a user level, rather than being M2M.  The user will
-see a notification pop-up in the status bar at the top of the screen, and the
-payload will not be delivered until the user drags the notification open and
-clicks on it.  Then the SDK can take delivery of the message and do something
-with the contents.
-
-But the user could decide to dismiss the notification without executing the
-action, and it would be lost to the SDK.  In many cases, when the user clicks
-on a notification, the corresponding app starts up in some way---presumably
-apps based on the SDK would fetch the subscribed-to resource from the CSE and
-present that to the user.
-
-Perhaps a simple use case for subscriptions and notifications could be a user
-telling a parking app to notify them when a bookable parking space becomes
-available in High Wycombe near the library.  When the event occurs, they
-receive a cloud message, pop open the app and book parking.
-
 There's a nice value-add for the app developer here when using oneM2M.  The
 CSE and SDK between them take care of all the registration and dealings with
 GCM and the developer simply has to create a subscription object on the
-required resource, maybe with a callback for the user clicking on the
-notification.
+required resource.
 
 #### Long polling
 
