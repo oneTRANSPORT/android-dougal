@@ -2,10 +2,8 @@ package com.interdigital.android.onem2msdk.network.request;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.interdigital.android.onem2msdk.SDK;
 import com.interdigital.android.onem2msdk.resource.ApplicationEntity;
 import com.interdigital.android.onem2msdk.resource.ContentInstance;
-import com.interdigital.android.onem2msdk.resource.DataContainer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,9 +22,9 @@ public class RequestHolder {
     @Expose
     @SerializedName("m2m:cin")
     private ContentInstance contentInstance;
-    @Expose
-    @SerializedName("m2m:cnt")
-    private DataContainer dataContainer;
+//    @Expose
+//    @SerializedName("m2m:cnt")
+//    private DataContainer dataContainer;
 
     private HashMap<String, List<String>> propertyValues =
             new HashMap<>();
@@ -43,9 +41,9 @@ public class RequestHolder {
         this.contentInstance = contentInstance;
     }
 
-    public void setDataContainer(DataContainer dataContainer) {
-        this.dataContainer = dataContainer;
-    }
+//    public void setDataContainer(DataContainer dataContainer) {
+//        this.dataContainer = dataContainer;
+//    }
 
     public void putOriginProperty(String origin) {
         putPropertyValue(PROPERTY_ORIGIN, origin);
@@ -69,7 +67,7 @@ public class RequestHolder {
     }
 
     protected void putRequestIdProperty() {
-        putPropertyValue(PROPERTY_REQUEST_ID, SDK.getInstance().getUniqueRequestId());
+//        putPropertyValue(PROPERTY_REQUEST_ID, SDK.getInstance().getUniqueRequestId());
     }
 
     private void putPropertyValue(String name, String value) {
