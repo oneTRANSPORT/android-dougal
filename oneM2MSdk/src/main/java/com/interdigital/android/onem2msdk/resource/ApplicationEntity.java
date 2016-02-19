@@ -10,10 +10,10 @@ import com.interdigital.android.onem2msdk.network.request.RequestHolder;
 
 public class ApplicationEntity extends BaseResource {
 
-    @Expose
+//    @Expose
     @SerializedName("aei")
     private String id;
-    @Expose //
+//    @Expose
     @SerializedName("apn")
     private String appName;
     @Expose

@@ -11,6 +11,7 @@ import com.interdigital.android.onem2msdk.Types;
 import com.interdigital.android.onem2msdk.network.Ri;
 import com.interdigital.android.onem2msdk.network.request.RequestHolder;
 import com.interdigital.android.onem2msdk.network.response.ResponseHolder;
+import com.interdigital.android.onem2msdk.network2.LoggingInterceptor;
 
 import java.io.IOException;
 
@@ -50,8 +51,8 @@ public abstract class BaseResource {
     @Expose
     @SerializedName("rn")
     private String resourceName;
-    @Expose
-    @SerializedName("ty")
+    //    @Expose // This is sent in the Content-Type header.
+//    @SerializedName("ty")
     @Types.ResourceType
     private int resourceType;
     @Expose
@@ -74,7 +75,7 @@ public abstract class BaseResource {
     private String[] labels;
     @Expose
     @SerializedName("st")
-    private int stateTag; // Strictly an unsigned int.
+    private Integer stateTag = null; // Strictly an unsigned int.
     //    @Expose  We don't know what the link attribute is.
     //    @SerializedName("")
     //    Private link
@@ -126,7 +127,7 @@ public abstract class BaseResource {
     // Delete DELETE
     // Notify POST
 
-    // Synchronous HTTP PUT always?
+    // Synchronous HTTP POST always.
     public ResponseHolder create(String userName, String password) {
         Request request = makeCreateRequest(userName, password);
         return execute(request);
@@ -143,8 +144,9 @@ public abstract class BaseResource {
         return null;
     }
 
-    public ResponseHolder delete() {
-        return null;
+    public ResponseHolder delete(String userName, String password) {
+        Request request = makeDeleteRequest(userName, password);
+        return execute(request);
     }
 
     public String getResourceId() {
@@ -302,17 +304,15 @@ public abstract class BaseResource {
 
     protected Request makeCreateRequest(String userName, String password) {
         RequestHolder requestHolder = new RequestHolder();
-        String origin = null;
-        switch (resourceType) {
-            case Types.RESOURCE_TYPE_APPLICATION_ENTITY:
-                requestHolder.setApplicationEntity((ApplicationEntity) this);
-                origin = ((ApplicationEntity) this).getId();
-                break;
-        }
+        String origin = findOrigin(requestHolder);
         initialiseGson();
         String json = gson.toJson(requestHolder);
-        String contentType = "application/json;ty=" + resourceType;
-        RequestBody body = RequestBody.create(MediaType.parse(contentType), json);
+        // TODO The oneM2M CSE does not like charset=utf-8.
+//        String contentType = "application/json; charset=utf-8; ty=" + resourceType;
+        String contentType = "application/json; ty=" + resourceType;
+//        RequestBody body = RequestBody.create(MediaType.parse(contentType), json);
+        // Using bytes prevents OkHttp adding charset=utf-8.
+        RequestBody body = RequestBody.create(MediaType.parse(contentType), json.getBytes());
         Request.Builder builder = new Request.Builder().url(ri.createUrl()).post(body);
         addCommonHeaders(origin, userName, password, builder);
         builder.addHeader("Content-Type", contentType);
@@ -325,14 +325,6 @@ public abstract class BaseResource {
         }
     }
 
-//    protected Request makeCreateRequest() {
-//        RequestBody body = RequestBody.create(
-//                MediaType.parse("application/vnd.onem2m-res+json"), str);
-//        Request.Builder builder = new Request.Builder().url(url).put(body);
-//        addCommonHeaders(origin, userName, password, builder);
-//        return builder.build();
-//    }
-
     private static Request makeRetrieveRequest(
             String origin, String userName, String password, String url) {
         Request.Builder builder = new Request.Builder().url(url);
@@ -340,10 +332,21 @@ public abstract class BaseResource {
         return builder.build();
     }
 
-    private Request makeDeleteRequest(String origin, String userName, String password, String url) {
-        Request.Builder builder = new Request.Builder().url(url).delete();
-        addCommonHeaders(origin, userName, password, builder);
+    private Request makeDeleteRequest(String userName, String password) {
+        Request.Builder builder = new Request.Builder().url(ri.createUrl()).delete();
+        addCommonHeaders(findOrigin(null), userName, password, builder);
         return builder.build();
+    }
+
+    private String findOrigin(@Nullable RequestHolder requestHolder) {
+        switch (resourceType) {
+            case Types.RESOURCE_TYPE_APPLICATION_ENTITY:
+                if (requestHolder != null) {
+                    requestHolder.setApplicationEntity((ApplicationEntity) this);
+                }
+                return ((ApplicationEntity) this).getId();
+        }
+        return null;
     }
 
     @Nullable
@@ -369,14 +372,18 @@ public abstract class BaseResource {
 
     private static synchronized OkHttpClient getOkHttpClient() {
         if (okHttpClient == null) {
-            okHttpClient = new OkHttpClient();
+//            okHttpClient = new OkHttpClient.Builder().addInterceptor(new LoggingInterceptor()).build();
+            okHttpClient = new OkHttpClient.Builder()
+                    .addNetworkInterceptor(new LoggingInterceptor()).build();
+//            okHttpClient = new OkHttpClient();
         }
         return okHttpClient;
     }
 
     @NonNull
     private static synchronized String getUniqueRequestId() {
-        return String.valueOf(requestId++);
+        return "PaulsOwnRequest4";
+//        return String.valueOf(requestId++);
     }
 }
 

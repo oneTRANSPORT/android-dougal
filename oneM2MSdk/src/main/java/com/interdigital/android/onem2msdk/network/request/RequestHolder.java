@@ -17,10 +17,10 @@ public class RequestHolder {
     private static final String PROPERTY_CONTENT_TYPE = "Content-Type";
 
     @Expose
-    @SerializedName("m2m:ae")
+    @SerializedName("ae")
     private ApplicationEntity applicationEntity;
     @Expose
-    @SerializedName("m2m:cin")
+    @SerializedName("cin")
     private ContentInstance contentInstance;
 //    @Expose
 //    @SerializedName("m2m:cnt")
