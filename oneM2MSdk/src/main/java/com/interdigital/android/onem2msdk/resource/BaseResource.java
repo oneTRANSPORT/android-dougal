@@ -2,6 +2,7 @@ package com.interdigital.android.onem2msdk.resource;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -24,17 +25,6 @@ import okhttp3.Response;
 
 public abstract class BaseResource {
 
-    // TODO Remove this.
-    // Seems that this should contain no new line characters.
-//    private static final String CIN_HEADER =
-//            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
-//                    + "<m2m:cin xmlns:m2m=\"http://www.onem2m.org/xml/protocols\""
-//                    + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-//                    + " xsi:schemaLocation=\"http://www.onem2m.org/xml/protocols CDT-cin-v1_0_0.xsd\""
-//                    + " rn=\"cin\">"
-//                    + "<cnf>text/plain:0</cnf>"
-//                    + "<con>";
-//    private static final String CIN_FOOTER = "</con></m2m:cin>";
     private static final String AUTHORISATION_HEADER = "Authorization";
 
     // Gson is supposed to be thread-safe.  Keep only one instance.
@@ -45,11 +35,11 @@ public abstract class BaseResource {
     // The request id must be unique to this session.
     private static long requestId = 1L;
 
-    @Expose
-    @SerializedName("ri")
+    //    @Expose
+//    @SerializedName("ri")
     private String resourceId;
-    @Expose
-    @SerializedName("rn")
+    //    @Expose
+//    @SerializedName("rn")
     private String resourceName;
     //    @Expose // This is sent in the Content-Type header.
 //    @SerializedName("ty")
@@ -128,24 +118,28 @@ public abstract class BaseResource {
     // Notify POST
 
     // Synchronous HTTP POST always.
-    public ResponseHolder create(String userName, String password) {
-        Request request = makeCreateRequest(userName, password);
+    public ResponseHolder create(String aeId, String userName, String password) {
+        Request request = makeCreateRequest(aeId, userName, password);
         return execute(request);
     }
 
     // Synchronous HTTP GET.
-    public static ResponseHolder retrieve(Ri ri, String origin, String userName, String password) {
-        String url = ri.createUrl();
-        Request request = makeRetrieveRequest(origin, userName, password, url);
+    public static ResponseHolder retrieve(Ri ri, String aeId, String userName, String password) {
+        Request request = makeRetrieveRequest(aeId, userName, password, ri);
         return execute(request);
     }
 
-    public ResponseHolder update() {
+    public ResponseHolder update(String aeId, String userName, String password) {
         return null;
     }
 
-    public ResponseHolder delete(String userName, String password) {
-        Request request = makeDeleteRequest(userName, password);
+    public static ResponseHolder delete(Ri ri, String aeId, String userName, String password) {
+        Request request = makeDeleteRequest(aeId, userName, password, ri);
+        return execute(request);
+    }
+
+    public ResponseHolder delete(String aeId, String userName, String password) {
+        Request request = makeDeleteRequest(aeId, userName, password, ri);
         return execute(request);
     }
 
@@ -302,9 +296,14 @@ public abstract class BaseResource {
         builder.addHeader("Accept", "application/json");
     }
 
-    protected Request makeCreateRequest(String userName, String password) {
-        RequestHolder requestHolder = new RequestHolder();
-        String origin = findOrigin(requestHolder);
+    protected static void initialiseGson() {
+        if (gson == null) {
+            gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        }
+    }
+
+    protected Request makeCreateRequest(String aeId, String userName, String password) {
+        RequestHolder requestHolder = populateRequestHolder();
         initialiseGson();
         String json = gson.toJson(requestHolder);
         // TODO The oneM2M CSE does not like charset=utf-8.
@@ -314,39 +313,37 @@ public abstract class BaseResource {
         // Using bytes prevents OkHttp adding charset=utf-8.
         RequestBody body = RequestBody.create(MediaType.parse(contentType), json.getBytes());
         Request.Builder builder = new Request.Builder().url(ri.createUrl()).post(body);
-        addCommonHeaders(origin, userName, password, builder);
+        addCommonHeaders(aeId, userName, password, builder);
         builder.addHeader("Content-Type", contentType);
-        return builder.build();
-    }
-
-    protected static void initialiseGson() {
-        if (gson == null) {
-            gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        if (!TextUtils.isEmpty(resourceName)) {
+            builder.addHeader("X-M2M-NM", resourceName);
         }
+        return builder.build();
     }
 
     private static Request makeRetrieveRequest(
-            String origin, String userName, String password, String url) {
-        Request.Builder builder = new Request.Builder().url(url);
-        addCommonHeaders(origin, userName, password, builder);
+            String aeId, String userName, String password, Ri ri) {
+        Request.Builder builder = new Request.Builder().url(ri.createUrl());
+        addCommonHeaders(aeId, userName, password, builder);
         return builder.build();
     }
 
-    private Request makeDeleteRequest(String userName, String password) {
+    private static Request makeDeleteRequest(String aeId, String userName, String password, Ri ri) {
         Request.Builder builder = new Request.Builder().url(ri.createUrl()).delete();
-        addCommonHeaders(findOrigin(null), userName, password, builder);
+        addCommonHeaders(aeId, userName, password, builder);
         return builder.build();
     }
 
-    private String findOrigin(@Nullable RequestHolder requestHolder) {
+    @NonNull
+    private RequestHolder populateRequestHolder() {
+        RequestHolder requestHolder = new RequestHolder();
+        // TODO Add all the rest of the objects.
         switch (resourceType) {
             case Types.RESOURCE_TYPE_APPLICATION_ENTITY:
-                if (requestHolder != null) {
-                    requestHolder.setApplicationEntity((ApplicationEntity) this);
-                }
-                return ((ApplicationEntity) this).getId();
+                requestHolder.setApplicationEntity((ApplicationEntity) this);
+                break;
         }
-        return null;
+        return requestHolder;
     }
 
     @Nullable
@@ -372,9 +369,9 @@ public abstract class BaseResource {
 
     private static synchronized OkHttpClient getOkHttpClient() {
         if (okHttpClient == null) {
-//            okHttpClient = new OkHttpClient.Builder().addInterceptor(new LoggingInterceptor()).build();
-            okHttpClient = new OkHttpClient.Builder()
-                    .addNetworkInterceptor(new LoggingInterceptor()).build();
+            okHttpClient = new OkHttpClient.Builder().addInterceptor(new LoggingInterceptor()).build();
+//            okHttpClient = new OkHttpClient.Builder()
+//                    .addNetworkInterceptor(new LoggingInterceptor()).build();
 //            okHttpClient = new OkHttpClient();
         }
         return okHttpClient;
@@ -382,8 +379,8 @@ public abstract class BaseResource {
 
     @NonNull
     private static synchronized String getUniqueRequestId() {
-        return "PaulsOwnRequest4";
-//        return String.valueOf(requestId++);
+//        return "PaulsOwnRequest4";
+        return String.valueOf(requestId++);
     }
 }
 

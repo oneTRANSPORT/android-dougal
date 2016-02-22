@@ -6,15 +6,16 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.interdigital.android.onem2msdk.Types;
 import com.interdigital.android.onem2msdk.network.Ri;
-import com.interdigital.android.onem2msdk.network.request.RequestHolder;
 
 public class ApplicationEntity extends BaseResource {
 
-//    @Expose
-    @SerializedName("aei")
+    private Context context;
+    // The AE id.
+    //    @Expose
+//    @SerializedName("aei")
     private String id;
-//    @Expose
-    @SerializedName("apn")
+    //    @Expose
+//    @SerializedName("apn")
     private String appName;
     @Expose
     @SerializedName("api")
@@ -32,14 +33,19 @@ public class ApplicationEntity extends BaseResource {
     @SerializedName("nl")
     private String nodeLink;
 
-    public ApplicationEntity(Ri ri, String expiryTime, String[] accessControlPolicyIds, String[] labels,
-                             String id, String appName, String applicationId, boolean requestReachable,
+    public ApplicationEntity(Context context, Ri ri, String expiryTime, String[] accessControlPolicyIds,
+                             String[] labels, String id, String appName, String applicationId, boolean requestReachable,
                              String[] pointOfAccessList, String ontologyRef, String nodeLink) {
         super(null, null, Types.RESOURCE_TYPE_APPLICATION_ENTITY, null, null, null, expiryTime,
                 accessControlPolicyIds, labels);
+        this.context = context;
         setRi(ri);
         this.id = id;
+        // The resource id shall be the same as the AE id.
+        setResourceId(id);
         this.appName = appName;
+        // We will set the resource name to be the same as the app name.
+        setResourceName(appName);
         this.applicationId = applicationId;
         this.requestReachable = requestReachable;
         this.pointOfAccessList = pointOfAccessList;
@@ -47,18 +53,23 @@ public class ApplicationEntity extends BaseResource {
         this.nodeLink = nodeLink;
     }
 
-    public void create(String cseName, String aeName, String aeId,
-                       String userName, String password) {
-        ApplicationEntity applicationEntity = create(userName, password)
+    public void create(String userName, String password) {
+        ApplicationEntity applicationEntity = create(id, userName, password)
                 .getApplicationEntity();
+
         // Update current object.
-        id = applicationEntity.getId(); // TODO Already set?
         setCreationTime(applicationEntity.getCreationTime());
         setExpiryTime(applicationEntity.getExpiryTime());
         setLastModifiedTime(applicationEntity.getLastModifiedTime());
         setParentId(applicationEntity.getParentId());
         setResourceId(applicationEntity.getResourceId());
         setResourceName(applicationEntity.getResourceName());
+    }
+
+    public static ApplicationEntity retrieveAe(Ri ri, String aeId, String userName, String password) {
+        ApplicationEntity applicationEntity = retrieve(ri, aeId, userName, password).getApplicationEntity();
+        applicationEntity.setRi(ri);
+        return applicationEntity;
     }
 
 //    public static ApplicationEntity create(Context context, String fqdn, int port, boolean useHttps,

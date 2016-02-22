@@ -20,6 +20,7 @@ public class LoggingInterceptor implements Interceptor {
         long t1 = System.nanoTime();
         Log.i(TAG, String.format("Sending request %s on %s%n%s",
                 request.url(), chain.connection(), request.headers()));
+// Breaks request.
 //        if (request.body() != null) {
 //            Log.i(TAG, bodyToString(request));
 //        }
@@ -28,10 +29,11 @@ public class LoggingInterceptor implements Interceptor {
         long t2 = System.nanoTime();
         Log.i(TAG, String.format("Received response for %s in %.1fms%n%s",
                 response.request().url(), (t2 - t1) / 1e6d, response.headers()));
-        if (response.body() != null) {
-            Response newResponse = response.newBuilder().build();
-            Log.i(TAG, newResponse.body().string());
-        }
+        // This breaks the return call but at least we can see what came back.
+//        if (response.body() != null) {
+//            Response newResponse = response.newBuilder().build();
+//            Log.i(TAG, newResponse.body().string());
+//        }
         return response;
     }
 
