@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
 import com.interdigital.android.onem2msdk.Types;
 import com.interdigital.android.onem2msdk.network.Ri;
 
-public class ApplicationEntity extends BaseResource {
+public class ApplicationEntity extends Resource {
 
     private Context context;
     // The AE id.
@@ -33,13 +33,16 @@ public class ApplicationEntity extends BaseResource {
     @SerializedName("nl")
     private String nodeLink;
 
-    public ApplicationEntity(Context context, Ri ri, String expiryTime, String[] accessControlPolicyIds,
+    public ApplicationEntity(Context context, String id, String appName, String applicationId) {
+        this(context, null, null, null, id, appName, applicationId, false, null, null, null);
+    }
+
+    public ApplicationEntity(Context context, String expiryTime, String[] accessControlPolicyIds,
                              String[] labels, String id, String appName, String applicationId, boolean requestReachable,
                              String[] pointOfAccessList, String ontologyRef, String nodeLink) {
         super(null, null, Types.RESOURCE_TYPE_APPLICATION_ENTITY, null, null, null, expiryTime,
                 accessControlPolicyIds, labels);
         this.context = context;
-        setRi(ri);
         this.id = id;
         // The resource id shall be the same as the AE id.
         setResourceId(id);
@@ -53,10 +56,10 @@ public class ApplicationEntity extends BaseResource {
         this.nodeLink = nodeLink;
     }
 
-    public void create(String userName, String password) {
-        ApplicationEntity applicationEntity = create(id, userName, password)
+    // Since we don't know the resource Uri, riCreate is temporary (collection-level) only.
+    public void create(Ri riCreate, String userName, String password) {
+        ApplicationEntity applicationEntity = create(riCreate, id, userName, password)
                 .getApplicationEntity();
-
         // Update current object.
         setCreationTime(applicationEntity.getCreationTime());
         setExpiryTime(applicationEntity.getExpiryTime());

@@ -2,8 +2,10 @@ package com.interdigital.android.onem2msdk.network.request;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.interdigital.android.onem2msdk.Types;
 import com.interdigital.android.onem2msdk.resource.ApplicationEntity;
 import com.interdigital.android.onem2msdk.resource.ContentInstance;
+import com.interdigital.android.onem2msdk.resource.Resource;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,6 +33,15 @@ public class RequestHolder {
 
     public RequestHolder() {
         putRequestIdProperty();
+    }
+
+    public void setResource(Resource resource) {
+        // TODO Add all the rest of the objects.
+        switch (resource.getResourceType()) {
+            case Types.RESOURCE_TYPE_APPLICATION_ENTITY:
+                setApplicationEntity((ApplicationEntity) resource);
+                break;
+        }
     }
 
     public void setApplicationEntity(ApplicationEntity applicationEntity) {

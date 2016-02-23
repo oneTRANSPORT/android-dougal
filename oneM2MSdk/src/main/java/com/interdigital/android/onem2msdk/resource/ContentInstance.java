@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import com.interdigital.android.onem2msdk.Types;
 import com.interdigital.android.onem2msdk.network.Ri;
 
-public class ContentInstance extends BaseResource {
+public class ContentInstance extends Resource {
 
     private static final String LAST_CI = "la";
 
@@ -30,7 +30,7 @@ public class ContentInstance extends BaseResource {
     public static ContentInstance retrieve(String fqdn, int port, boolean useHttps,
                                            String cseName, String aeName, String dcName, String ciName, String aeId,
                                            String userName, String password) {
-        return BaseResource.retrieve(
+        return Resource.retrieve(
                 new Ri(fqdn, port, cseName + "/" + aeName + "/" + dcName + "/" + ciName, useHttps),
                 aeId, userName, password).getContentInstance();
     }
@@ -39,7 +39,7 @@ public class ContentInstance extends BaseResource {
     public static ContentInstance retrieve(String fqdn, int port, boolean useHttps,
                                            String cseName, String aeName, String dcName, String aeId,
                                            String userName, String password) {
-        return BaseResource.retrieve(
+        return Resource.retrieve(
                 new Ri(fqdn, port, cseName + "/" + aeName + "/" + dcName + "/" + LAST_CI, useHttps),
                 aeId, userName, password).getContentInstance();
     }

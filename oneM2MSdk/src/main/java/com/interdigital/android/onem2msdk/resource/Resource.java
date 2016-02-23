@@ -23,7 +23,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public abstract class BaseResource {
+public abstract class Resource {
 
     private static final String AUTHORISATION_HEADER = "Authorization";
 
@@ -80,9 +80,9 @@ public abstract class BaseResource {
 
     // No network request.
     // Builder pattern would be better here?
-    public BaseResource(String resourceId, String resourceName, @Types.ResourceType int resourceType,
-                        String parentId, String creationTime, String lastModifiedTime, String expiryTime,
-                        String[] accessControlPolicyIds, String[] labels) {
+    public Resource(String resourceId, String resourceName, @Types.ResourceType int resourceType,
+                    String parentId, String creationTime, String lastModifiedTime, String expiryTime,
+                    String[] accessControlPolicyIds, String[] labels) {
         this.resourceId = resourceId;
         this.resourceName = resourceName;
         this.resourceType = resourceType;
@@ -118,14 +118,14 @@ public abstract class BaseResource {
     // Notify POST
 
     // Synchronous HTTP POST always.
-    public ResponseHolder create(String aeId, String userName, String password) {
-        Request request = makeCreateRequest(aeId, userName, password);
+    public ResponseHolder create(Ri riCreate, String aeId, String userName, String password) {
+        Request request = makeCreateRequest(riCreate, aeId, userName, password);
         return execute(request);
     }
 
     // Synchronous HTTP GET.
-    public static ResponseHolder retrieve(Ri ri, String aeId, String userName, String password) {
-        Request request = makeRetrieveRequest(aeId, userName, password, ri);
+    public static ResponseHolder retrieve(Ri riRetrieve, String aeId, String userName, String password) {
+        Request request = makeRetrieveRequest(aeId, userName, password, riRetrieve);
         return execute(request);
     }
 
@@ -302,7 +302,7 @@ public abstract class BaseResource {
         }
     }
 
-    protected Request makeCreateRequest(String aeId, String userName, String password) {
+    protected Request makeCreateRequest(Ri riCreate, String aeId, String userName, String password) {
         RequestHolder requestHolder = populateRequestHolder();
         initialiseGson();
         String json = gson.toJson(requestHolder);
@@ -312,7 +312,7 @@ public abstract class BaseResource {
 //        RequestBody body = RequestBody.create(MediaType.parse(contentType), json);
         // Using bytes prevents OkHttp adding charset=utf-8.
         RequestBody body = RequestBody.create(MediaType.parse(contentType), json.getBytes());
-        Request.Builder builder = new Request.Builder().url(ri.createUrl()).post(body);
+        Request.Builder builder = new Request.Builder().url(riCreate.createUrl()).post(body);
         addCommonHeaders(aeId, userName, password, builder);
         builder.addHeader("Content-Type", contentType);
         if (!TextUtils.isEmpty(resourceName)) {
@@ -337,12 +337,7 @@ public abstract class BaseResource {
     @NonNull
     private RequestHolder populateRequestHolder() {
         RequestHolder requestHolder = new RequestHolder();
-        // TODO Add all the rest of the objects.
-        switch (resourceType) {
-            case Types.RESOURCE_TYPE_APPLICATION_ENTITY:
-                requestHolder.setApplicationEntity((ApplicationEntity) this);
-                break;
-        }
+        requestHolder.setResource(this);
         return requestHolder;
     }
 
