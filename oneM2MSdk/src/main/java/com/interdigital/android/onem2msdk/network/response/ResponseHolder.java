@@ -13,7 +13,6 @@ import okhttp3.Headers;
 public class ResponseHolder {
 
     private int statusCode;
-    private Map<String, List<String>> propertyValues; // HTTP response headers.
     private Headers headers;
     private String body;
 

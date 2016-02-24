@@ -1,37 +1,38 @@
 package com.interdigital.android.onem2msdk.resource;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.interdigital.android.onem2msdk.OneM2MService;
 import com.interdigital.android.onem2msdk.Types;
-import com.interdigital.android.onem2msdk.network.Ri;
 import com.interdigital.android.onem2msdk.network.request.RequestHolder;
 import com.interdigital.android.onem2msdk.network.response.ResponseHolder;
-import com.interdigital.android.onem2msdk.network2.LoggingInterceptor;
+import com.interdigital.android.onem2msdk.network2.AddHeadersInterceptor;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import okhttp3.Credentials;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public abstract class Resource {
 
     private static final String AUTHORISATION_HEADER = "Authorization";
 
-    // Gson is supposed to be thread-safe.  Keep only one instance.
-    protected static Gson gson;
+    // We should be able to use one Gson instance for everything.  Should be thread-safe.
+    private static Gson gson;
+    // On the off-chance that we need to connect to multiple oneM2M servers with different
+    // base URLs.
+    private static HashMap<String, OneM2MService> oneM2MServiceMap = new HashMap<>();
 
-    // In case we ever need caching, there should only ever be one OkHttpClient instance.
-    private static OkHttpClient okHttpClient;
     // The request id must be unique to this session.
     private static long requestId = 1L;
 
@@ -76,7 +77,8 @@ public abstract class Resource {
     @SerializedName("aa")
     private String announcedAttribute;
 
-    private Ri ri;
+    private String baseUrl;
+    private String path;
 
     // No network request.
     // Builder pattern would be better here?
@@ -93,6 +95,7 @@ public abstract class Resource {
         this.accessControlPolicyIds = accessControlPolicyIds;
         this.labels = labels;
     }
+
 
     // CREATE
     // If we have the full Uri of the resource to be created on the server, the request is:
@@ -118,29 +121,41 @@ public abstract class Resource {
     // Notify POST
 
     // Synchronous HTTP POST always.
-    public ResponseHolder create(Ri riCreate, String aeId, String userName, String password) {
-        Request request = makeCreateRequest(riCreate, aeId, userName, password);
-        return execute(request);
+    public Response<ResponseHolder> create(
+            String baseUrl, String path, String aeId, String userName, String password) throws IOException {
+        maybeMakeOneM2MService(baseUrl);
+        String auth = Credentials.basic(userName, password);
+        RequestHolder requestHolder = new RequestHolder(this);
+        Call<ResponseHolder> responseHolder = oneM2MServiceMap.get(baseUrl).createAe(
+                path, auth, aeId, resourceName, requestHolder);
+        Response<ResponseHolder> response = responseHolder.execute();
+        return response;
     }
 
     // Synchronous HTTP GET.
-    public static ResponseHolder retrieve(Ri riRetrieve, String aeId, String userName, String password) {
-        Request request = makeRetrieveRequest(aeId, userName, password, riRetrieve);
-        return execute(request);
+    public static Response<ResponseHolder> retrieve(
+            String baseUrl, String path, String aeId, String userName, String password) throws IOException {
+        maybeMakeOneM2MService(baseUrl);
+        String auth = Credentials.basic(userName, password);
+        Call<ResponseHolder> responseHolder = oneM2MServiceMap.get(baseUrl).retrieveAe(
+                path, auth, aeId);
+        Response<ResponseHolder> response = responseHolder.execute();
+        return response;
     }
 
     public ResponseHolder update(String aeId, String userName, String password) {
         return null;
     }
 
-    public static ResponseHolder delete(Ri ri, String aeId, String userName, String password) {
-        Request request = makeDeleteRequest(aeId, userName, password, ri);
-        return execute(request);
+    public static ResponseHolder delete(
+            String baseUrl, String path, String aeId, String userName, String password) {
+//        Request request = makeDeleteRequest(aeId, userName, password, uri);
+        return null;//  return execute(request);
     }
 
     public ResponseHolder delete(String aeId, String userName, String password) {
-        Request request = makeDeleteRequest(aeId, userName, password, ri);
-        return execute(request);
+//        Request request = makeDeleteRequest(aeId, userName, password, uri);
+        return null;//  return execute(request);
     }
 
     public String getResourceId() {
@@ -240,12 +255,26 @@ public abstract class Resource {
         return announcedAttribute;
     }
 
-    public void setRi(Ri ri) {
-        this.ri = ri;
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
     }
 
-    public Ri getRi() {
-        return ri;
+    public String getBaseUrl() {
+        return baseUrl;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    // Most applications should not need to call this.
+    public void free() {
+        gson = null;
+        oneM2MServiceMap.clear();
     }
 
     // TODO Inject request holder here?
@@ -296,42 +325,43 @@ public abstract class Resource {
         builder.addHeader("Accept", "application/json");
     }
 
-    protected static void initialiseGson() {
-        if (gson == null) {
-            gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+//    protected Request makeCreateRequest(Uri uriCreate, String aeId, String userName, String password) {
+//        RequestHolder requestHolder = populateRequestHolder();
+//        initialiseGson();
+//        String json = gson.toJson(requestHolder);
+//        // TODO The oneM2M CSE does not like charset=utf-8.
+////        String contentType = "application/json; charset=utf-8; ty=" + resourceType;
+//        String contentType = "application/json; ty=" + resourceType;
+////        RequestBody body = RequestBody.create(MediaType.parse(contentType), json);
+//        // Using bytes prevents OkHttp adding charset=utf-8.
+//        RequestBody body = RequestBody.create(MediaType.parse(contentType), json.getBytes());
+//        Request.Builder builder = new Request.Builder().url(uriCreate.toString()).post(body);
+//        addCommonHeaders(aeId, userName, password, builder);
+//        builder.addHeader("Content-Type", contentType);
+//        if (!TextUtils.isEmpty(resourceName)) {
+//            builder.addHeader("X-M2M-NM", resourceName);
+//        }
+//        return builder.build();
+//    }
+
+    private static void maybeMakeOneM2MService(String baseUrl) {
+        if (!oneM2MServiceMap.containsKey(baseUrl)) {
+            if (gson == null) {
+                gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+            }
+            OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                    .addInterceptor(new AddHeadersInterceptor())
+                            // If we have logging, the unit test will fail.
+                            // (Unimplemented Android framework class.)
+//                    .addInterceptor(new LoggingInterceptor())
+                    .build();
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(baseUrl)
+                    .client(okHttpClient)
+                    .addConverterFactory(GsonConverterFactory.create(gson))
+                    .build();
+            oneM2MServiceMap.put(baseUrl, retrofit.create(OneM2MService.class));
         }
-    }
-
-    protected Request makeCreateRequest(Ri riCreate, String aeId, String userName, String password) {
-        RequestHolder requestHolder = populateRequestHolder();
-        initialiseGson();
-        String json = gson.toJson(requestHolder);
-        // TODO The oneM2M CSE does not like charset=utf-8.
-//        String contentType = "application/json; charset=utf-8; ty=" + resourceType;
-        String contentType = "application/json; ty=" + resourceType;
-//        RequestBody body = RequestBody.create(MediaType.parse(contentType), json);
-        // Using bytes prevents OkHttp adding charset=utf-8.
-        RequestBody body = RequestBody.create(MediaType.parse(contentType), json.getBytes());
-        Request.Builder builder = new Request.Builder().url(riCreate.createUrl()).post(body);
-        addCommonHeaders(aeId, userName, password, builder);
-        builder.addHeader("Content-Type", contentType);
-        if (!TextUtils.isEmpty(resourceName)) {
-            builder.addHeader("X-M2M-NM", resourceName);
-        }
-        return builder.build();
-    }
-
-    private static Request makeRetrieveRequest(
-            String aeId, String userName, String password, Ri ri) {
-        Request.Builder builder = new Request.Builder().url(ri.createUrl());
-        addCommonHeaders(aeId, userName, password, builder);
-        return builder.build();
-    }
-
-    private static Request makeDeleteRequest(String aeId, String userName, String password, Ri ri) {
-        Request.Builder builder = new Request.Builder().url(ri.createUrl()).delete();
-        addCommonHeaders(aeId, userName, password, builder);
-        return builder.build();
     }
 
     @NonNull
@@ -341,36 +371,26 @@ public abstract class Resource {
         return requestHolder;
     }
 
-    @Nullable
-    private static ResponseHolder execute(Request request) {
-        try {
-            Response response = getOkHttpClient().newCall(request).execute();
-            int statusCode = response.code();
-            String text = response.body().string();
-            initialiseGson();
-            ResponseHolder responseHolder = gson.fromJson(text, ResponseHolder.class);
-            if (responseHolder == null) {
-                responseHolder = new ResponseHolder();
-                responseHolder.setBody(text);
-            }
-            responseHolder.setStatusCode(statusCode);
-            responseHolder.setHeaders(request.headers());
-            return responseHolder;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private static synchronized OkHttpClient getOkHttpClient() {
-        if (okHttpClient == null) {
-            okHttpClient = new OkHttpClient.Builder().addInterceptor(new LoggingInterceptor()).build();
-//            okHttpClient = new OkHttpClient.Builder()
-//                    .addNetworkInterceptor(new LoggingInterceptor()).build();
-//            okHttpClient = new OkHttpClient();
-        }
-        return okHttpClient;
-    }
+//    @Nullable
+//    private static ResponseHolder execute(Request request) {
+//        try {
+//            Response response = getOkHttpClient().newCall(request).execute();
+//            int statusCode = response.code();
+//            String text = response.body().string();
+//            initialiseGson();
+//            ResponseHolder responseHolder = gson.fromJson(text, ResponseHolder.class);
+//            if (responseHolder == null) {
+//                responseHolder = new ResponseHolder();
+//                responseHolder.setBody(text);
+//            }
+//            responseHolder.setStatusCode(statusCode);
+//            responseHolder.setHeaders(request.headers());
+//            return responseHolder;
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        return null;
+//    }
 
     @NonNull
     private static synchronized String getUniqueRequestId() {

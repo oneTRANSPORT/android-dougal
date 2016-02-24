@@ -1,15 +1,13 @@
 package com.interdigital.android.onem2msdk.resource;
 
-import android.content.Context;
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.interdigital.android.onem2msdk.Types;
-import com.interdigital.android.onem2msdk.network.Ri;
+
+import java.io.IOException;
 
 public class ApplicationEntity extends Resource {
 
-    private Context context;
     // The AE id.
     //    @Expose
 //    @SerializedName("aei")
@@ -33,16 +31,15 @@ public class ApplicationEntity extends Resource {
     @SerializedName("nl")
     private String nodeLink;
 
-    public ApplicationEntity(Context context, String id, String appName, String applicationId) {
-        this(context, null, null, null, id, appName, applicationId, false, null, null, null);
+    public ApplicationEntity(String id, String appName, String applicationId) {
+        this(null, null, null, id, appName, applicationId, false, null, null, null);
     }
 
-    public ApplicationEntity(Context context, String expiryTime, String[] accessControlPolicyIds,
+    public ApplicationEntity(String expiryTime, String[] accessControlPolicyIds,
                              String[] labels, String id, String appName, String applicationId, boolean requestReachable,
                              String[] pointOfAccessList, String ontologyRef, String nodeLink) {
         super(null, null, Types.RESOURCE_TYPE_APPLICATION_ENTITY, null, null, null, expiryTime,
                 accessControlPolicyIds, labels);
-        this.context = context;
         this.id = id;
         // The resource id shall be the same as the AE id.
         setResourceId(id);
@@ -56,10 +53,10 @@ public class ApplicationEntity extends Resource {
         this.nodeLink = nodeLink;
     }
 
-    // Since we don't know the resource Uri, riCreate is temporary (collection-level) only.
-    public void create(Ri riCreate, String userName, String password) {
-        ApplicationEntity applicationEntity = create(riCreate, id, userName, password)
-                .getApplicationEntity();
+    // Since we don't know the resource Uri, uriCreate is temporary (collection-level) only.
+    public void create(String baseUrl, String path, String userName, String password) throws IOException {
+        ApplicationEntity applicationEntity = create(baseUrl, path, id, userName, password)
+                .body().getApplicationEntity();
         // Update current object.
         setCreationTime(applicationEntity.getCreationTime());
         setExpiryTime(applicationEntity.getExpiryTime());
@@ -69,9 +66,12 @@ public class ApplicationEntity extends Resource {
         setResourceName(applicationEntity.getResourceName());
     }
 
-    public static ApplicationEntity retrieveAe(Ri ri, String aeId, String userName, String password) {
-        ApplicationEntity applicationEntity = retrieve(ri, aeId, userName, password).getApplicationEntity();
-        applicationEntity.setRi(ri);
+    public static ApplicationEntity retrieveAe(
+            String baseUrl, String path, String aeId, String userName, String password) throws IOException {
+        ApplicationEntity applicationEntity = retrieve(baseUrl, path, aeId, userName, password).body()
+                .getApplicationEntity();
+        applicationEntity.setBaseUrl(baseUrl);
+        applicationEntity.setPath(path);
         return applicationEntity;
     }
 

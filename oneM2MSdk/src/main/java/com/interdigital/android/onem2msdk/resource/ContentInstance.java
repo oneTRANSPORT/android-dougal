@@ -3,7 +3,6 @@ package com.interdigital.android.onem2msdk.resource;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.interdigital.android.onem2msdk.Types;
-import com.interdigital.android.onem2msdk.network.Ri;
 
 public class ContentInstance extends Resource {
 
@@ -27,22 +26,22 @@ public class ContentInstance extends Resource {
                 expiryTime, accessControlPolicyIds, labels);
     }
 
-    public static ContentInstance retrieve(String fqdn, int port, boolean useHttps,
-                                           String cseName, String aeName, String dcName, String ciName, String aeId,
-                                           String userName, String password) {
-        return Resource.retrieve(
-                new Ri(fqdn, port, cseName + "/" + aeName + "/" + dcName + "/" + ciName, useHttps),
-                aeId, userName, password).getContentInstance();
-    }
+//    public static ContentInstance retrieve(String fqdn, int port, boolean useHttps,
+//                                           String cseName, String aeName, String dcName, String ciName, String aeId,
+//                                           String userName, String password) {
+//        return Resource.retrieve(
+//                new Ri(fqdn, port, cseName + "/" + aeName + "/" + dcName + "/" + ciName, useHttps),
+//                aeId, userName, password).getContentInstance();
+//    }
 
     // Needs a filter parameter for oldest and latest.
-    public static ContentInstance retrieve(String fqdn, int port, boolean useHttps,
-                                           String cseName, String aeName, String dcName, String aeId,
-                                           String userName, String password) {
-        return Resource.retrieve(
-                new Ri(fqdn, port, cseName + "/" + aeName + "/" + dcName + "/" + LAST_CI, useHttps),
-                aeId, userName, password).getContentInstance();
-    }
+//    public static ContentInstance retrieve(String fqdn, int port, boolean useHttps,
+//                                           String cseName, String aeName, String dcName, String aeId,
+//                                           String userName, String password) {
+//        return Resource.retrieve(
+//                new Ri(fqdn, port, cseName + "/" + aeName + "/" + dcName + "/" + LAST_CI, useHttps),
+//                aeId, userName, password).getContentInstance();
+//    }
 
 //    public static ContentInstance create(Context context, String fqdn, int port, boolean useHttps,
 //                                         String cseName, String aeName, String dcName, String aeId, String content,
