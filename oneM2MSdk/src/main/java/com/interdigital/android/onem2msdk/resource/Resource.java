@@ -11,13 +11,13 @@ import com.interdigital.android.onem2msdk.Types;
 import com.interdigital.android.onem2msdk.network.request.RequestHolder;
 import com.interdigital.android.onem2msdk.network.response.ResponseHolder;
 import com.interdigital.android.onem2msdk.network2.AddHeadersInterceptor;
+import com.interdigital.android.onem2msdk.network2.LoggingInterceptor;
 
 import java.io.IOException;
 import java.util.HashMap;
 
 import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -35,6 +35,7 @@ public abstract class Resource {
 
     // The request id must be unique to this session.
     private static long requestId = 1L;
+    private static LoggingInterceptor loggingInterceptor;
 
     //    @Expose
 //    @SerializedName("ri")
@@ -120,7 +121,6 @@ public abstract class Resource {
     // Delete DELETE
     // Notify POST
 
-    // Synchronous HTTP POST always.
     public Response<ResponseHolder> create(
             String baseUrl, String path, String aeId, String userName, String password) throws IOException {
         maybeMakeOneM2MService(baseUrl);
@@ -132,7 +132,6 @@ public abstract class Resource {
         return response;
     }
 
-    // Synchronous HTTP GET.
     public static Response<ResponseHolder> retrieve(
             String baseUrl, String path, String aeId, String userName, String password) throws IOException {
         maybeMakeOneM2MService(baseUrl);
@@ -143,19 +142,32 @@ public abstract class Resource {
         return response;
     }
 
-    public ResponseHolder update(String aeId, String userName, String password) {
-        return null;
+    public Response<ResponseHolder> update(
+            String aeId, String userName, String password) throws IOException {
+        maybeMakeOneM2MService(baseUrl);
+        String auth = Credentials.basic(userName, password);
+        RequestHolder requestHolder = new RequestHolder(this);
+        Call<ResponseHolder> responseHolder = oneM2MServiceMap.get(baseUrl).updateAe(
+                path, auth, aeId, requestHolder);
+        Response<ResponseHolder> response = responseHolder.execute();
+        return response;
     }
 
-    public static ResponseHolder delete(
-            String baseUrl, String path, String aeId, String userName, String password) {
-//        Request request = makeDeleteRequest(aeId, userName, password, uri);
-        return null;//  return execute(request);
+    public static Response<Void> delete(
+            String baseUrl, String path, String aeId, String userName, String password) throws IOException {
+        maybeMakeOneM2MService(baseUrl);
+        String auth = Credentials.basic(userName, password);
+        Call<Void> responseHolder = oneM2MServiceMap.get(baseUrl).deleteAe(path, auth, aeId);
+        Response<Void> response = responseHolder.execute();
+        return response;
     }
 
-    public ResponseHolder delete(String aeId, String userName, String password) {
-//        Request request = makeDeleteRequest(aeId, userName, password, uri);
-        return null;//  return execute(request);
+    public Response<Void> delete(String aeId, String userName, String password) throws IOException {
+        maybeMakeOneM2MService(baseUrl);
+        String auth = Credentials.basic(userName, password);
+        Call<Void> responseHolder = oneM2MServiceMap.get(baseUrl).deleteAe(path, auth, aeId);
+        Response<Void> response = responseHolder.execute();
+        return response;
     }
 
     public String getResourceId() {
@@ -271,89 +283,35 @@ public abstract class Resource {
         return path;
     }
 
+    public void setRequestBodyLogging(boolean logging) {
+        if (loggingInterceptor != null) {
+            loggingInterceptor.setLogRequestBody(logging);
+        }
+    }
+
+    public void setResponseBodyLogging(boolean logging) {
+        if (loggingInterceptor != null) {
+            loggingInterceptor.setLogResponseBody(logging);
+        }
+    }
+
     // Most applications should not need to call this.
     public void free() {
         gson = null;
         oneM2MServiceMap.clear();
     }
 
-    // TODO Inject request holder here?
-//    protected static ResponseHolder create(Context context, Ri ri, boolean useHttps, String aeId,
-//                                        String userName, String password) {
-//        HashMap<String, List<String>> propertyValues = createOriginProperty(aeId);
-//        return retrieveResource(context, ri, useHttps, propertyValues, userName, password);
-//    }
-
-//    public static ResponseHolder post(Context context, Ri ri, boolean useHttps,
-//                                      RequestHolder requestHolder, String userName, String password) {
-//        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-//        String json = gson.toJson(requestHolder);
-//        return SDK.getInstance().postResource(context, ri, useHttps, requestHolder.getPropertyValues(), json,
-//                userName, password);
-//    }
-
-//    public static ResponseHolder postCin(Context context, Ri ri, boolean useHttps,
-//                                         RequestHolder requestHolder, String userName, String password) {
-//        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-//        String json = gson.toJson(requestHolder);
-//         We must wrap the content instance JSON in an XML envelope.
-//        return SDK.getInstance().postResource(context, ri, useHttps, requestHolder.getPropertyValues(),
-//                CIN_HEADER + json + CIN_FOOTER, userName, password);
-//    }
-
-//    public static ResponseHolder delete(Context context, Ri ri, boolean useHttps, String aeId,
-//                                        String userName, String password) {
-//        HashMap<String, List<String>> propertyValues = createOriginProperty(aeId);
-//        return SDK.getInstance().deleteResource(context, ri, useHttps, propertyValues, userName, password);
-//    }
-
-//    protected static Discovery discover(Context context, Ri ri, boolean useHttps, String aeId,
-//                                        String userName, String password) {
-//        HashMap<String, List<String>> propertyValues = createOriginProperty(aeId);
-//        ResponseHolder responseHolder = SDK.getInstance().retrieveResource(context, ri, useHttps,
-//                propertyValues, userName, password);
-//        return responseHolder.getDiscovery();
-//    }
-
-    protected static void addCommonHeaders(
-            String origin, String userName, String password, Request.Builder builder) {
-        if (userName != null && password != null) {
-            builder.addHeader(AUTHORISATION_HEADER, Credentials.basic(userName, password));
-        }
-        builder.addHeader("X-M2M-Origin", origin);
-        builder.addHeader("X-M2M-RI", getUniqueRequestId());
-        builder.addHeader("Accept", "application/json");
-    }
-
-//    protected Request makeCreateRequest(Uri uriCreate, String aeId, String userName, String password) {
-//        RequestHolder requestHolder = populateRequestHolder();
-//        initialiseGson();
-//        String json = gson.toJson(requestHolder);
-//        // TODO The oneM2M CSE does not like charset=utf-8.
-////        String contentType = "application/json; charset=utf-8; ty=" + resourceType;
-//        String contentType = "application/json; ty=" + resourceType;
-////        RequestBody body = RequestBody.create(MediaType.parse(contentType), json);
-//        // Using bytes prevents OkHttp adding charset=utf-8.
-//        RequestBody body = RequestBody.create(MediaType.parse(contentType), json.getBytes());
-//        Request.Builder builder = new Request.Builder().url(uriCreate.toString()).post(body);
-//        addCommonHeaders(aeId, userName, password, builder);
-//        builder.addHeader("Content-Type", contentType);
-//        if (!TextUtils.isEmpty(resourceName)) {
-//            builder.addHeader("X-M2M-NM", resourceName);
-//        }
-//        return builder.build();
-//    }
-
     private static void maybeMakeOneM2MService(String baseUrl) {
         if (!oneM2MServiceMap.containsKey(baseUrl)) {
             if (gson == null) {
                 gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
             }
+            loggingInterceptor = new LoggingInterceptor();
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
                     .addInterceptor(new AddHeadersInterceptor())
-                            // If we have logging, the unit test will fail.
+                            // If we have logging enabled, the unit test will fail.
                             // (Unimplemented Android framework class.)
-//                    .addInterceptor(new LoggingInterceptor())
+                    .addInterceptor(new LoggingInterceptor())
                     .build();
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(baseUrl)
@@ -365,36 +323,7 @@ public abstract class Resource {
     }
 
     @NonNull
-    private RequestHolder populateRequestHolder() {
-        RequestHolder requestHolder = new RequestHolder();
-        requestHolder.setResource(this);
-        return requestHolder;
-    }
-
-//    @Nullable
-//    private static ResponseHolder execute(Request request) {
-//        try {
-//            Response response = getOkHttpClient().newCall(request).execute();
-//            int statusCode = response.code();
-//            String text = response.body().string();
-//            initialiseGson();
-//            ResponseHolder responseHolder = gson.fromJson(text, ResponseHolder.class);
-//            if (responseHolder == null) {
-//                responseHolder = new ResponseHolder();
-//                responseHolder.setBody(text);
-//            }
-//            responseHolder.setStatusCode(statusCode);
-//            responseHolder.setHeaders(request.headers());
-//            return responseHolder;
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        return null;
-//    }
-
-    @NonNull
     private static synchronized String getUniqueRequestId() {
-//        return "PaulsOwnRequest4";
         return String.valueOf(requestId++);
     }
 }

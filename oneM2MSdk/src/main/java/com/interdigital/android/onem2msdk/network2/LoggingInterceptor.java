@@ -13,6 +13,17 @@ public class LoggingInterceptor implements Interceptor {
 
     private static final String TAG = "LoggingInterceptor";
 
+    private boolean logRequestBody = false;
+    private boolean logResponseBody = false;
+
+    public void setLogRequestBody(boolean logRequestBody) {
+        this.logRequestBody = logRequestBody;
+    }
+
+    public void setLogResponseBody(boolean logResponseBody) {
+        this.logResponseBody = logResponseBody;
+    }
+
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
@@ -22,9 +33,9 @@ public class LoggingInterceptor implements Interceptor {
                 request.url(), chain.connection(), request.headers()));
 
 // Breaks request.
-//        if (request.body() != null) {
-//            Log.i(TAG, bodyToString(request));
-//        }
+        if (logRequestBody && request.body() != null) {
+            Log.i(TAG, bodyToString(request));
+        }
 
         Response response = chain.proceed(request);
 
@@ -33,10 +44,11 @@ public class LoggingInterceptor implements Interceptor {
                 response.request().url(), (t2 - t1) / 1e6d, response.headers()));
 
         // This breaks the return call but at least we can see what came back.
-        if (response.body() != null) {
+        if (logResponseBody && response.body() != null) {
             Response newResponse = response.newBuilder().build();
             Log.i(TAG, newResponse.body().string());
         }
+
         return response;
     }
 

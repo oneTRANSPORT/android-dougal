@@ -5,6 +5,9 @@ import org.junit.Test;
 import okhttp3.HttpUrl;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
+import okhttp3.mockwebserver.RecordedRequest;
+
+import static org.junit.Assert.assertEquals;
 
 public class ApplicationEntityTest {
 
@@ -18,7 +21,7 @@ public class ApplicationEntityTest {
     private static final String APP_NAME = NAME;
     private static final String APPLICATION_ID = "C-JSON-TEST-APP-ID-10";
     private static final String BASE_URL = "https://" + CSE_BASE + "/";
-    private static final String PATH = CSE_NAME + "/" + NAME;
+    private static final String PATH = "/" + CSE_NAME + "/" + NAME;
 
     @Test
     public void createSuccess() throws Exception {
@@ -31,6 +34,9 @@ public class ApplicationEntityTest {
         HttpUrl httpUrl = server.url("");
         ApplicationEntity applicationEntity = ApplicationEntity.retrieveAe(
                 httpUrl.toString(), PATH, ID, USER_NAME, PASSWORD);
+
+        RecordedRequest recordedRequest = server.takeRequest();
+        assertEquals(PATH, recordedRequest.getPath());
 
         server.shutdown();
     }
