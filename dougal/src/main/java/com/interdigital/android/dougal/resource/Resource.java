@@ -6,12 +6,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.interdigital.android.dougal.OneM2MService;
+import com.interdigital.android.dougal.DougalService;
 import com.interdigital.android.dougal.Types;
 import com.interdigital.android.dougal.network.request.RequestHolder;
 import com.interdigital.android.dougal.network.response.ResponseHolder;
-import com.interdigital.android.dougal.network2.AddHeadersInterceptor;
-import com.interdigital.android.dougal.network2.LoggingInterceptor;
+import com.interdigital.android.dougal.network.AddHeadersInterceptor;
+import com.interdigital.android.dougal.network.LoggingInterceptor;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -31,7 +31,7 @@ public abstract class Resource {
     private static Gson gson;
     // On the off-chance that we need to connect to multiple oneM2M servers with different
     // base URLs.
-    private static HashMap<String, OneM2MService> oneM2MServiceMap = new HashMap<>();
+    private static HashMap<String, DougalService> oneM2MServiceMap = new HashMap<>();
 
     // The request id must be unique to this session.
     private static long requestId = 1L;
@@ -333,7 +333,7 @@ public abstract class Resource {
                     .client(okHttpClient)
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
-            oneM2MServiceMap.put(baseUrl, retrofit.create(OneM2MService.class));
+            oneM2MServiceMap.put(baseUrl, retrofit.create(DougalService.class));
         }
     }
 

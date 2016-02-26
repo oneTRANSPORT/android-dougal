@@ -1,4 +1,4 @@
-package com.interdigital.android.dougal.network2;
+package com.interdigital.android.dougal.network;
 
 import android.util.Log;
 

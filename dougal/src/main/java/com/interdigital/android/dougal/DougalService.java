@@ -13,7 +13,7 @@ import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
-public interface OneM2MService {
+public interface DougalService {
 
     @Headers({
             "X-M2M-RI: i4568g",
