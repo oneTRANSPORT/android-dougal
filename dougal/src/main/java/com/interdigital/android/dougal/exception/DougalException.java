@@ -1,8 +1,19 @@
 package com.interdigital.android.dougal.exception;
 
+import com.interdigital.android.dougal.Types;
+
 public class DougalException extends Exception {
 
-    public DougalException(String message) {
-        super(message);
+    @Types.StatusCode
+    private int code;
+
+    public DougalException(@Types.StatusCode int code) {
+        super();
+        this.code = code;
+    }
+
+    @Types.StatusCode
+    public int getCode() {
+        return code;
     }
 }

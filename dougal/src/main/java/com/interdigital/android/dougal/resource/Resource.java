@@ -124,40 +124,34 @@ public abstract class Resource {
 
     public Response<ResponseHolder> create(
             String baseUrl, String path, String aeId, String userName, String password)
-            throws DougalException {
+            throws Exception {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
         RequestHolder requestHolder = new RequestHolder(this);
         Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).createAe(
                 path, auth, aeId, resourceName, requestHolder);
-        try {
-            Response<ResponseHolder> response = call.execute();
-            int code = getCodeFromResponse(response);
-            if (code != Types.STATUS_CODE_CREATED) {
-                throw new DougalException("Error code = " + code);
-            }
-            return response;
-        } catch (IOException ioException) {
-            throw new DougalException("IO Exception");
+        Response<ResponseHolder> response = call.execute();
+        @Types.StatusCode
+        int code = getCodeFromResponse(response);
+        if (code != Types.STATUS_CODE_CREATED) {
+            throw new DougalException(code);
         }
+        return response;
     }
 
     public static Response<ResponseHolder> retrieve(
             String baseUrl, String path, String aeId, String userName, String password)
-            throws DougalException {
+            throws Exception {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
         Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).retrieveAe(path, auth, aeId);
-        try {
-            Response<ResponseHolder> response = call.execute();
-            int code = getCodeFromResponse(response);
-            if (code != Types.STATUS_CODE_OK) {
-                throw new DougalException("Error code = " + code);
-            }
-            return response;
-        } catch (IOException ioException) {
-            throw new DougalException("IO Exception");
+        Response<ResponseHolder> response = call.execute();
+        @Types.StatusCode
+        int code = getCodeFromResponse(response);
+        if (code != Types.STATUS_CODE_OK) {
+            throw new DougalException(code);
         }
+        return response;
     }
 
     // TODO Difficult because the CSE currently requires differential updates.
@@ -174,20 +168,17 @@ public abstract class Resource {
 
     public static Response<Void> delete(
             String baseUrl, String path, String aeId, String userName, String password)
-            throws DougalException {
+            throws Exception {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
         Call<Void> call = oneM2MServiceMap.get(baseUrl).deleteAe(path, auth, aeId);
-        try {
-            Response<Void> response = call.execute();
-            int code = getCodeFromResponse(response);
-            if (code != Types.STATUS_CODE_DELETED) {
-                throw new DougalException("Error code = " + code);
-            }
-            return response;
-        } catch (IOException ioException) {
-            throw new DougalException("IO Exception");
+        Response<Void> response = call.execute();
+        @Types.StatusCode
+        int code = getCodeFromResponse(response);
+        if (code != Types.STATUS_CODE_DELETED) {
+            throw new DougalException(code);
         }
+        return response;
     }
 
     public Response<Void> delete(String aeId, String userName, String password) throws IOException {

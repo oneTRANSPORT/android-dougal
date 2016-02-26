@@ -57,7 +57,7 @@ public class ApplicationEntity extends Resource {
 
     // Since we don't know the resource Uri, uriCreate is temporary (collection-level) only.
     public void create(String baseUrl, String path, String userName, String password)
-            throws DougalException {
+            throws Exception {
         Response<ResponseHolder> response = create(baseUrl, path, id, userName, password);
         ApplicationEntity applicationEntity = response.body().getApplicationEntity();
         // Update current object.
@@ -71,7 +71,7 @@ public class ApplicationEntity extends Resource {
 
     public static ApplicationEntity retrieveAe(
             String baseUrl, String path, String aeId, String userName, String password)
-            throws DougalException {
+            throws Exception {
         ApplicationEntity applicationEntity = retrieve(baseUrl, path, aeId, userName, password).body()
                 .getApplicationEntity();
         applicationEntity.setBaseUrl(baseUrl);
