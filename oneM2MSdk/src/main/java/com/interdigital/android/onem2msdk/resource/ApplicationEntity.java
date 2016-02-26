@@ -3,8 +3,11 @@ package com.interdigital.android.onem2msdk.resource;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.interdigital.android.onem2msdk.Types;
+import com.interdigital.android.onem2msdk.network.response.ResponseHolder;
 
 import java.io.IOException;
+
+import retrofit2.Response;
 
 public class ApplicationEntity extends Resource {
 
@@ -54,25 +57,36 @@ public class ApplicationEntity extends Resource {
     }
 
     // Since we don't know the resource Uri, uriCreate is temporary (collection-level) only.
-    public void create(String baseUrl, String path, String userName, String password) throws IOException {
-        ApplicationEntity applicationEntity = create(baseUrl, path, id, userName, password)
-                .body().getApplicationEntity();
-        // Update current object.
-        setCreationTime(applicationEntity.getCreationTime());
-        setExpiryTime(applicationEntity.getExpiryTime());
-        setLastModifiedTime(applicationEntity.getLastModifiedTime());
-        setParentId(applicationEntity.getParentId());
-        setResourceId(applicationEntity.getResourceId());
-        setResourceName(applicationEntity.getResourceName());
+    public int create(String baseUrl, String path, String userName, String password) throws IOException {
+        Response<ResponseHolder> response = create(baseUrl, path, id, userName, password);
+        setLastStatusCode(response);
+        int code = getLastStatusCode();
+        if (code == Types.STATUS_CODE_CREATED) {
+            ApplicationEntity applicationEntity = response.body().getApplicationEntity();
+            // Update current object.
+            setCreationTime(applicationEntity.getCreationTime());
+            setExpiryTime(applicationEntity.getExpiryTime());
+            setLastModifiedTime(applicationEntity.getLastModifiedTime());
+            setParentId(applicationEntity.getParentId());
+            setResourceId(applicationEntity.getResourceId());
+            setResourceName(applicationEntity.getResourceName());
+        }
+        return code;
     }
 
+    // TODO How to return status code if not ACCEPTED?
     public static ApplicationEntity retrieveAe(
             String baseUrl, String path, String aeId, String userName, String password) throws IOException {
-        ApplicationEntity applicationEntity = retrieve(baseUrl, path, aeId, userName, password).body()
-                .getApplicationEntity();
-        applicationEntity.setBaseUrl(baseUrl);
-        applicationEntity.setPath(path);
-        return applicationEntity;
+        Response<ResponseHolder> response = retrieve(baseUrl, path, aeId, userName, password);
+        if (getCodeFromResponse(response) == Types.STATUS_CODE_ACCEPTED) {
+            ApplicationEntity applicationEntity = retrieve(baseUrl, path, aeId, userName, password).body()
+                    .getApplicationEntity();
+            applicationEntity.setBaseUrl(baseUrl);
+            applicationEntity.setPath(path);
+            applicationEntity.setLastStatusCode(response);
+            return applicationEntity;
+        }
+        return null;
     }
 
 //    public static ApplicationEntity create(Context context, String fqdn, int port, boolean useHttps,

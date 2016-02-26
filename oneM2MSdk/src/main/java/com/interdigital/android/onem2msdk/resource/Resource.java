@@ -80,6 +80,7 @@ public abstract class Resource {
 
     private String baseUrl;
     private String path;
+    private int lastStatusCode = 0;
 
     // No network request.
     // Builder pattern would be better here?
@@ -126,9 +127,9 @@ public abstract class Resource {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
         RequestHolder requestHolder = new RequestHolder(this);
-        Call<ResponseHolder> responseHolder = oneM2MServiceMap.get(baseUrl).createAe(
+        Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).createAe(
                 path, auth, aeId, resourceName, requestHolder);
-        Response<ResponseHolder> response = responseHolder.execute();
+        Response<ResponseHolder> response = call.execute();
         return response;
     }
 
@@ -136,9 +137,8 @@ public abstract class Resource {
             String baseUrl, String path, String aeId, String userName, String password) throws IOException {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
-        Call<ResponseHolder> responseHolder = oneM2MServiceMap.get(baseUrl).retrieveAe(
-                path, auth, aeId);
-        Response<ResponseHolder> response = responseHolder.execute();
+        Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).retrieveAe(path, auth, aeId);
+        Response<ResponseHolder> response = call.execute();
         return response;
     }
 
@@ -147,9 +147,9 @@ public abstract class Resource {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
         RequestHolder requestHolder = new RequestHolder(this);
-        Call<ResponseHolder> responseHolder = oneM2MServiceMap.get(baseUrl).updateAe(
+        Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).updateAe(
                 path, auth, aeId, requestHolder);
-        Response<ResponseHolder> response = responseHolder.execute();
+        Response<ResponseHolder> response = call.execute();
         return response;
     }
 
@@ -157,16 +157,16 @@ public abstract class Resource {
             String baseUrl, String path, String aeId, String userName, String password) throws IOException {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
-        Call<Void> responseHolder = oneM2MServiceMap.get(baseUrl).deleteAe(path, auth, aeId);
-        Response<Void> response = responseHolder.execute();
+        Call<Void> call = oneM2MServiceMap.get(baseUrl).deleteAe(path, auth, aeId);
+        Response<Void> response = call.execute();
         return response;
     }
 
     public Response<Void> delete(String aeId, String userName, String password) throws IOException {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
-        Call<Void> responseHolder = oneM2MServiceMap.get(baseUrl).deleteAe(path, auth, aeId);
-        Response<Void> response = responseHolder.execute();
+        Call<Void> call = oneM2MServiceMap.get(baseUrl).deleteAe(path, auth, aeId);
+        Response<Void> response = call.execute();
         return response;
     }
 
@@ -295,10 +295,25 @@ public abstract class Resource {
         }
     }
 
+    public int getLastStatusCode() {
+        return lastStatusCode;
+    }
+
     // Most applications should not need to call this.
     public void free() {
         gson = null;
         oneM2MServiceMap.clear();
+    }
+
+    protected void setLastStatusCode(Response response) {
+        lastStatusCode = getCodeFromResponse(response);
+    }
+
+    protected static int getCodeFromResponse(Response response) {
+        if (response.headers().get("X-M2M-RSC") != null) {
+            return Integer.parseInt(response.headers().get("X-M2M-RSC"));
+        }
+        return 0;
     }
 
     private static void maybeMakeOneM2MService(String baseUrl) {

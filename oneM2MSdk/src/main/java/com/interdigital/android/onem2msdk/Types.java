@@ -92,7 +92,7 @@ public class Types {
     public @interface StatusCode {
     }
 
-    public static final int STATUS_CODE_ACCEPTED = 1000;
+    public static final int STATUS_CODE_ACCEPTED = 2000;
     public static final int STATUS_CODE_CREATED = 2001;
     public static final int STATUS_CODE_CONFLICT = 2101;
     public static final int STATUS_CODE_BAD_REQUEST = 4000;
