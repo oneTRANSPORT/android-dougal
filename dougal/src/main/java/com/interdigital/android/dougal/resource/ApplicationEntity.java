@@ -3,7 +3,6 @@ package com.interdigital.android.dougal.resource;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.interdigital.android.dougal.Types;
-import com.interdigital.android.dougal.exception.DougalException;
 import com.interdigital.android.dougal.network.response.ResponseHolder;
 
 import retrofit2.Response;
@@ -79,25 +78,11 @@ public class ApplicationEntity extends Resource {
         return applicationEntity;
     }
 
-//    public static ApplicationEntity create(Context context, String fqdn, int port, boolean useHttps,
-//                                           String cseName, String aeName, String aeId, String userName, String password) {
-//        Ri ri = new Ri(fqdn, port, "/" + cseName);
-//        ApplicationEntity applicationEntity = new ApplicationEntity();
-//        applicationEntity.setApplicationId(aeName);
-//        RequestHolder requestHolder = new RequestHolder();
-//        requestHolder.setApplicationEntity(applicationEntity);
-//        requestHolder.putOriginProperty(aeId);
-//        requestHolder.putContentTypeProperty("application/json; ty=2");
-//        requestHolder.putNameProperty(aeName);
-//        return post(context, ri, useHttps, requestHolder, userName, password).getApplicationEntity();
-//    }
-
-//    public static int delete(Context context,
-//                             String fqdn, int port, boolean useHttps, String cseName, String aeName, String aeId,
-//                             String userName, String password) {
-//        Ri ri = new Ri(fqdn, port, "/" + cseName + "/" + aeName);
-//        return delete(context, ri, useHttps, aeId, userName, password).getStatusCode();
-//    }
+    public static void retrieveAeAsync(String baseUrl, String path, String aeId,
+                                       String userName, String password, DougalCallback dougalCallback) {
+        retrieveAsync(baseUrl, path, aeId, userName, password,
+                new ApplicationEntityRetrieveCallback(baseUrl, path, dougalCallback));
+    }
 
 //    public static Discovery discoverAll(Context context, String fqdn, int port, boolean useHttps,
 //                                        String cseName, String aeId, String userName, String password) {

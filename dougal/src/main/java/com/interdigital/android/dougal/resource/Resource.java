@@ -20,6 +20,7 @@ import java.util.HashMap;
 import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -152,6 +153,14 @@ public abstract class Resource {
             throw new DougalException(code);
         }
         return response;
+    }
+
+    public static void retrieveAsync(String baseUrl, String path, String aeId,
+                                     String userName, String password, Callback<ResponseHolder> callback) {
+        maybeMakeOneM2MService(baseUrl);
+        String auth = Credentials.basic(userName, password);
+        Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).retrieveAe(path, auth, aeId);
+        call.enqueue(callback);
     }
 
     // TODO Difficult because the CSE currently requires differential updates.
@@ -320,7 +329,7 @@ public abstract class Resource {
         oneM2MServiceMap.clear();
     }
 
-    private static int getCodeFromResponse(Response response) {
+    protected static int getCodeFromResponse(Response response) {
         if (response.headers().get("X-M2M-RSC") != null) {
             return Integer.parseInt(response.headers().get("X-M2M-RSC"));
         }
