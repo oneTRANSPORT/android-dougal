@@ -67,7 +67,8 @@ public class Types {
     public static final int RESOURCE_TYPE_SCHEDULE_ANNC = 10018;
 
     @Retention(SOURCE)
-    @IntDef({STATUS_CODE_ACCEPTED, STATUS_CODE_CREATED, STATUS_CODE_CONFLICT,
+    @IntDef({STATUS_CODE_ACCEPTED, STATUS_CODE_OK, STATUS_CODE_CREATED,
+            STATUS_CODE_DELETED, STATUS_CODE_UPDATED, STATUS_CODE_CONFLICT,
             STATUS_CODE_BAD_REQUEST, STATUS_CODE_NOT_FOUND,
             STATUS_CODE_OPERATION_NOT_ALLOWED, STATUS_CODE_REQUEST_TIMEOUT,
             STATUS_CODE_SUBSCRIPTION_CREATOR_HAS_NO_PRIVILEGE,
@@ -87,18 +88,21 @@ public class Types {
             STATUS_CODE_MANAGEMENT_SESSION_ESTABLISHMENT_TIMEOUT,
             STATUS_CODE_INVALID_CMDTYPE, STATUS_CODE_INVALID_ARGUMENTS,
             STATUS_CODE_INSUFFICIENT_ARGUMENT,
-            STATUS_CODE_MGMT_CONVERSION_ERROR, STATUS_CODE_CANCELLATION_FAILED,
+            STATUS_CODE_MGMT_CONVERSION_ERROR, STATUS_CODE_MGMT_CANCELLATION_FAILED,
             STATUS_CODE_ALREADY_COMPLETE, STATUS_CODE_COMMAND_NOT_CANCELLABLE})
     public @interface StatusCode {
     }
 
-    public static final int STATUS_CODE_ACCEPTED = 2000;
+    public static final int STATUS_CODE_ACCEPTED = 1000;
+    public static final int STATUS_CODE_OK = 2000;
     public static final int STATUS_CODE_CREATED = 2001;
-    public static final int STATUS_CODE_CONFLICT = 2101;
+    public static final int STATUS_CODE_DELETED = 2002;
+    public static final int STATUS_CODE_UPDATED = 2004;
     public static final int STATUS_CODE_BAD_REQUEST = 4000;
     public static final int STATUS_CODE_NOT_FOUND = 4004;
     public static final int STATUS_CODE_OPERATION_NOT_ALLOWED = 4005;
     public static final int STATUS_CODE_REQUEST_TIMEOUT = 4008;
+    public static final int STATUS_CODE_CONFLICT = 4015;
     public static final int STATUS_CODE_SUBSCRIPTION_CREATOR_HAS_NO_PRIVILEGE = 4101;
     public static final int STATUS_CODE_CONTENTS_UNACCEPTABLE = 4102;
     public static final int STATUS_CODE_ACCESS_DENIED = 4103;
@@ -122,7 +126,7 @@ public class Types {
     public static final int STATUS_CODE_INVALID_ARGUMENTS = 6023;
     public static final int STATUS_CODE_INSUFFICIENT_ARGUMENT = 6024;
     public static final int STATUS_CODE_MGMT_CONVERSION_ERROR = 6025;
-    public static final int STATUS_CODE_CANCELLATION_FAILED = 6026;
+    public static final int STATUS_CODE_MGMT_CANCELLATION_FAILED = 6026;
     public static final int STATUS_CODE_ALREADY_COMPLETE = 6028;
     public static final int STATUS_CODE_COMMAND_NOT_CANCELLABLE = 6029;
 }

@@ -8,10 +8,11 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.interdigital.android.dougal.DougalService;
 import com.interdigital.android.dougal.Types;
-import com.interdigital.android.dougal.network.request.RequestHolder;
-import com.interdigital.android.dougal.network.response.ResponseHolder;
+import com.interdigital.android.dougal.exception.DougalException;
 import com.interdigital.android.dougal.network.AddHeadersInterceptor;
 import com.interdigital.android.dougal.network.LoggingInterceptor;
+import com.interdigital.android.dougal.network.request.RequestHolder;
+import com.interdigital.android.dougal.network.response.ResponseHolder;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -80,7 +81,6 @@ public abstract class Resource {
 
     private String baseUrl;
     private String path;
-    private int lastStatusCode = 0;
 
     // No network request.
     // Builder pattern would be better here?
@@ -123,25 +123,44 @@ public abstract class Resource {
     // Notify POST
 
     public Response<ResponseHolder> create(
-            String baseUrl, String path, String aeId, String userName, String password) throws IOException {
+            String baseUrl, String path, String aeId, String userName, String password)
+            throws DougalException {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
         RequestHolder requestHolder = new RequestHolder(this);
         Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).createAe(
                 path, auth, aeId, resourceName, requestHolder);
-        Response<ResponseHolder> response = call.execute();
-        return response;
+        try {
+            Response<ResponseHolder> response = call.execute();
+            int code = getCodeFromResponse(response);
+            if (code != Types.STATUS_CODE_CREATED) {
+                throw new DougalException("Error code = " + code);
+            }
+            return response;
+        } catch (IOException ioException) {
+            throw new DougalException("IO Exception");
+        }
     }
 
     public static Response<ResponseHolder> retrieve(
-            String baseUrl, String path, String aeId, String userName, String password) throws IOException {
+            String baseUrl, String path, String aeId, String userName, String password)
+            throws DougalException {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
         Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).retrieveAe(path, auth, aeId);
-        Response<ResponseHolder> response = call.execute();
-        return response;
+        try {
+            Response<ResponseHolder> response = call.execute();
+            int code = getCodeFromResponse(response);
+            if (code != Types.STATUS_CODE_OK) {
+                throw new DougalException("Error code = " + code);
+            }
+            return response;
+        } catch (IOException ioException) {
+            throw new DougalException("IO Exception");
+        }
     }
 
+    // TODO Difficult because the CSE currently requires differential updates.
     public Response<ResponseHolder> update(
             String aeId, String userName, String password) throws IOException {
         maybeMakeOneM2MService(baseUrl);
@@ -154,12 +173,21 @@ public abstract class Resource {
     }
 
     public static Response<Void> delete(
-            String baseUrl, String path, String aeId, String userName, String password) throws IOException {
+            String baseUrl, String path, String aeId, String userName, String password)
+            throws DougalException {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
         Call<Void> call = oneM2MServiceMap.get(baseUrl).deleteAe(path, auth, aeId);
-        Response<Void> response = call.execute();
-        return response;
+        try {
+            Response<Void> response = call.execute();
+            int code = getCodeFromResponse(response);
+            if (code != Types.STATUS_CODE_DELETED) {
+                throw new DougalException("Error code = " + code);
+            }
+            return response;
+        } catch (IOException ioException) {
+            throw new DougalException("IO Exception");
+        }
     }
 
     public Response<Void> delete(String aeId, String userName, String password) throws IOException {
@@ -295,21 +323,13 @@ public abstract class Resource {
         }
     }
 
-    public int getLastStatusCode() {
-        return lastStatusCode;
-    }
-
     // Most applications should not need to call this.
     public void free() {
         gson = null;
         oneM2MServiceMap.clear();
     }
 
-    protected void setLastStatusCode(Response response) {
-        lastStatusCode = getCodeFromResponse(response);
-    }
-
-    protected static int getCodeFromResponse(Response response) {
+    private static int getCodeFromResponse(Response response) {
         if (response.headers().get("X-M2M-RSC") != null) {
             return Integer.parseInt(response.headers().get("X-M2M-RSC"));
         }
