@@ -12,6 +12,11 @@ public class DougalException extends Exception {
         this.code = code;
     }
 
+    @Override
+    public String getMessage() {
+        return "Status code = " + code;
+    }
+
     @Types.StatusCode
     public int getCode() {
         return code;

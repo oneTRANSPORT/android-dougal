@@ -140,6 +140,16 @@ public abstract class Resource {
         return response;
     }
 
+    public void createAsync(String baseUrl, String path, String aeId, String userName, String password,
+                            Callback<ResponseHolder> callback) {
+        maybeMakeOneM2MService(baseUrl);
+        String auth = Credentials.basic(userName, password);
+        RequestHolder requestHolder = new RequestHolder(this);
+        Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).createAe(
+                path, auth, aeId, resourceName, requestHolder);
+        call.enqueue(callback);
+    }
+
     public static Response<ResponseHolder> retrieve(
             String baseUrl, String path, String aeId, String userName, String password)
             throws Exception {
@@ -175,6 +185,16 @@ public abstract class Resource {
         return response;
     }
 
+    public void updateAsync(
+            String aeId, String userName, String password, Callback<ResponseHolder> callback) {
+        maybeMakeOneM2MService(baseUrl);
+        String auth = Credentials.basic(userName, password);
+        RequestHolder requestHolder = new RequestHolder(this);
+        Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).updateAe(
+                path, auth, aeId, requestHolder);
+        call.enqueue(callback);
+    }
+
     public static Response<Void> delete(
             String baseUrl, String path, String aeId, String userName, String password)
             throws Exception {
@@ -190,12 +210,33 @@ public abstract class Resource {
         return response;
     }
 
-    public Response<Void> delete(String aeId, String userName, String password) throws IOException {
+    public Response<Void> delete(String aeId, String userName, String password) throws Exception {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
         Call<Void> call = oneM2MServiceMap.get(baseUrl).deleteAe(path, auth, aeId);
         Response<Void> response = call.execute();
+        @Types.StatusCode
+        int code = getCodeFromResponse(response);
+        if (code != Types.STATUS_CODE_DELETED) {
+            throw new DougalException(code);
+        }
         return response;
+    }
+
+    public static void deleteAsync(String baseUrl, String path, String aeId,
+                                   String userName, String password, Callback<Void> callback) {
+        maybeMakeOneM2MService(baseUrl);
+        String auth = Credentials.basic(userName, password);
+        Call<Void> call = oneM2MServiceMap.get(baseUrl).deleteAe(path, auth, aeId);
+        call.enqueue(callback);
+    }
+
+    public void deleteAsync(
+            String aeId, String userName, String password, Callback<ResponseHolder> callback) {
+        maybeMakeOneM2MService(baseUrl);
+        String auth = Credentials.basic(userName, password);
+        Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).retrieveAe(path, auth, aeId);
+        call.enqueue(callback);
     }
 
     public String getResourceId() {
@@ -359,6 +400,7 @@ public abstract class Resource {
 
     @NonNull
     private static synchronized String getUniqueRequestId() {
+//        return "paul-id";
         return String.valueOf(requestId++);
     }
 }

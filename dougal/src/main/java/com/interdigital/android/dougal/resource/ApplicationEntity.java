@@ -60,12 +60,19 @@ public class ApplicationEntity extends Resource {
         Response<ResponseHolder> response = create(baseUrl, path, id, userName, password);
         ApplicationEntity applicationEntity = response.body().getApplicationEntity();
         // Update current object.
+        // TODO URL returned?
         setCreationTime(applicationEntity.getCreationTime());
         setExpiryTime(applicationEntity.getExpiryTime());
         setLastModifiedTime(applicationEntity.getLastModifiedTime());
         setParentId(applicationEntity.getParentId());
         setResourceId(applicationEntity.getResourceId());
         setResourceName(applicationEntity.getResourceName());
+    }
+
+    public void createAsync(
+            String baseUrl, String path, String userName, String password, DougalCallback dougalCallback) {
+        createAsync(baseUrl, path, id, userName, password,
+                new ApplicationEntityCreateCallback(this, dougalCallback));
     }
 
     public static ApplicationEntity retrieveAe(
@@ -82,6 +89,27 @@ public class ApplicationEntity extends Resource {
                                        String userName, String password, DougalCallback dougalCallback) {
         retrieveAsync(baseUrl, path, aeId, userName, password,
                 new ApplicationEntityRetrieveCallback(baseUrl, path, dougalCallback));
+    }
+
+    public void update(String userName, String password) throws Exception {
+        // TODO Decide what to do here.
+        Response<ResponseHolder> response = update(id, userName, password);
+    }
+
+    public void updateAsync(String userName, String password, DougalCallback dougalCallback) {
+        updateAsync(id, userName, password, new ApplicationEntityUpdateCallback(this, dougalCallback));
+    }
+
+    public static void deleteAeAsync(String baseUrl, String path, String aeId,
+                                     String userName, String password, DougalCallback dougalCallback) {
+        deleteAsync(baseUrl, path, aeId, userName, password,
+                new ApplicationEntityDeleteCallback(dougalCallback));
+    }
+
+    public void deleteAeAsync(
+                                     String userName, String password, DougalCallback dougalCallback) {
+        deleteAsync(getBaseUrl(), getPath(), id, userName, password,
+                new ApplicationEntityDeleteCallback(dougalCallback));
     }
 
 //    public static Discovery discoverAll(Context context, String fqdn, int port, boolean useHttps,
