@@ -50,6 +50,6 @@ public class ApplicationEntityCreateCallback implements Callback<ResponseHolder>
 
     @Override
     public void onFailure(Call<ResponseHolder> call, Throwable t) {
-        // TODO Network failure?
+        dougalCallback.getResult(null, t);
     }
 }

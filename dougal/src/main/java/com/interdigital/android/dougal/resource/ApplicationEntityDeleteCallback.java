@@ -32,6 +32,6 @@ public class ApplicationEntityDeleteCallback implements Callback<Void> {
 
     @Override
     public void onFailure(Call<Void> call, Throwable t) {
-        // TODO Network failure?
+        dougalCallback.getResult(null, t);
     }
 }
