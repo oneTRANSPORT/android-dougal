@@ -27,7 +27,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public abstract class Resource {
 
-    private static final String AUTHORISATION_HEADER = "Authorization";
+    private static final String CONTENT_TYPE_PREFIX = "application/json; ty=";
 
     // We should be able to use one Gson instance for everything.  Should be thread-safe.
     private static Gson gson;
@@ -123,14 +123,14 @@ public abstract class Resource {
     // Delete DELETE
     // Notify POST
 
-    public Response<ResponseHolder> create(
-            String baseUrl, String path, String aeId, String userName, String password)
-            throws Exception {
+    public Response<ResponseHolder> create(@NonNull String baseUrl, @NonNull String path,
+                                           @NonNull String aeId, String userName, String password) throws Exception {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
         RequestHolder requestHolder = new RequestHolder(this);
-        Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).createAe(
-                path, auth, aeId, resourceName, requestHolder);
+        String contentType = CONTENT_TYPE_PREFIX + resourceType;
+        Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).create(
+                path, auth, aeId, resourceName, contentType, requestHolder);
         Response<ResponseHolder> response = call.execute();
         @Types.StatusCode
         int code = getCodeFromResponse(response);
@@ -140,18 +140,19 @@ public abstract class Resource {
         return response;
     }
 
-    public void createAsync(String baseUrl, String path, String aeId, String userName, String password,
-                            Callback<ResponseHolder> callback) {
+    public void createAsync(@NonNull String baseUrl, @NonNull String path, @NonNull String aeId,
+                            String userName, String password, Callback<ResponseHolder> callback) {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
         RequestHolder requestHolder = new RequestHolder(this);
-        Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).createAe(
-                path, auth, aeId, resourceName, requestHolder);
+        String contentType = "application/json; ty=" + resourceType;
+        Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).create(
+                path, auth, aeId, resourceName, contentType, requestHolder);
         call.enqueue(callback);
     }
 
-    public static Response<ResponseHolder> retrieve(
-            String baseUrl, String path, String aeId, String userName, String password)
+    public static Response<ResponseHolder> retrieve(@NonNull String baseUrl, @NonNull String path,
+                                                    @NonNull String aeId, String userName, String password)
             throws Exception {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
@@ -165,7 +166,7 @@ public abstract class Resource {
         return response;
     }
 
-    public static void retrieveAsync(String baseUrl, String path, String aeId,
+    public static void retrieveAsync(@NonNull String baseUrl, @NonNull String path, @NonNull String aeId,
                                      String userName, String password, Callback<ResponseHolder> callback) {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
@@ -175,7 +176,7 @@ public abstract class Resource {
 
     // TODO Difficult because the CSE currently requires differential updates.
     public Response<ResponseHolder> update(
-            String aeId, String userName, String password) throws IOException {
+            @NonNull String aeId, String userName, String password) throws IOException {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
         RequestHolder requestHolder = new RequestHolder(this);
@@ -186,7 +187,7 @@ public abstract class Resource {
     }
 
     public void updateAsync(
-            String aeId, String userName, String password, Callback<ResponseHolder> callback) {
+            @NonNull String aeId, String userName, String password, Callback<ResponseHolder> callback) {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
         RequestHolder requestHolder = new RequestHolder(this);
@@ -195,8 +196,21 @@ public abstract class Resource {
         call.enqueue(callback);
     }
 
-    public static Response<Void> delete(
-            String baseUrl, String path, String aeId, String userName, String password)
+    public static Response<Void> delete(@NonNull String baseUrl, @NonNull String path,
+                                        @NonNull String aeId, String userName, String password) throws Exception {
+        maybeMakeOneM2MService(baseUrl);
+        String auth = Credentials.basic(userName, password);
+        Call<Void> call = oneM2MServiceMap.get(baseUrl).deleteAe(path, auth, aeId);
+        Response<Void> response = call.execute();
+        @Types.StatusCode
+        int code = getCodeFromResponse(response);
+        if (code != Types.STATUS_CODE_DELETED) {
+            throw new DougalException(code);
+        }
+        return response;
+    }
+
+    public Response<Void> delete(@NonNull String aeId, String userName, String password)
             throws Exception {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
@@ -210,20 +224,7 @@ public abstract class Resource {
         return response;
     }
 
-    public Response<Void> delete(String aeId, String userName, String password) throws Exception {
-        maybeMakeOneM2MService(baseUrl);
-        String auth = Credentials.basic(userName, password);
-        Call<Void> call = oneM2MServiceMap.get(baseUrl).deleteAe(path, auth, aeId);
-        Response<Void> response = call.execute();
-        @Types.StatusCode
-        int code = getCodeFromResponse(response);
-        if (code != Types.STATUS_CODE_DELETED) {
-            throw new DougalException(code);
-        }
-        return response;
-    }
-
-    public static void deleteAsync(String baseUrl, String path, String aeId,
+    public static void deleteAsync(@NonNull String baseUrl, @NonNull String path, @NonNull String aeId,
                                    String userName, String password, Callback<Void> callback) {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
@@ -232,7 +233,7 @@ public abstract class Resource {
     }
 
     public void deleteAsync(
-            String aeId, String userName, String password, Callback<ResponseHolder> callback) {
+            @NonNull String aeId, String userName, String password, Callback<ResponseHolder> callback) {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
         Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).retrieveAe(path, auth, aeId);

@@ -17,14 +17,14 @@ public interface DougalService {
 
     @Headers({
             "X-M2M-RI: i4568g",
-            "Content-Type: application/json; ty=" + Types.RESOURCE_TYPE_APPLICATION_ENTITY
     })
     @POST("{path}")
-    Call<ResponseHolder> createAe(
+    Call<ResponseHolder> create(
             @Path(value = "path", encoded = true) String path,
             @Header("Authorization") String authorization,
             @Header("X-M2M-Origin") String aeId,
             @Header("X-M2M-NM") String aeName,
+            @Header("Content-Type") String contentType,
             @Body RequestHolder requestHolder);
 
     // TODO Generic retrieve?
