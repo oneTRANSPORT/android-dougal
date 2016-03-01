@@ -104,15 +104,15 @@ public class ApplicationEntity extends Resource {
         delete(id, userName, password);
     }
 
-    public static void deleteAeAsync(String baseUrl, String path, String aeId,
+    public static void deleteAsync(String baseUrl, String path, String aeId,
                                      String userName, String password, DougalCallback dougalCallback) {
         deleteAsync(baseUrl, path, aeId, userName, password,
                 new ApplicationEntityDeleteCallback(dougalCallback));
     }
 
-    public void deleteAeAsync(
+    public void deleteAsync(
             String userName, String password, DougalCallback dougalCallback) {
-        deleteAsync(getBaseUrl(), getPath(), id, userName, password,
+        deleteAsync(id, userName, password,
                 new ApplicationEntityDeleteCallback(dougalCallback));
     }
 
