@@ -15,9 +15,6 @@ import retrofit2.http.Path;
 
 public interface DougalService {
 
-    @Headers({
-            "X-M2M-RI: i4568g",
-    })
     @POST("{path}")
     Call<ResponseHolder> create(
             @Path(value = "path", encoded = true) String path,
@@ -25,35 +22,31 @@ public interface DougalService {
             @Header("X-M2M-Origin") String aeId,
             @Header("X-M2M-NM") String aeName,
             @Header("Content-Type") String contentType,
+            @Header("X-M2M-RI") String requestId,
             @Body RequestHolder requestHolder);
 
-    // TODO Generic retrieve?
-    @Headers({
-            "X-M2M-RI: 34543"
-    })
     @GET("{path}")
-    Call<ResponseHolder> retrieveAe(
-            @Path(value = "path", encoded = true) String path,
-            @Header("Authorization") String authorization,
-            @Header("X-M2M-Origin") String aeId);
-
-    @Headers({
-            "X-M2M-RI: 45897",
-            "Content-Type: application/json"
-    })
-    @PUT("{path}")
-    Call<ResponseHolder> updateAe(
+    Call<ResponseHolder> retrieve(
             @Path(value = "path", encoded = true) String path,
             @Header("Authorization") String authorization,
             @Header("X-M2M-Origin") String aeId,
-            @Body RequestHolder requestHolder);
+            @Header("X-M2M-RI") String requestId);
 
     @Headers({
-            "X-M2M-RI: 487bgkl"
+            "Content-Type: application/json"
     })
-    @DELETE("{path}")
-    Call<Void> deleteAe(
+    @PUT("{path}")
+    Call<ResponseHolder> update(
             @Path(value = "path", encoded = true) String path,
             @Header("Authorization") String authorization,
-            @Header("X-M2M-Origin") String aeId);
+            @Header("X-M2M-Origin") String aeId,
+            @Header("X-M2M-RI") String requestId,
+            @Body RequestHolder requestHolder);
+
+    @DELETE("{path}")
+    Call<Void> delete(
+            @Path(value = "path", encoded = true) String path,
+            @Header("Authorization") String authorization,
+            @Header("X-M2M-Origin") String aeId,
+            @Header("X-M2M-RI") String requestId);
 }

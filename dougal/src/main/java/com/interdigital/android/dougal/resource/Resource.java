@@ -99,7 +99,6 @@ public abstract class Resource {
         this.labels = labels;
     }
 
-
     // CREATE
     // If we have the full Uri of the resource to be created on the server, the request is:
     //
@@ -130,7 +129,7 @@ public abstract class Resource {
         RequestHolder requestHolder = new RequestHolder(this);
         String contentType = CONTENT_TYPE_PREFIX + resourceType;
         Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).create(
-                path, auth, aeId, resourceName, contentType, requestHolder);
+                path, auth, aeId, resourceName, contentType, getRequestId(), requestHolder);
         Response<ResponseHolder> response = call.execute();
         @Types.StatusCode
         int code = getCodeFromResponse(response);
@@ -147,7 +146,7 @@ public abstract class Resource {
         RequestHolder requestHolder = new RequestHolder(this);
         String contentType = "application/json; ty=" + resourceType;
         Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).create(
-                path, auth, aeId, resourceName, contentType, requestHolder);
+                path, auth, aeId, resourceName, contentType, getRequestId(), requestHolder);
         call.enqueue(callback);
     }
 
@@ -156,7 +155,8 @@ public abstract class Resource {
             throws Exception {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
-        Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).retrieveAe(path, auth, aeId);
+        Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl)
+                .retrieve(path, auth, aeId, getRequestId());
         Response<ResponseHolder> response = call.execute();
         @Types.StatusCode
         int code = getCodeFromResponse(response);
@@ -170,7 +170,8 @@ public abstract class Resource {
                                      String userName, String password, Callback<ResponseHolder> callback) {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
-        Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).retrieveAe(path, auth, aeId);
+        Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl)
+                .retrieve(path, auth, aeId, getRequestId());
         call.enqueue(callback);
     }
 
@@ -180,8 +181,8 @@ public abstract class Resource {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
         RequestHolder requestHolder = new RequestHolder(this);
-        Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).updateAe(
-                path, auth, aeId, requestHolder);
+        Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).update(
+                path, auth, aeId, getRequestId(), requestHolder);
         Response<ResponseHolder> response = call.execute();
         return response;
     }
@@ -191,52 +192,50 @@ public abstract class Resource {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
         RequestHolder requestHolder = new RequestHolder(this);
-        Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).updateAe(
-                path, auth, aeId, requestHolder);
+        Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).update(
+                path, auth, aeId, getRequestId(), requestHolder);
         call.enqueue(callback);
     }
 
-    public static Response<Void> delete(@NonNull String baseUrl, @NonNull String path,
-                                        @NonNull String aeId, String userName, String password) throws Exception {
+    public static void delete(@NonNull String baseUrl, @NonNull String path,
+                              @NonNull String aeId, String userName, String password) throws Exception {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
-        Call<Void> call = oneM2MServiceMap.get(baseUrl).deleteAe(path, auth, aeId);
+        Call<Void> call = oneM2MServiceMap.get(baseUrl).delete(path, auth, aeId, getRequestId());
         Response<Void> response = call.execute();
         @Types.StatusCode
         int code = getCodeFromResponse(response);
         if (code != Types.STATUS_CODE_DELETED) {
             throw new DougalException(code);
         }
-        return response;
     }
 
-    public Response<Void> delete(@NonNull String aeId, String userName, String password)
+    public void delete(@NonNull String aeId, String userName, String password)
             throws Exception {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
-        Call<Void> call = oneM2MServiceMap.get(baseUrl).deleteAe(path, auth, aeId);
+        Call<Void> call = oneM2MServiceMap.get(baseUrl).delete(path, auth, aeId, getRequestId());
         Response<Void> response = call.execute();
         @Types.StatusCode
         int code = getCodeFromResponse(response);
         if (code != Types.STATUS_CODE_DELETED) {
             throw new DougalException(code);
         }
-        return response;
     }
 
     public static void deleteAsync(@NonNull String baseUrl, @NonNull String path, @NonNull String aeId,
                                    String userName, String password, Callback<Void> callback) {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
-        Call<Void> call = oneM2MServiceMap.get(baseUrl).deleteAe(path, auth, aeId);
+        Call<Void> call = oneM2MServiceMap.get(baseUrl).delete(path, auth, aeId, getRequestId());
         call.enqueue(callback);
     }
 
     public void deleteAsync(
-            @NonNull String aeId, String userName, String password, Callback<ResponseHolder> callback) {
+            @NonNull String aeId, String userName, String password, Callback<Void> callback) {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
-        Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).retrieveAe(path, auth, aeId);
+        Call<Void> call = oneM2MServiceMap.get(baseUrl).delete(path, auth, aeId, getRequestId());
         call.enqueue(callback);
     }
 
@@ -400,8 +399,7 @@ public abstract class Resource {
     }
 
     @NonNull
-    private static synchronized String getUniqueRequestId() {
-//        return "paul-id";
+    private static synchronized String getRequestId() {
         return String.valueOf(requestId++);
     }
 }

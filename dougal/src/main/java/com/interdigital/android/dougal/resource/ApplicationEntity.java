@@ -100,6 +100,10 @@ public class ApplicationEntity extends Resource {
         updateAsync(id, userName, password, new ApplicationEntityUpdateCallback(this, dougalCallback));
     }
 
+    public void delete(String userName, String password) throws Exception {
+        delete(id, userName, password);
+    }
+
     public static void deleteAeAsync(String baseUrl, String path, String aeId,
                                      String userName, String password, DougalCallback dougalCallback) {
         deleteAsync(baseUrl, path, aeId, userName, password,
@@ -107,7 +111,7 @@ public class ApplicationEntity extends Resource {
     }
 
     public void deleteAeAsync(
-                                     String userName, String password, DougalCallback dougalCallback) {
+            String userName, String password, DougalCallback dougalCallback) {
         deleteAsync(getBaseUrl(), getPath(), id, userName, password,
                 new ApplicationEntityDeleteCallback(dougalCallback));
     }
@@ -140,6 +144,30 @@ public class ApplicationEntity extends Resource {
 
     public void setRequestReachable(boolean requestReachable) {
         this.requestReachable = requestReachable;
+    }
+
+    public String[] getPointOfAccessList() {
+        return pointOfAccessList;
+    }
+
+    public void setPointOfAccessList(String[] pointOfAccessList) {
+        this.pointOfAccessList = pointOfAccessList;
+    }
+
+    public String getOntologyRef() {
+        return ontologyRef;
+    }
+
+    public void setOntologyRef(String ontologyRef) {
+        this.ontologyRef = ontologyRef;
+    }
+
+    public String getNodeLink() {
+        return nodeLink;
+    }
+
+    public void setNodeLink(String nodeLink) {
+        this.nodeLink = nodeLink;
     }
 }
 
