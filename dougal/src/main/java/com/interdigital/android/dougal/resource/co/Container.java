@@ -105,25 +105,6 @@ public class Container extends Resource {
                 new ContainerDeleteCallback(dougalCallback));
     }
 
-//    public static Container create(Context context, String fqdn, int port, boolean useHttps,
-//                                       String cseName, String aeName, String dcName, String aeId,
-//                                       String userName, String password) {
-//        Ri ri = new Ri(fqdn, port, "/" + cseName + "/" + aeName);
-//        Container container = new Container();
-//        container.setResourceName("cnt");
-//        container.setLabels(new String[]{"TestLabel1"});
-//        RequestHolder requestHolder = new RequestHolder();
-//        requestHolder.setDataContainer(container);
-//        requestHolder.putOriginProperty(aeId);
-//        requestHolder.putContentTypeProperty("application/json; ty=3");
-//        requestHolder.putNameProperty(dcName);
-//        ResponseHolder responseHolder = post(context, ri, useHttps, requestHolder, userName, password);
-//        if (responseHolder != null) {
-//            return responseHolder.getDataContainer();
-//        }
-//        return null;
-//    }
-
 //    public static Container getByName(Context context, String fqdn, int port, boolean useHttps,
 //                                          String cseName, String aeName, String dcName, String aeId,
 //                                          String userName, String password) {
@@ -143,7 +124,6 @@ public class Container extends Resource {
 //        return discover(context, ri, useHttps, aeId, userName, password);
 //    }
 
-
     public String getAeId() {
         return aeId;
     }
@@ -152,43 +132,43 @@ public class Container extends Resource {
         this.aeId = aeId;
     }
 
-    public long getCurrentByteSize() {
+    public Long getCurrentByteSize() {
         return currentByteSize;
     }
 
-    public void setCurrentByteSize(long currentByteSize) {
+    public void setCurrentByteSize(Long currentByteSize) {
         this.currentByteSize = currentByteSize;
     }
 
-    public int getCurrentNumberOfInstances() {
+    public Integer getCurrentNumberOfInstances() {
         return currentNumberOfInstances;
     }
 
-    public void setCurrentNumberOfInstances(int currentNumberOfInstances) {
+    public void setCurrentNumberOfInstances(Integer currentNumberOfInstances) {
         this.currentNumberOfInstances = currentNumberOfInstances;
     }
 
-    public long getMaxByteSize() {
+    public Long getMaxByteSize() {
         return maxByteSize;
     }
 
-    public void setMaxByteSize(long maxByteSize) {
+    public void setMaxByteSize(Long maxByteSize) {
         this.maxByteSize = maxByteSize;
     }
 
-    public long getMaxInstanceAge() {
+    public Long getMaxInstanceAge() {
         return maxInstanceAge;
     }
 
-    public void setMaxInstanceAge(long maxInstanceAge) {
+    public void setMaxInstanceAge(Long maxInstanceAge) {
         this.maxInstanceAge = maxInstanceAge;
     }
 
-    public int getMaxNumberOfInstances() {
+    public Integer getMaxNumberOfInstances() {
         return maxNumberOfInstances;
     }
 
-    public void setMaxNumberOfInstances(int maxNumberOfInstances) {
+    public void setMaxNumberOfInstances(Integer maxNumberOfInstances) {
         this.maxNumberOfInstances = maxNumberOfInstances;
     }
 

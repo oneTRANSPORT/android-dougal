@@ -16,7 +16,7 @@ public class ContentInstance extends Resource {
     private String content;
     @Expose
     @SerializedName("cs")
-    private long contentSize;
+    private Long contentSize;
 
     public ContentInstance(String resourceId, String resourceName,
                            @Types.ResourceType int resourceType, String parentId, String expiryTime,

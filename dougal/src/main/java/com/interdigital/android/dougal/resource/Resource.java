@@ -311,11 +311,11 @@ public abstract class Resource {
         this.labels = labels;
     }
 
-    public void setStateTag(int stateTag) {
+    public void setStateTag(Integer stateTag) {
         this.stateTag = stateTag;
     }
 
-    public int getStateTag() {
+    public Integer getStateTag() {
         return stateTag;
     }
 

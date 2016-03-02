@@ -23,7 +23,7 @@ public class ApplicationEntity extends Resource {
     private String applicationId;
     @Expose
     @SerializedName("rr")
-    private boolean requestReachable;
+    private Boolean requestReachable;
     @Expose
     @SerializedName("poa")
     private String[] pointOfAccessList;
@@ -39,7 +39,7 @@ public class ApplicationEntity extends Resource {
     }
 
     public ApplicationEntity(String expiryTime, String[] accessControlPolicyIds,
-                             String[] labels, String id, String appName, String applicationId, boolean requestReachable,
+                             String[] labels, String id, String appName, String applicationId, Boolean requestReachable,
                              String[] pointOfAccessList, String ontologyRef, String nodeLink) {
         super(id, appName, Types.RESOURCE_TYPE_APPLICATION_ENTITY, null, expiryTime,
                 accessControlPolicyIds, labels);
@@ -136,11 +136,11 @@ public class ApplicationEntity extends Resource {
         this.applicationId = applicationId;
     }
 
-    public boolean isRequestReachable() {
+    public Boolean isRequestReachable() {
         return requestReachable;
     }
 
-    public void setRequestReachable(boolean requestReachable) {
+    public void setRequestReachable(Boolean requestReachable) {
         this.requestReachable = requestReachable;
     }
 
