@@ -12,9 +12,17 @@ public class DougalException extends Exception {
         this.code = code;
     }
 
+    public DougalException(String message) {
+        super(message);
+    }
+
     @Override
     public String getMessage() {
-        return "Status code = " + code;
+        String message = super.getMessage();
+        if (message == null) {
+            return "Status code = " + code;
+        }
+        return super.getMessage();
     }
 
     @Types.StatusCode

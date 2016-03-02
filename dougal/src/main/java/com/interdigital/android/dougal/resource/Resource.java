@@ -128,6 +128,10 @@ public abstract class Resource {
         Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).create(
                 aeId, path, auth, resourceName, contentType, getRequestId(), requestHolder);
         Response<ResponseHolder> response = call.execute();
+        int httpStatusCode = response.code();
+        if (httpStatusCode == 401) {
+            throw new DougalException("HTTP 401 Not Authorized");
+        }
         @Types.StatusCode
         int code = getCodeFromResponse(response);
         if (code != Types.STATUS_CODE_CREATED) {
