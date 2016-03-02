@@ -1,8 +1,10 @@
-package com.interdigital.android.dougal.resource;
+package com.interdigital.android.dougal.resource.ae;
 
 
 import com.interdigital.android.dougal.Types;
 import com.interdigital.android.dougal.exception.DougalException;
+import com.interdigital.android.dougal.resource.DougalCallback;
+import com.interdigital.android.dougal.resource.Resource;
 
 import retrofit2.Call;
 import retrofit2.Callback;

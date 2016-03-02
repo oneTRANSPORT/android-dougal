@@ -10,7 +10,6 @@ import com.interdigital.android.dougal.DougalService;
 import com.interdigital.android.dougal.Types;
 import com.interdigital.android.dougal.exception.DougalException;
 import com.interdigital.android.dougal.network.AddHeadersInterceptor;
-import com.interdigital.android.dougal.network.LoggingInterceptor;
 import com.interdigital.android.dougal.network.request.RequestHolder;
 import com.interdigital.android.dougal.network.response.ResponseHolder;
 
@@ -19,6 +18,7 @@ import java.util.HashMap;
 
 import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -37,7 +37,7 @@ public abstract class Resource {
 
     // The request id must be unique to this session.
     private static long requestId = 1L;
-    private static LoggingInterceptor loggingInterceptor;
+    private static HttpLoggingInterceptor httpLoggingInterceptor;
 
     //    @Expose
 //    @SerializedName("ri")
@@ -86,14 +86,11 @@ public abstract class Resource {
     // No network request.
     // Builder pattern would be better here?
     public Resource(String resourceId, String resourceName, @Types.ResourceType int resourceType,
-                    String parentId, String creationTime, String lastModifiedTime, String expiryTime,
-                    String[] accessControlPolicyIds, String[] labels) {
+                    String parentId, String expiryTime, String[] accessControlPolicyIds, String[] labels) {
         this.resourceId = resourceId;
         this.resourceName = resourceName;
         this.resourceType = resourceType;
         this.parentId = parentId;
-        this.creationTime = creationTime;
-        this.lastModifiedTime = lastModifiedTime;
         this.expiryTime = expiryTime;
         this.accessControlPolicyIds = accessControlPolicyIds;
         this.labels = labels;
@@ -122,14 +119,14 @@ public abstract class Resource {
     // Delete DELETE
     // Notify POST
 
-    public Response<ResponseHolder> create(@NonNull String baseUrl, @NonNull String path,
-                                           @NonNull String aeId, String userName, String password) throws Exception {
+    public Response<ResponseHolder> create(@NonNull String aeId, @NonNull String baseUrl,
+                                           @NonNull String path, String userName, String password) throws Exception {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
         RequestHolder requestHolder = new RequestHolder(this);
         String contentType = CONTENT_TYPE_PREFIX + resourceType;
         Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).create(
-                path, auth, aeId, resourceName, contentType, getRequestId(), requestHolder);
+                aeId, path, auth, resourceName, contentType, getRequestId(), requestHolder);
         Response<ResponseHolder> response = call.execute();
         @Types.StatusCode
         int code = getCodeFromResponse(response);
@@ -139,24 +136,25 @@ public abstract class Resource {
         return response;
     }
 
-    public void createAsync(@NonNull String baseUrl, @NonNull String path, @NonNull String aeId,
+    public void createAsync(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
                             String userName, String password, Callback<ResponseHolder> callback) {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
         RequestHolder requestHolder = new RequestHolder(this);
-        String contentType = "application/json; ty=" + resourceType;
+        String contentType = CONTENT_TYPE_PREFIX + resourceType;
         Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).create(
-                path, auth, aeId, resourceName, contentType, getRequestId(), requestHolder);
+                aeId, path, auth, resourceName, contentType, getRequestId(), requestHolder);
         call.enqueue(callback);
     }
 
-    public static Response<ResponseHolder> retrieve(@NonNull String baseUrl, @NonNull String path,
-                                                    @NonNull String aeId, String userName, String password)
+    public static Response<ResponseHolder> retrieveBase(@NonNull String aeId,
+                                                        @NonNull String baseUrl, @NonNull String path,
+                                                        String userName, String password)
             throws Exception {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
         Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl)
-                .retrieve(path, auth, aeId, getRequestId());
+                .retrieve(aeId, path, auth, getRequestId());
         Response<ResponseHolder> response = call.execute();
         @Types.StatusCode
         int code = getCodeFromResponse(response);
@@ -166,12 +164,13 @@ public abstract class Resource {
         return response;
     }
 
-    public static void retrieveAsync(@NonNull String baseUrl, @NonNull String path, @NonNull String aeId,
-                                     String userName, String password, Callback<ResponseHolder> callback) {
+    public static void retrieveAsyncBase(@NonNull String aeId, @NonNull String baseUrl,
+                                         @NonNull String path, String userName, String password,
+                                         Callback<ResponseHolder> callback) {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
         Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl)
-                .retrieve(path, auth, aeId, getRequestId());
+                .retrieve(aeId, path, auth, getRequestId());
         call.enqueue(callback);
     }
 
@@ -182,7 +181,7 @@ public abstract class Resource {
         String auth = Credentials.basic(userName, password);
         RequestHolder requestHolder = new RequestHolder(this);
         Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).update(
-                path, auth, aeId, getRequestId(), requestHolder);
+                aeId, path, auth, getRequestId(), requestHolder);
         Response<ResponseHolder> response = call.execute();
         return response;
     }
@@ -193,15 +192,15 @@ public abstract class Resource {
         String auth = Credentials.basic(userName, password);
         RequestHolder requestHolder = new RequestHolder(this);
         Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).update(
-                path, auth, aeId, getRequestId(), requestHolder);
+                aeId, path, auth, getRequestId(), requestHolder);
         call.enqueue(callback);
     }
 
-    public static void delete(@NonNull String baseUrl, @NonNull String path,
-                              @NonNull String aeId, String userName, String password) throws Exception {
+    public static void delete(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
+                              String userName, String password) throws Exception {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
-        Call<Void> call = oneM2MServiceMap.get(baseUrl).delete(path, auth, aeId, getRequestId());
+        Call<Void> call = oneM2MServiceMap.get(baseUrl).delete(aeId, path, auth, getRequestId());
         Response<Void> response = call.execute();
         @Types.StatusCode
         int code = getCodeFromResponse(response);
@@ -214,7 +213,7 @@ public abstract class Resource {
             throws Exception {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
-        Call<Void> call = oneM2MServiceMap.get(baseUrl).delete(path, auth, aeId, getRequestId());
+        Call<Void> call = oneM2MServiceMap.get(baseUrl).delete(aeId, path, auth, getRequestId());
         Response<Void> response = call.execute();
         @Types.StatusCode
         int code = getCodeFromResponse(response);
@@ -223,11 +222,11 @@ public abstract class Resource {
         }
     }
 
-    public static void deleteAsync(@NonNull String baseUrl, @NonNull String path, @NonNull String aeId,
+    public static void deleteAsync(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
                                    String userName, String password, Callback<Void> callback) {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
-        Call<Void> call = oneM2MServiceMap.get(baseUrl).delete(path, auth, aeId, getRequestId());
+        Call<Void> call = oneM2MServiceMap.get(baseUrl).delete(aeId, path, auth, getRequestId());
         call.enqueue(callback);
     }
 
@@ -235,7 +234,7 @@ public abstract class Resource {
             @NonNull String aeId, String userName, String password, Callback<Void> callback) {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
-        Call<Void> call = oneM2MServiceMap.get(baseUrl).delete(path, auth, aeId, getRequestId());
+        Call<Void> call = oneM2MServiceMap.get(baseUrl).delete(aeId, path, auth, getRequestId());
         call.enqueue(callback);
     }
 
@@ -352,15 +351,9 @@ public abstract class Resource {
         return path;
     }
 
-    public void setRequestBodyLogging(boolean logging) {
-        if (loggingInterceptor != null) {
-            loggingInterceptor.setLogRequestBody(logging);
-        }
-    }
-
-    public void setResponseBodyLogging(boolean logging) {
-        if (loggingInterceptor != null) {
-            loggingInterceptor.setLogResponseBody(logging);
+    public void setHttpLoggingLevel(HttpLoggingInterceptor.Level level) {
+        if (httpLoggingInterceptor != null) {
+            httpLoggingInterceptor.setLevel(level);
         }
     }
 
@@ -370,7 +363,7 @@ public abstract class Resource {
         oneM2MServiceMap.clear();
     }
 
-    protected static int getCodeFromResponse(Response response) {
+    public static int getCodeFromResponse(Response response) {
         if (response.headers().get("X-M2M-RSC") != null) {
             return Integer.parseInt(response.headers().get("X-M2M-RSC"));
         }
@@ -382,12 +375,13 @@ public abstract class Resource {
             if (gson == null) {
                 gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
             }
-            loggingInterceptor = new LoggingInterceptor();
+            httpLoggingInterceptor = new HttpLoggingInterceptor();
+            httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
                     .addInterceptor(new AddHeadersInterceptor())
                             // If we have logging enabled, the unit test will fail.
                             // (Unimplemented Android framework class.)
-                    .addInterceptor(new LoggingInterceptor())
+                    .addInterceptor(httpLoggingInterceptor)
                     .build();
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(baseUrl)

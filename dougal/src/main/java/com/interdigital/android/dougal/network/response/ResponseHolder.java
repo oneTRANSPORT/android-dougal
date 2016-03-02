@@ -2,7 +2,8 @@ package com.interdigital.android.dougal.network.response;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.interdigital.android.dougal.resource.ApplicationEntity;
+import com.interdigital.android.dougal.resource.ae.ApplicationEntity;
+import com.interdigital.android.dougal.resource.co.Container;
 import com.interdigital.android.dougal.resource.ContentInstance;
 
 import okhttp3.Headers;
@@ -13,14 +14,14 @@ public class ResponseHolder {
     private Headers headers;
     private String body;
 
-    // TODO Should these have @Expose?
-//    @SerializedName("m2m:cb")
+    //    @SerializedName("m2m:cb")
 //    private CommonServicesEntity commonServicesEntity;
     @Expose
     @SerializedName("m2m:ae")
     private ApplicationEntity applicationEntity;
-    //    @SerializedName("m2m:cnt")
-//    private DataContainer dataContainer;
+    @Expose
+    @SerializedName("m2m:cnt")
+    private Container container;
     @Expose
     @SerializedName("m2m:cin")
     private ContentInstance contentInstance;
@@ -68,13 +69,13 @@ public class ResponseHolder {
         this.applicationEntity = applicationEntity;
     }
 
-//    public DataContainer getDataContainer() {
-//        return dataContainer;
-//    }
-//
-//    public void setDataContainer(DataContainer dataContainer) {
-//        this.dataContainer = dataContainer;
-//    }
+    public Container getContainer() {
+        return container;
+    }
+
+    public void setContainer(Container container) {
+        this.container = container;
+    }
 
     public ContentInstance getContentInstance() {
         return contentInstance;

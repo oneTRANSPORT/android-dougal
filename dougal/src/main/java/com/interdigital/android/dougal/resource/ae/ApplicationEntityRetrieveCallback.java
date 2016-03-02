@@ -1,22 +1,26 @@
-package com.interdigital.android.dougal.resource;
+package com.interdigital.android.dougal.resource.ae;
 
 
 import com.interdigital.android.dougal.Types;
 import com.interdigital.android.dougal.exception.DougalException;
 import com.interdigital.android.dougal.network.response.ResponseHolder;
+import com.interdigital.android.dougal.resource.DougalCallback;
+import com.interdigital.android.dougal.resource.Resource;
+import com.interdigital.android.dougal.resource.ae.ApplicationEntity;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ApplicationEntityCreateCallback implements Callback<ResponseHolder> {
+public class ApplicationEntityRetrieveCallback implements Callback<ResponseHolder> {
 
-    private ApplicationEntity applicationEntity;
+    private String baseUrl;
+    private String path;
     private DougalCallback dougalCallback;
 
-    public ApplicationEntityCreateCallback(
-            ApplicationEntity applicationEntity, DougalCallback dougalCallback) {
-        this.applicationEntity = applicationEntity;
+    public ApplicationEntityRetrieveCallback(String baseUrl, String path, DougalCallback dougalCallback) {
+        this.baseUrl = baseUrl;
+        this.path = path;
         this.dougalCallback = dougalCallback;
     }
 
@@ -27,7 +31,7 @@ public class ApplicationEntityCreateCallback implements Callback<ResponseHolder>
         }
         @Types.StatusCode
         int code = Resource.getCodeFromResponse(response);
-        if (code != Types.STATUS_CODE_CREATED) {
+        if (code != Types.STATUS_CODE_OK) {
             dougalCallback.getResult(null, new DougalException(code));
             return;
         }
@@ -36,14 +40,10 @@ public class ApplicationEntityCreateCallback implements Callback<ResponseHolder>
             dougalCallback.getResult(null, new DougalException(code));
             return;
         }
-        ApplicationEntity returnAe = response.body().getApplicationEntity();
+        ApplicationEntity applicationEntity = response.body().getApplicationEntity();
         if (applicationEntity != null) {
-            applicationEntity.setCreationTime(returnAe.getCreationTime());
-            applicationEntity.setExpiryTime(returnAe.getExpiryTime());
-            applicationEntity.setLastModifiedTime(returnAe.getLastModifiedTime());
-            applicationEntity.setParentId(returnAe.getParentId());
-            applicationEntity.setResourceId(returnAe.getResourceId());
-            applicationEntity.setResourceName(returnAe.getResourceName());
+            applicationEntity.setBaseUrl(baseUrl);
+            applicationEntity.setPath(path);
         }
         dougalCallback.getResult(applicationEntity, null);
     }

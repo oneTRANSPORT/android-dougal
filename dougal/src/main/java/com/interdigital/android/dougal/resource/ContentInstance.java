@@ -19,11 +19,9 @@ public class ContentInstance extends Resource {
     private long contentSize;
 
     public ContentInstance(String resourceId, String resourceName,
-                           @Types.ResourceType int resourceType, String parentId,
-                           String creationTime, String lastModifiedTime, String expiryTime,
+                           @Types.ResourceType int resourceType, String parentId, String expiryTime,
                            String[] accessControlPolicyIds, String[] labels) {
-        super(resourceId, resourceName, resourceType, parentId, creationTime, lastModifiedTime,
-                expiryTime, accessControlPolicyIds, labels);
+        super(resourceId, resourceName, resourceType, parentId, expiryTime, accessControlPolicyIds, labels);
     }
 
 //    public static ContentInstance retrieve(String fqdn, int port, boolean useHttps,
