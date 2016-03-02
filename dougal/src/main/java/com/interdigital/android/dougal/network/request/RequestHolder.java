@@ -3,9 +3,9 @@ package com.interdigital.android.dougal.network.request;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.interdigital.android.dougal.Types;
-import com.interdigital.android.dougal.resource.ContentInstance;
 import com.interdigital.android.dougal.resource.Resource;
 import com.interdigital.android.dougal.resource.ae.ApplicationEntity;
+import com.interdigital.android.dougal.resource.ci.ContentInstance;
 import com.interdigital.android.dougal.resource.co.Container;
 
 public class RequestHolder {
@@ -39,6 +39,7 @@ public class RequestHolder {
                 setContainer((Container) resource);
                 break;
             case Types.RESOURCE_TYPE_CONTENT_INSTANCE:
+                setContentInstance((ContentInstance) resource);
                 break;
             case Types.RESOURCE_TYPE_CSE_BASE:
                 break;
