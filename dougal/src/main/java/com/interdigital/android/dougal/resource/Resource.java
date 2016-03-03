@@ -27,6 +27,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public abstract class Resource {
 
+    public static final String NO_AUTH = "HTTP 401 Not Authorized";
+    public static final int NO_AUTH_CODE = 401;
+
     private static final String CONTENT_TYPE_PREFIX = "application/json; ty=";
 
     // We should be able to use one Gson instance for everything.  Should be thread-safe.
@@ -128,15 +131,7 @@ public abstract class Resource {
         Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).create(
                 aeId, path, auth, resourceName, contentType, getRequestId(), requestHolder);
         Response<ResponseHolder> response = call.execute();
-        int httpStatusCode = response.code();
-        if (httpStatusCode == 401) { // TODO Every call needs this.
-            throw new DougalException("HTTP 401 Not Authorized");
-        }
-        @Types.StatusCode
-        int code = getCodeFromResponse(response);
-        if (code != Types.STATUS_CODE_CREATED) {
-            throw new DougalException(code);
-        }
+        checkStatusCodes(response, Types.STATUS_CODE_CREATED);
         return response;
     }
 
@@ -160,11 +155,7 @@ public abstract class Resource {
         Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl)
                 .retrieve(aeId, path, auth, getRequestId());
         Response<ResponseHolder> response = call.execute();
-        @Types.StatusCode
-        int code = getCodeFromResponse(response);
-        if (code != Types.STATUS_CODE_OK) {
-            throw new DougalException(code);
-        }
+        checkStatusCodes(response, Types.STATUS_CODE_OK);
         return response;
     }
 
@@ -187,6 +178,7 @@ public abstract class Resource {
         Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).update(
                 aeId, path, auth, getRequestId(), requestHolder);
         Response<ResponseHolder> response = call.execute();
+        // TODO Decide what to do here.
         return response;
     }
 
@@ -206,11 +198,7 @@ public abstract class Resource {
         String auth = Credentials.basic(userName, password);
         Call<Void> call = oneM2MServiceMap.get(baseUrl).delete(aeId, path, auth, getRequestId());
         Response<Void> response = call.execute();
-        @Types.StatusCode
-        int code = getCodeFromResponse(response);
-        if (code != Types.STATUS_CODE_DELETED) {
-            throw new DougalException(code);
-        }
+        checkStatusCodes(response, Types.STATUS_CODE_DELETED);
     }
 
     public void delete(@NonNull String aeId, String userName, String password)
@@ -219,11 +207,7 @@ public abstract class Resource {
         String auth = Credentials.basic(userName, password);
         Call<Void> call = oneM2MServiceMap.get(baseUrl).delete(aeId, path, auth, getRequestId());
         Response<Void> response = call.execute();
-        @Types.StatusCode
-        int code = getCodeFromResponse(response);
-        if (code != Types.STATUS_CODE_DELETED) {
-            throw new DougalException(code);
-        }
+        checkStatusCodes(response, Types.STATUS_CODE_DELETED);
     }
 
     public static void deleteAsync(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
@@ -393,6 +377,19 @@ public abstract class Resource {
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
             oneM2MServiceMap.put(baseUrl, retrofit.create(DougalService.class));
+        }
+    }
+
+    private static void checkStatusCodes(Response<?> response,
+                                         @Types.StatusCode int successCode) throws DougalException {
+        int httpStatusCode = response.code();
+        if (httpStatusCode == NO_AUTH_CODE) {
+            throw new DougalException(NO_AUTH);
+        }
+        @Types.StatusCode
+        int code = getCodeFromResponse(response);
+        if (code != successCode) {
+            throw new DougalException(code);
         }
     }
 

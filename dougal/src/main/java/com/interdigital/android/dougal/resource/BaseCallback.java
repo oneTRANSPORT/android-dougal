@@ -23,11 +23,16 @@ public abstract class BaseCallback<R extends Resource, C> implements Callback<C>
         if (dougalCallback == null) {
             return;
         }
+
         @Types.StatusCode
         int code = Resource.getCodeFromResponse(response);
         if (code != successCode) {
             dougalCallback.getResult(null, new DougalException(code));
             return;
+        }
+        int httpStatusCode = response.code();
+        if (httpStatusCode == Resource.NO_AUTH_CODE) {
+            dougalCallback.getResult(null, new DougalException(Resource.NO_AUTH));
         }
         C c = response.body();
         if (c != null) {
