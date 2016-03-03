@@ -2,9 +2,10 @@ package com.interdigital.android.dougal.network.response;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.interdigital.android.dougal.resource.ae.ApplicationEntity;
-import com.interdigital.android.dougal.resource.co.Container;
-import com.interdigital.android.dougal.resource.ci.ContentInstance;
+import com.interdigital.android.dougal.resource.Resource;
+import com.interdigital.android.dougal.resource.ApplicationEntity;
+import com.interdigital.android.dougal.resource.ContentInstance;
+import com.interdigital.android.dougal.resource.Container;
 
 import okhttp3.Headers;
 
@@ -60,6 +61,19 @@ public class ResponseHolder {
 //    public void setCommonServicesEntity(CommonServicesEntity commonServicesEntity) {
 //        this.commonServicesEntity = commonServicesEntity;
 //    }
+
+    public Resource getResource() {
+        if (applicationEntity != null) {
+            return applicationEntity;
+        }
+        if (container != null) {
+            return container;
+        }
+        if (contentInstance != null) {
+            return contentInstance;
+        }
+        return null;
+    }
 
     public ApplicationEntity getApplicationEntity() {
         return applicationEntity;

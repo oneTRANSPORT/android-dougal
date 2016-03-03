@@ -129,7 +129,7 @@ public abstract class Resource {
                 aeId, path, auth, resourceName, contentType, getRequestId(), requestHolder);
         Response<ResponseHolder> response = call.execute();
         int httpStatusCode = response.code();
-        if (httpStatusCode == 401) {
+        if (httpStatusCode == 401) { // TODO Every call needs this.
             throw new DougalException("HTTP 401 Not Authorized");
         }
         @Types.StatusCode

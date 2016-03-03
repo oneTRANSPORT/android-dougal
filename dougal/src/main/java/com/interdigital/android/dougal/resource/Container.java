@@ -1,11 +1,9 @@
-package com.interdigital.android.dougal.resource.co;
+package com.interdigital.android.dougal.resource;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.interdigital.android.dougal.Types;
 import com.interdigital.android.dougal.network.response.ResponseHolder;
-import com.interdigital.android.dougal.resource.DougalCallback;
-import com.interdigital.android.dougal.resource.Resource;
 
 import retrofit2.Response;
 
@@ -64,7 +62,7 @@ public class Container extends Resource {
     public void createAsync(
             String baseUrl, String path, String userName, String password, DougalCallback dougalCallback) {
         createAsync(aeId, baseUrl, path, userName, password,
-                new ContainerCreateCallback(this, dougalCallback));
+                new CreateCallback<Container>(this, dougalCallback));
     }
 
     public static Container retrieve(
@@ -81,7 +79,7 @@ public class Container extends Resource {
     public static void retrieveAsync(String aeId, String baseUrl, String path,
                                      String userName, String password, DougalCallback dougalCallback) {
         retrieveAsyncBase(aeId, baseUrl, path, userName, password,
-                new ContainerRetrieveCallback(baseUrl, path, dougalCallback));
+                new RetrieveCallback<Container>(baseUrl, path, dougalCallback));
     }
 
     public void update(String userName, String password) throws Exception {
@@ -96,13 +94,13 @@ public class Container extends Resource {
     public static void deleteAsync(String aeId, String baseUrl, String path,
                                    String userName, String password, DougalCallback dougalCallback) {
         deleteAsync(aeId, baseUrl, path, userName, password,
-                new ContainerDeleteCallback(dougalCallback));
+                new DeleteCallback(dougalCallback));
     }
 
     public void deleteAsync(
             String userName, String password, DougalCallback dougalCallback) {
         deleteAsync(aeId, userName, password,
-                new ContainerDeleteCallback(dougalCallback));
+                new DeleteCallback(dougalCallback));
     }
 
 //    public static Container getByName(Context context, String fqdn, int port, boolean useHttps,

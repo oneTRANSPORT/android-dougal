@@ -1,11 +1,9 @@
-package com.interdigital.android.dougal.resource.ae;
+package com.interdigital.android.dougal.resource;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.interdigital.android.dougal.Types;
 import com.interdigital.android.dougal.network.response.ResponseHolder;
-import com.interdigital.android.dougal.resource.DougalCallback;
-import com.interdigital.android.dougal.resource.Resource;
 
 import retrofit2.Response;
 
@@ -70,7 +68,7 @@ public class ApplicationEntity extends Resource {
     public void createAsync(
             String baseUrl, String path, String userName, String password, DougalCallback dougalCallback) {
         createAsync(id, baseUrl, path, userName, password,
-                new ApplicationEntityCreateCallback(this, dougalCallback));
+                new CreateCallback<ApplicationEntity>(this, dougalCallback));
     }
 
     public static ApplicationEntity retrieve(
@@ -86,7 +84,7 @@ public class ApplicationEntity extends Resource {
     public static void retrieveAsync(String aeId, String baseUrl, String path,
                                      String userName, String password, DougalCallback dougalCallback) {
         retrieveAsyncBase(aeId, baseUrl, path, userName, password,
-                new ApplicationEntityRetrieveCallback(baseUrl, path, dougalCallback));
+                new RetrieveCallback<ApplicationEntity>(baseUrl, path, dougalCallback));
     }
 
     public void update(String userName, String password) throws Exception {
@@ -95,7 +93,7 @@ public class ApplicationEntity extends Resource {
     }
 
     public void updateAsync(String userName, String password, DougalCallback dougalCallback) {
-        updateAsync(id, userName, password, new ApplicationEntityUpdateCallback(this, dougalCallback));
+        updateAsync(id, userName, password, new UpdateCallback<>(this, dougalCallback));
     }
 
     public void delete(String userName, String password) throws Exception {
@@ -105,13 +103,13 @@ public class ApplicationEntity extends Resource {
     public static void deleteAsync(String aeId, String baseUrl, String path,
                                    String userName, String password, DougalCallback dougalCallback) {
         deleteAsync(aeId, baseUrl, path, userName, password,
-                new ApplicationEntityDeleteCallback(dougalCallback));
+                new DeleteCallback(dougalCallback));
     }
 
     public void deleteAsync(
             String userName, String password, DougalCallback dougalCallback) {
         deleteAsync(id, userName, password,
-                new ApplicationEntityDeleteCallback(dougalCallback));
+                new DeleteCallback(dougalCallback));
     }
 
 //    public static Discovery discoverAll(Context context, String fqdn, int port, boolean useHttps,

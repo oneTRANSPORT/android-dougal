@@ -1,12 +1,9 @@
-package com.interdigital.android.dougal.resource.ci;
+package com.interdigital.android.dougal.resource;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.interdigital.android.dougal.Types;
 import com.interdigital.android.dougal.network.response.ResponseHolder;
-import com.interdigital.android.dougal.resource.DougalCallback;
-import com.interdigital.android.dougal.resource.Resource;
-import com.interdigital.android.dougal.resource.co.ContainerDeleteCallback;
 
 import retrofit2.Response;
 
@@ -60,7 +57,7 @@ public class ContentInstance extends Resource {
     public void createAsync(
             String baseUrl, String path, String userName, String password, DougalCallback dougalCallback) {
         createAsync(aeId, baseUrl, path, userName, password,
-                new ContentInstanceCreateCallback(this, dougalCallback));
+                new CreateCallback<ContentInstance>(this, dougalCallback));
     }
 
     public static ContentInstance retrieve(
@@ -77,7 +74,7 @@ public class ContentInstance extends Resource {
     public static void retrieveAsync(String aeId, String baseUrl, String path,
                                      String userName, String password, DougalCallback dougalCallback) {
         retrieveAsyncBase(aeId, baseUrl, path, userName, password,
-                new ContentInstanceRetrieveCallback(baseUrl, path, dougalCallback));
+                new RetrieveCallback<ContentInstance>(baseUrl, path, dougalCallback));
     }
 
     public void update(String userName, String password) throws Exception {
@@ -92,13 +89,13 @@ public class ContentInstance extends Resource {
     public static void deleteAsync(String aeId, String baseUrl, String path,
                                    String userName, String password, DougalCallback dougalCallback) {
         deleteAsync(aeId, baseUrl, path, userName, password,
-                new ContentInstanceDeleteCallback(dougalCallback));
+                new DeleteCallback(dougalCallback));
     }
 
     public void deleteAsync(
             String userName, String password, DougalCallback dougalCallback) {
         deleteAsync(aeId, userName, password,
-                new ContainerDeleteCallback(dougalCallback));
+                new DeleteCallback(dougalCallback));
     }
 
 //    public static ContentInstance retrieve(String fqdn, int port, boolean useHttps,

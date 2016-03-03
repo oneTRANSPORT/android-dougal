@@ -1,25 +1,20 @@
-package com.interdigital.android.dougal.resource.co;
-
+package com.interdigital.android.dougal.resource;
 
 import com.interdigital.android.dougal.Types;
 import com.interdigital.android.dougal.exception.DougalException;
 import com.interdigital.android.dougal.network.response.ResponseHolder;
-import com.interdigital.android.dougal.resource.DougalCallback;
-import com.interdigital.android.dougal.resource.Resource;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ContainerRetrieveCallback implements Callback<ResponseHolder> {
+public class CreateCallback<T extends Resource> implements Callback<ResponseHolder> {
 
-    private String baseUrl;
-    private String path;
+    private T resource;
     private DougalCallback dougalCallback;
 
-    public ContainerRetrieveCallback(String baseUrl, String path, DougalCallback dougalCallback) {
-        this.baseUrl = baseUrl;
-        this.path = path;
+    public CreateCallback(T resource, DougalCallback dougalCallback) {
+        this.resource = resource;
         this.dougalCallback = dougalCallback;
     }
 
@@ -30,7 +25,7 @@ public class ContainerRetrieveCallback implements Callback<ResponseHolder> {
         }
         @Types.StatusCode
         int code = Resource.getCodeFromResponse(response);
-        if (code != Types.STATUS_CODE_OK) {
+        if (code != Types.STATUS_CODE_CREATED) {
             dougalCallback.getResult(null, new DougalException(code));
             return;
         }
@@ -39,12 +34,18 @@ public class ContainerRetrieveCallback implements Callback<ResponseHolder> {
             dougalCallback.getResult(null, new DougalException(code));
             return;
         }
-        Container container = response.body().getContainer();
-        if (container != null) {
-            container.setBaseUrl(baseUrl);
-            container.setPath(path);
+        T returnT = (T) responseHolder.getResource();
+        if (resource != null) {
+            // These are common to all resources.
+            // For the full resource, do a RETRIEVE request.
+            resource.setCreationTime(returnT.getCreationTime());
+            resource.setExpiryTime(returnT.getExpiryTime());
+            resource.setLastModifiedTime(returnT.getLastModifiedTime());
+            resource.setParentId(returnT.getParentId());
+            resource.setResourceId(returnT.getResourceId());
+            resource.setResourceName(returnT.getResourceName());
         }
-        dougalCallback.getResult(container, null);
+        dougalCallback.getResult(resource, null);
     }
 
     @Override

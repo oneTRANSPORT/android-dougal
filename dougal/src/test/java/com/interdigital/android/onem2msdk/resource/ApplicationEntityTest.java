@@ -1,7 +1,5 @@
 package com.interdigital.android.dougal.resource;
 
-import com.interdigital.android.dougal.resource.ae.ApplicationEntity;
-
 import org.junit.Test;
 
 import okhttp3.HttpUrl;

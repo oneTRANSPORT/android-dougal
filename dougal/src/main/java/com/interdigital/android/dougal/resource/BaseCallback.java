@@ -1,39 +1,46 @@
-package com.interdigital.android.dougal.resource.ae;
-
+package com.interdigital.android.dougal.resource;
 
 import com.interdigital.android.dougal.Types;
 import com.interdigital.android.dougal.exception.DougalException;
-import com.interdigital.android.dougal.resource.DougalCallback;
-import com.interdigital.android.dougal.resource.Resource;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ApplicationEntityDeleteCallback implements Callback<Void> {
+public abstract class BaseCallback<R extends Resource, C> implements Callback<C> {
 
+    @Types.StatusCode
+    private int successCode;
     private DougalCallback dougalCallback;
 
-    public ApplicationEntityDeleteCallback(DougalCallback dougalCallback) {
+    public BaseCallback(@Types.StatusCode int successCode, DougalCallback dougalCallback) {
+        this.successCode = successCode;
         this.dougalCallback = dougalCallback;
     }
 
     @Override
-    public void onResponse(Call<Void> call, Response<Void> response) {
+    public void onResponse(Call<C> call, Response<C> response) {
         if (dougalCallback == null) {
             return;
         }
         @Types.StatusCode
         int code = Resource.getCodeFromResponse(response);
-        if (code != Types.STATUS_CODE_DELETED) {
+        if (code != successCode) {
             dougalCallback.getResult(null, new DougalException(code));
+            return;
+        }
+        C c = response.body();
+        if (c != null) {
+            dougalCallback.getResult(processResponse(c), null);
             return;
         }
         dougalCallback.getResult(null, null);
     }
 
     @Override
-    public void onFailure(Call<Void> call, Throwable t) {
+    public void onFailure(Call<C> call, Throwable t) {
         dougalCallback.getResult(null, t);
     }
+
+    protected abstract R processResponse(C c);
 }

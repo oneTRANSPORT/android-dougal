@@ -4,9 +4,9 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.interdigital.android.dougal.Types;
 import com.interdigital.android.dougal.resource.Resource;
-import com.interdigital.android.dougal.resource.ae.ApplicationEntity;
-import com.interdigital.android.dougal.resource.ci.ContentInstance;
-import com.interdigital.android.dougal.resource.co.Container;
+import com.interdigital.android.dougal.resource.ApplicationEntity;
+import com.interdigital.android.dougal.resource.ContentInstance;
+import com.interdigital.android.dougal.resource.Container;
 
 public class RequestHolder {
 
