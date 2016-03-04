@@ -1,5 +1,6 @@
 package com.interdigital.android.dougal.resource;
 
+import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 
 import com.google.gson.Gson;
@@ -14,6 +15,7 @@ import com.interdigital.android.dougal.network.request.RequestHolder;
 import com.interdigital.android.dougal.network.response.ResponseHolder;
 
 import java.io.IOException;
+import java.lang.annotation.Retention;
 import java.util.HashMap;
 
 import okhttp3.Credentials;
@@ -25,10 +27,23 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static java.lang.annotation.RetentionPolicy.SOURCE;
+
 public abstract class Resource {
 
     public static final String NO_AUTH = "HTTP 401 Not Authorized";
     public static final int NO_AUTH_CODE = 401;
+
+    @Retention(SOURCE)
+    @IntDef({RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH,
+            RESPONSE_TYPE_NON_BLOCKING_REQUEST_ASYNCH,
+            RESPONSE_TYPE_BLOCKING_REQUEST})
+    public @interface ResponseType {
+    }
+
+    public static final int RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH = 1;
+    public static final int RESPONSE_TYPE_NON_BLOCKING_REQUEST_ASYNCH = 2;
+    public static final int RESPONSE_TYPE_BLOCKING_REQUEST = 3;
 
     private static final String CONTENT_TYPE_PREFIX = "application/json; ty=";
 
@@ -129,7 +144,8 @@ public abstract class Resource {
         RequestHolder requestHolder = new RequestHolder(this);
         String contentType = CONTENT_TYPE_PREFIX + resourceType;
         Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).create(
-                aeId, path, auth, resourceName, contentType, getRequestId(), requestHolder);
+                aeId, path, auth, resourceName, contentType, getRequestId(),
+                RESPONSE_TYPE_BLOCKING_REQUEST, requestHolder);
         Response<ResponseHolder> response = call.execute();
         checkStatusCodes(response, Types.STATUS_CODE_CREATED);
         return response;
@@ -142,7 +158,8 @@ public abstract class Resource {
         RequestHolder requestHolder = new RequestHolder(this);
         String contentType = CONTENT_TYPE_PREFIX + resourceType;
         Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).create(
-                aeId, path, auth, resourceName, contentType, getRequestId(), requestHolder);
+                aeId, path, auth, resourceName, contentType, getRequestId(),
+                RESPONSE_TYPE_BLOCKING_REQUEST, requestHolder);
         call.enqueue(callback);
     }
 
@@ -153,7 +170,7 @@ public abstract class Resource {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
         Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl)
-                .retrieve(aeId, path, auth, getRequestId());
+                .retrieve(aeId, path, auth, getRequestId(), RESPONSE_TYPE_BLOCKING_REQUEST);
         Response<ResponseHolder> response = call.execute();
         checkStatusCodes(response, Types.STATUS_CODE_OK);
         return response;
@@ -165,7 +182,7 @@ public abstract class Resource {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
         Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl)
-                .retrieve(aeId, path, auth, getRequestId());
+                .retrieve(aeId, path, auth, getRequestId(), RESPONSE_TYPE_BLOCKING_REQUEST);
         call.enqueue(callback);
     }
 
@@ -176,7 +193,7 @@ public abstract class Resource {
         String auth = Credentials.basic(userName, password);
         RequestHolder requestHolder = new RequestHolder(this);
         Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).update(
-                aeId, path, auth, getRequestId(), requestHolder);
+                aeId, path, auth, getRequestId(), RESPONSE_TYPE_BLOCKING_REQUEST, requestHolder);
         Response<ResponseHolder> response = call.execute();
         // TODO Decide what to do here.
         return response;
@@ -188,7 +205,7 @@ public abstract class Resource {
         String auth = Credentials.basic(userName, password);
         RequestHolder requestHolder = new RequestHolder(this);
         Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).update(
-                aeId, path, auth, getRequestId(), requestHolder);
+                aeId, path, auth, getRequestId(), RESPONSE_TYPE_BLOCKING_REQUEST, requestHolder);
         call.enqueue(callback);
     }
 
@@ -196,7 +213,8 @@ public abstract class Resource {
                               String userName, String password) throws Exception {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
-        Call<Void> call = oneM2MServiceMap.get(baseUrl).delete(aeId, path, auth, getRequestId());
+        Call<Void> call = oneM2MServiceMap.get(baseUrl).delete(aeId, path, auth, getRequestId(),
+                RESPONSE_TYPE_BLOCKING_REQUEST);
         Response<Void> response = call.execute();
         checkStatusCodes(response, Types.STATUS_CODE_DELETED);
     }
@@ -205,7 +223,8 @@ public abstract class Resource {
             throws Exception {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
-        Call<Void> call = oneM2MServiceMap.get(baseUrl).delete(aeId, path, auth, getRequestId());
+        Call<Void> call = oneM2MServiceMap.get(baseUrl).delete(aeId, path, auth, getRequestId(),
+                RESPONSE_TYPE_BLOCKING_REQUEST);
         Response<Void> response = call.execute();
         checkStatusCodes(response, Types.STATUS_CODE_DELETED);
     }
@@ -214,7 +233,8 @@ public abstract class Resource {
                                    String userName, String password, Callback<Void> callback) {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
-        Call<Void> call = oneM2MServiceMap.get(baseUrl).delete(aeId, path, auth, getRequestId());
+        Call<Void> call = oneM2MServiceMap.get(baseUrl).delete(aeId, path, auth, getRequestId(),
+                RESPONSE_TYPE_BLOCKING_REQUEST);
         call.enqueue(callback);
     }
 
@@ -222,7 +242,8 @@ public abstract class Resource {
             @NonNull String aeId, String userName, String password, Callback<Void> callback) {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
-        Call<Void> call = oneM2MServiceMap.get(baseUrl).delete(aeId, path, auth, getRequestId());
+        Call<Void> call = oneM2MServiceMap.get(baseUrl).delete(aeId, path, auth, getRequestId(),
+                RESPONSE_TYPE_BLOCKING_REQUEST);
         call.enqueue(callback);
     }
 
