@@ -55,7 +55,8 @@ public class Container extends Resource {
 
     public void create(String baseUrl, String path, String userName, String password)
             throws Exception {
-        Response<ResponseHolder> response = create(aeId, baseUrl, path, userName, password);
+        Response<ResponseHolder> response = create(aeId, baseUrl, path, userName, password,
+                RESPONSE_TYPE_BLOCKING_REQUEST);
         Container container = response.body().getContainer();
         // Update current object.
         // TODO URL returned?
@@ -70,7 +71,8 @@ public class Container extends Resource {
     public void createAsync(
             String baseUrl, String path, String userName, String password, DougalCallback dougalCallback) {
         createAsync(aeId, baseUrl, path, userName, password,
-                new CreateCallback<Container>(this, dougalCallback));
+                new CreateCallback<Container>(this, dougalCallback),
+                RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
     public static Container retrieve(

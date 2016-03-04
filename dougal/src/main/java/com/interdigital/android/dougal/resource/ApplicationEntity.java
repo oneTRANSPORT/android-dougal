@@ -57,7 +57,8 @@ public class ApplicationEntity extends Resource {
     // Since we don't know the resource Uri, uriCreate is temporary (collection-level) only.
     public void create(String baseUrl, String path, String userName, String password)
             throws Exception {
-        Response<ResponseHolder> response = create(id, baseUrl, path, userName, password);
+        Response<ResponseHolder> response = create(id, baseUrl, path, userName, password,
+                RESPONSE_TYPE_BLOCKING_REQUEST);
         ApplicationEntity applicationEntity = response.body().getApplicationEntity();
         // Update current object.
         // TODO URL returned?
@@ -72,7 +73,8 @@ public class ApplicationEntity extends Resource {
     public void createAsync(
             String baseUrl, String path, String userName, String password, DougalCallback dougalCallback) {
         createAsync(id, baseUrl, path, userName, password,
-                new CreateCallback<ApplicationEntity>(this, dougalCallback));
+                new CreateCallback<ApplicationEntity>(this, dougalCallback),
+                RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
     public static ApplicationEntity retrieve(

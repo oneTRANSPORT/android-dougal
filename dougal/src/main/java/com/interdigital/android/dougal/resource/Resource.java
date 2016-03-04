@@ -138,28 +138,29 @@ public abstract class Resource {
     // Notify POST
 
     public Response<ResponseHolder> create(@NonNull String aeId, @NonNull String baseUrl,
-                                           @NonNull String path, String userName, String password) throws Exception {
+                                           @NonNull String path, String userName, String password,
+                                           @ResponseType int responseType) throws Exception {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
         RequestHolder requestHolder = new RequestHolder(this);
         String contentType = CONTENT_TYPE_PREFIX + resourceType;
         Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).create(
-                aeId, path, auth, resourceName, contentType, getRequestId(),
-                RESPONSE_TYPE_BLOCKING_REQUEST, requestHolder);
+                aeId, path, auth, resourceName, contentType, getRequestId(), responseType, requestHolder);
         Response<ResponseHolder> response = call.execute();
         checkStatusCodes(response, Types.STATUS_CODE_CREATED);
         return response;
     }
 
     public void createAsync(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
-                            String userName, String password, Callback<ResponseHolder> callback) {
+                            String userName, String password, Callback<ResponseHolder> callback,
+                            @ResponseType int responseType) {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
         RequestHolder requestHolder = new RequestHolder(this);
         String contentType = CONTENT_TYPE_PREFIX + resourceType;
         Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).create(
                 aeId, path, auth, resourceName, contentType, getRequestId(),
-                RESPONSE_TYPE_BLOCKING_REQUEST, requestHolder);
+                responseType, requestHolder);
         call.enqueue(callback);
     }
 
