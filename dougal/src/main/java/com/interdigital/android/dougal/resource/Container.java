@@ -12,6 +12,7 @@ import retrofit2.Response;
 public class Container extends Resource {
 
     private static final String LATEST_SUFFIX = "/la";
+    private static final String OLDEST_SUFFIX = "/ol";
 
     // We need to send the ae-id on every request, so may as well keep a copy.
     private String aeId;
@@ -86,6 +87,12 @@ public class Container extends Resource {
         return ContentInstance.retrieve(aeId, baseUrl, path + LATEST_SUFFIX, userName, password);
     }
 
+    public static ContentInstance retrieveOldest(
+            String aeId, String baseUrl, String path, String userName, String password)
+            throws Exception {
+        return ContentInstance.retrieve(aeId, baseUrl, path + OLDEST_SUFFIX, userName, password);
+    }
+
     public static void retrieveAsync(String aeId, String baseUrl, String path,
                                      String userName, String password, DougalCallback dougalCallback) {
         retrieveAsyncBase(aeId, baseUrl, path, userName, password,
@@ -96,6 +103,12 @@ public class Container extends Resource {
                                            String userName, String password, DougalCallback dougalCallback) {
         retrieveAsyncBase(aeId, baseUrl, path + LATEST_SUFFIX, userName, password,
                 new RetrieveCallback<ContentInstance>(baseUrl, path + LATEST_SUFFIX, dougalCallback));
+    }
+
+    public static void retrieveOldestAsync(String aeId, String baseUrl, String path,
+                                           String userName, String password, DougalCallback dougalCallback) {
+        retrieveAsyncBase(aeId, baseUrl, path + OLDEST_SUFFIX, userName, password,
+                new RetrieveCallback<ContentInstance>(baseUrl, path + OLDEST_SUFFIX, dougalCallback));
     }
 
     public void update(String userName, String password) throws Exception {
@@ -112,8 +125,17 @@ public class Container extends Resource {
         delete(aeId, baseUrl, path + LATEST_SUFFIX, userName, password);
     }
 
+    public static void deleteOldest(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
+                                    String userName, String password) throws Exception {
+        delete(aeId, baseUrl, path + OLDEST_SUFFIX, userName, password);
+    }
+
     public void deleteLatest(String userName, String password) throws Exception {
         delete(aeId, getBaseUrl(), getPath() + LATEST_SUFFIX, userName, password);
+    }
+
+    public void deleteOldest(String userName, String password) throws Exception {
+        delete(aeId, getBaseUrl(), getPath() + OLDEST_SUFFIX, userName, password);
     }
 
     public static void deleteAsync(String aeId, String baseUrl, String path,
@@ -134,9 +156,21 @@ public class Container extends Resource {
                 new DeleteCallback(dougalCallback));
     }
 
+    public static void deleteOldestAsync(String aeId, String baseUrl, String path,
+                                         String userName, String password, DougalCallback dougalCallback) {
+        deleteAsync(aeId, baseUrl, path + OLDEST_SUFFIX, userName, password,
+                new DeleteCallback(dougalCallback));
+    }
+
     public void deleteLatestAsync(
             String userName, String password, DougalCallback dougalCallback) {
         deleteAsync(aeId, getBaseUrl(), getPath() + LATEST_SUFFIX, userName, password,
+                new DeleteCallback(dougalCallback));
+    }
+
+    public void deleteOldestAsync(
+            String userName, String password, DougalCallback dougalCallback) {
+        deleteAsync(aeId, getBaseUrl(), getPath() + OLDEST_SUFFIX, userName, password,
                 new DeleteCallback(dougalCallback));
     }
 
