@@ -26,12 +26,12 @@ public class CreateCallback<T extends Resource> implements Callback<ResponseHold
         @Types.StatusCode
         int code = Resource.getCodeFromResponse(response);
         if (code != Types.STATUS_CODE_CREATED) {
-            dougalCallback.getResult(null, new DougalException(code));
+            dougalCallback.getResponse(null, new DougalException(code));
             return;
         }
         ResponseHolder responseHolder = response.body();
         if (responseHolder == null) {
-            dougalCallback.getResult(null, new DougalException(code));
+            dougalCallback.getResponse(null, new DougalException(code));
             return;
         }
         T returnT = (T) responseHolder.getResource();
@@ -45,11 +45,11 @@ public class CreateCallback<T extends Resource> implements Callback<ResponseHold
             resource.setResourceId(returnT.getResourceId());
             resource.setResourceName(returnT.getResourceName());
         }
-        dougalCallback.getResult(resource, null);
+        dougalCallback.getResponse(resource, null);
     }
 
     @Override
     public void onFailure(Call<ResponseHolder> call, Throwable t) {
-        dougalCallback.getResult(null, t);
+        dougalCallback.getResponse(null, t);
     }
 }

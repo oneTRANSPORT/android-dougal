@@ -27,24 +27,24 @@ public abstract class BaseCallback<R extends Resource, C> implements Callback<C>
         @Types.StatusCode
         int code = Resource.getCodeFromResponse(response);
         if (code != successCode) {
-            dougalCallback.getResult(null, new DougalException(code));
+            dougalCallback.getResponse(null, new DougalException(code));
             return;
         }
         int httpStatusCode = response.code();
         if (httpStatusCode == Resource.NO_AUTH_CODE) {
-            dougalCallback.getResult(null, new DougalException(Resource.NO_AUTH));
+            dougalCallback.getResponse(null, new DougalException(Resource.NO_AUTH));
         }
         C c = response.body();
         if (c != null) {
-            dougalCallback.getResult(processResponse(c), null);
+            dougalCallback.getResponse(processResponse(c), null);
             return;
         }
-        dougalCallback.getResult(null, null);
+        dougalCallback.getResponse(null, null);
     }
 
     @Override
     public void onFailure(Call<C> call, Throwable t) {
-        dougalCallback.getResult(null, t);
+        dougalCallback.getResponse(null, t);
     }
 
     protected abstract R processResponse(C c);
