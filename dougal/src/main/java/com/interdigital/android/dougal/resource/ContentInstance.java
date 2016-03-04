@@ -1,16 +1,16 @@
 package com.interdigital.android.dougal.resource;
 
+import android.support.annotation.NonNull;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.interdigital.android.dougal.Types;
 import com.interdigital.android.dougal.network.response.ResponseHolder;
 
+import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ContentInstance extends Resource {
-
-    private static final String OLDEST_CI = "ol";
-    private static final String LAST_CI = "la";
 
     private String aeId;
     @Expose
@@ -77,9 +77,14 @@ public class ContentInstance extends Resource {
                 new RetrieveCallback<ContentInstance>(baseUrl, path, dougalCallback));
     }
 
-    public void update(String userName, String password) throws Exception {
-        // TODO Decide what to do here.
-        Response<ResponseHolder> response = update(aeId, userName, password);
+    @Override
+    public Response<ResponseHolder> update(@NonNull String aeId, String userName, String password) {
+        throw new UnsupportedOperationException("Content instances may not be updated");
+    }
+
+    @Override
+    public void updateAsync(@NonNull String aeId, String userName, String password, Callback<ResponseHolder> callback) {
+        throw new UnsupportedOperationException("Content instances may not be updated");
     }
 
     public void delete(String userName, String password) throws Exception {
