@@ -1,8 +1,10 @@
-package com.interdigital.android.dougal.resource;
+package com.interdigital.android.dougal.resource.callback;
 
 import com.interdigital.android.dougal.Types;
 import com.interdigital.android.dougal.exception.DougalException;
 import com.interdigital.android.dougal.network.response.ResponseHolder;
+import com.interdigital.android.dougal.resource.DougalCallback;
+import com.interdigital.android.dougal.resource.Resource;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -21,6 +23,10 @@ public class CreateCallback<T extends Resource> implements Callback<ResponseHold
     @Override
     public void onResponse(Call<ResponseHolder> call, Response<ResponseHolder> response) {
         if (dougalCallback == null) {
+            return;
+        }
+        if (response.code() == Resource.NO_AUTH_CODE) {
+            dougalCallback.getResponse(null, new DougalException(Resource.NO_AUTH));
             return;
         }
         @Types.StatusCode

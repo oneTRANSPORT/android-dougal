@@ -1,7 +1,9 @@
-package com.interdigital.android.dougal.resource;
+package com.interdigital.android.dougal.resource.callback;
 
 import com.interdigital.android.dougal.Types;
 import com.interdigital.android.dougal.exception.DougalException;
+import com.interdigital.android.dougal.resource.DougalCallback;
+import com.interdigital.android.dougal.resource.Resource;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -23,16 +25,15 @@ public abstract class BaseCallback<R extends Resource, C> implements Callback<C>
         if (dougalCallback == null) {
             return;
         }
-
+        if (response.code() == Resource.NO_AUTH_CODE) {
+            dougalCallback.getResponse(null, new DougalException(Resource.NO_AUTH));
+            return;
+        }
         @Types.StatusCode
         int code = Resource.getCodeFromResponse(response);
         if (code != successCode) {
             dougalCallback.getResponse(null, new DougalException(code));
             return;
-        }
-        int httpStatusCode = response.code();
-        if (httpStatusCode == Resource.NO_AUTH_CODE) {
-            dougalCallback.getResponse(null, new DougalException(Resource.NO_AUTH));
         }
         C c = response.body();
         if (c != null) {

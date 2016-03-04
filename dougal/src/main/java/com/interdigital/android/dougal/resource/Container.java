@@ -6,6 +6,9 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.interdigital.android.dougal.Types;
 import com.interdigital.android.dougal.network.response.ResponseHolder;
+import com.interdigital.android.dougal.resource.callback.CreateCallback;
+import com.interdigital.android.dougal.resource.callback.DeleteCallback;
+import com.interdigital.android.dougal.resource.callback.RetrieveCallback;
 
 import retrofit2.Response;
 
