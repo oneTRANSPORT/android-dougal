@@ -226,6 +226,29 @@ public abstract class Resource {
         call.enqueue(callback);
     }
 
+    public static Response<ResponseHolder> discover(@NonNull String aeId, @NonNull String baseUrl,
+                                                    @NonNull String path, @Types.ResourceType int resourceType,
+                                                    String userName, String password)
+            throws Exception {
+        maybeMakeOneM2MService(baseUrl);
+        String auth = Credentials.basic(userName, password);
+        Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl)
+                .discover(aeId, path, auth, getRequestId(), resourceType);
+        Response<ResponseHolder> response = call.execute();
+        checkStatusCodes(response, Types.STATUS_CODE_OK);
+        return response;
+    }
+
+    public static void discoverAsync(@NonNull String aeId, @NonNull String baseUrl,
+                                     @NonNull String path, @Types.ResourceType int resourceType,
+                                     String userName, String password, Callback<ResponseHolder> callback) {
+        maybeMakeOneM2MService(baseUrl);
+        String auth = Credentials.basic(userName, password);
+        Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl)
+                .discover(aeId, path, auth, getRequestId(), resourceType);
+        call.enqueue(callback);
+    }
+
     public String getResourceId() {
         return resourceId;
     }

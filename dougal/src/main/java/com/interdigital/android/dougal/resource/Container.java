@@ -177,24 +177,17 @@ public class Container extends Resource {
                 new DeleteCallback(dougalCallback));
     }
 
-//    public static Container getByName(Context context, String fqdn, int port, boolean useHttps,
-//                                          String cseName, String aeName, String dcName, String aeId,
-//                                          String userName, String password) {
-//        Ri ri = new Ri(fqdn, port, cseName + "/" + aeName + "/" + dcName);
-//        return create(context, ri, useHttps, aeId, userName, password).getDataContainer();
-//    }
+    public static Discovery discover(String aeId, String baseUrl, String path,
+                                     String userName, String password) throws Exception {
+        return discover(aeId, baseUrl, path, Types.RESOURCE_TYPE_CONTAINER,
+                userName, password).body().getDiscovery();
+    }
 
-//    public static Discovery discoverByAe(Context context, String fqdn, int port, boolean useHttps,
-//                                         String cseName, String aeName, String aeId, String userName, String password) {
-//        Ri ri = new Ri(fqdn, port, cseName + "/" + aeName + "?fu=1&rty=3");
-//        return discover(context, ri, useHttps, aeId, userName, password);
-//    }
-
-//    public static Discovery discoverAll(Context context, String fqdn, int port, boolean useHttps,
-//                                        String cseName, String aeId, String userName, String password) {
-//        Ri ri = new Ri(fqdn, port, cseName + "?fu=1&rty=3");
-//        return discover(context, ri, useHttps, aeId, userName, password);
-//    }
+    public static void discoverAsync(String aeId, String baseUrl, String path,
+                                     String userName, String password, DougalCallback dougalCallback) {
+        discoverAsync(aeId, baseUrl, path, Types.RESOURCE_TYPE_CONTAINER,
+                userName, password, new RetrieveCallback<Discovery>(baseUrl, path, dougalCallback));
+    }
 
     public String getAeId() {
         return aeId;

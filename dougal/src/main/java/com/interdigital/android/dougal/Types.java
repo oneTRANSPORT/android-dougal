@@ -129,4 +129,13 @@ public class Types {
     public static final int STATUS_CODE_MGMT_CANCELLATION_FAILED = 6026;
     public static final int STATUS_CODE_ALREADY_COMPLETE = 6028;
     public static final int STATUS_CODE_COMMAND_NOT_CANCELLABLE = 6029;
+
+    @Retention(SOURCE)
+    @IntDef({FILTER_USAGE_DISCOVERY_CRITERIA,
+            FILTER_USAGE_CONDITIONAL_RETRIEVAL})
+    public @interface FilterUsage {
+    }
+
+    public static final int FILTER_USAGE_DISCOVERY_CRITERIA = 1;
+    public static final int FILTER_USAGE_CONDITIONAL_RETRIEVAL = 2; // Default.
 }

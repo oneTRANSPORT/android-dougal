@@ -12,6 +12,7 @@ import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface DougalService {
 
@@ -49,4 +50,12 @@ public interface DougalService {
             @Path(value = "path", encoded = true) String path,
             @Header("Authorization") String authorization,
             @Header("X-M2M-RI") String requestId);
+
+    @GET("{path}?fu=1")
+    Call<ResponseHolder> discover(
+            @Header("X-M2M-Origin") String aeId,
+            @Path(value = "path", encoded = true) String path,
+            @Header("Authorization") String authorization,
+            @Header("X-M2M-RI") String requestId,
+            @Query("rty") @Types.ResourceType int resourceType);
 }
