@@ -166,12 +166,12 @@ public abstract class Resource {
 
     public static Response<ResponseHolder> retrieveBase(@NonNull String aeId,
                                                         @NonNull String baseUrl, @NonNull String path,
-                                                        String userName, String password)
+                                                        String userName, String password, @ResponseType int responseType)
             throws Exception {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
         Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl)
-                .retrieve(aeId, path, auth, getRequestId(), RESPONSE_TYPE_BLOCKING_REQUEST);
+                .retrieve(aeId, path, auth, getRequestId(), responseType);
         Response<ResponseHolder> response = call.execute();
         checkStatusCodes(response, Types.STATUS_CODE_OK);
         return response;
@@ -179,11 +179,11 @@ public abstract class Resource {
 
     public static void retrieveAsyncBase(@NonNull String aeId, @NonNull String baseUrl,
                                          @NonNull String path, String userName, String password,
-                                         Callback<ResponseHolder> callback) {
+                                         Callback<ResponseHolder> callback, @ResponseType int responseType) {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
         Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl)
-                .retrieve(aeId, path, auth, getRequestId(), RESPONSE_TYPE_BLOCKING_REQUEST);
+                .retrieve(aeId, path, auth, getRequestId(), responseType);
         call.enqueue(callback);
     }
 
@@ -211,16 +211,7 @@ public abstract class Resource {
     }
 
     public static void delete(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
-                              String userName, String password) throws Exception {
-        maybeMakeOneM2MService(baseUrl);
-        String auth = Credentials.basic(userName, password);
-        Call<Void> call = oneM2MServiceMap.get(baseUrl).delete(aeId, path, auth, getRequestId(),
-                RESPONSE_TYPE_BLOCKING_REQUEST);
-        Response<Void> response = call.execute();
-        checkStatusCodes(response, Types.STATUS_CODE_DELETED);
-    }
-
-    public void delete(@NonNull String aeId, String userName, String password)
+                              String userName, String password)
             throws Exception {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
@@ -230,21 +221,31 @@ public abstract class Resource {
         checkStatusCodes(response, Types.STATUS_CODE_DELETED);
     }
 
-    public static void deleteAsync(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
-                                   String userName, String password, Callback<Void> callback) {
+    public void delete(@NonNull String aeId, String userName, String password) throws Exception {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
         Call<Void> call = oneM2MServiceMap.get(baseUrl).delete(aeId, path, auth, getRequestId(),
                 RESPONSE_TYPE_BLOCKING_REQUEST);
+        Response<Void> response = call.execute();
+        checkStatusCodes(response, Types.STATUS_CODE_DELETED);
+    }
+
+    public static void deleteAsync(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
+                                   String userName, String password, Callback<Void> callback,
+                                   @ResponseType int responseType) {
+        maybeMakeOneM2MService(baseUrl);
+        String auth = Credentials.basic(userName, password);
+        Call<Void> call = oneM2MServiceMap.get(baseUrl).delete(aeId, path, auth, getRequestId(),
+                responseType);
         call.enqueue(callback);
     }
 
-    public void deleteAsync(
-            @NonNull String aeId, String userName, String password, Callback<Void> callback) {
+    public void deleteAsync(@NonNull String aeId, String userName, String password,
+                            Callback<Void> callback, @ResponseType int responseType) {
         maybeMakeOneM2MService(baseUrl);
         String auth = Credentials.basic(userName, password);
         Call<Void> call = oneM2MServiceMap.get(baseUrl).delete(aeId, path, auth, getRequestId(),
-                RESPONSE_TYPE_BLOCKING_REQUEST);
+                responseType);
         call.enqueue(callback);
     }
 

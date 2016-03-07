@@ -45,17 +45,13 @@ public class ContentInstance extends Resource {
 
     public void create(String baseUrl, String path, String userName, String password)
             throws Exception {
-        Response<ResponseHolder> response = create(aeId, baseUrl, path, userName, password,
-                RESPONSE_TYPE_BLOCKING_REQUEST);
-        ContentInstance contentInstance = response.body().getContentInstance();
-        // Update current object.
-        // TODO URL returned?
-        setCreationTime(contentInstance.getCreationTime());
-        setExpiryTime(contentInstance.getExpiryTime());
-        setLastModifiedTime(contentInstance.getLastModifiedTime());
-        setParentId(contentInstance.getParentId());
-        setResourceId(contentInstance.getResourceId());
-        setResourceName(contentInstance.getResourceName());
+        create(baseUrl, path, userName, password, RESPONSE_TYPE_BLOCKING_REQUEST);
+    }
+
+    public void createNonBlocking(String baseUrl, String path, String userName, String password)
+            throws Exception {
+        create(baseUrl, path, userName, password,
+                RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH);
     }
 
     public void createAsync(
@@ -68,7 +64,8 @@ public class ContentInstance extends Resource {
     public static ContentInstance retrieve(
             String aeId, String baseUrl, String path, String userName, String password)
             throws Exception {
-        ContentInstance contentInstance = retrieveBase(aeId, baseUrl, path, userName, password).body()
+        ContentInstance contentInstance = retrieveBase(aeId, baseUrl, path, userName, password,
+                RESPONSE_TYPE_BLOCKING_REQUEST).body()
                 .getContentInstance();
         contentInstance.setAeId(aeId);
         contentInstance.setBaseUrl(baseUrl);
@@ -79,7 +76,8 @@ public class ContentInstance extends Resource {
     public static void retrieveAsync(String aeId, String baseUrl, String path,
                                      String userName, String password, DougalCallback dougalCallback) {
         retrieveAsyncBase(aeId, baseUrl, path, userName, password,
-                new RetrieveCallback<ContentInstance>(baseUrl, path, dougalCallback));
+                new RetrieveCallback<ContentInstance>(baseUrl, path, dougalCallback),
+                RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
     @Override
@@ -99,13 +97,13 @@ public class ContentInstance extends Resource {
     public static void deleteAsync(String aeId, String baseUrl, String path,
                                    String userName, String password, DougalCallback dougalCallback) {
         deleteAsync(aeId, baseUrl, path, userName, password,
-                new DeleteCallback(dougalCallback));
+                new DeleteCallback(dougalCallback), RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
     public void deleteAsync(
             String userName, String password, DougalCallback dougalCallback) {
         deleteAsync(aeId, userName, password,
-                new DeleteCallback(dougalCallback));
+                new DeleteCallback(dougalCallback), RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
 //    public static ContentInstance retrieve(String fqdn, int port, boolean useHttps,
@@ -197,6 +195,22 @@ public class ContentInstance extends Resource {
 
     public void setContentSize(long contentSize) {
         this.contentSize = contentSize;
+    }
+
+    private void create(String baseUrl, String path, String userName, String password,
+                        @ResponseType int responseType)
+            throws Exception {
+        Response<ResponseHolder> response = create(aeId, baseUrl, path, userName, password,
+                responseType);
+        ContentInstance contentInstance = response.body().getContentInstance();
+        // Update current object.
+        // TODO URL returned?
+        setCreationTime(contentInstance.getCreationTime());
+        setExpiryTime(contentInstance.getExpiryTime());
+        setLastModifiedTime(contentInstance.getLastModifiedTime());
+        setParentId(contentInstance.getParentId());
+        setResourceId(contentInstance.getResourceId());
+        setResourceName(contentInstance.getResourceName());
     }
 
 }

@@ -55,17 +55,13 @@ public class Container extends Resource {
 
     public void create(String baseUrl, String path, String userName, String password)
             throws Exception {
-        Response<ResponseHolder> response = create(aeId, baseUrl, path, userName, password,
-                RESPONSE_TYPE_BLOCKING_REQUEST);
-        Container container = response.body().getContainer();
-        // Update current object.
-        // TODO URL returned?
-        setCreationTime(container.getCreationTime());
-        setExpiryTime(container.getExpiryTime());
-        setLastModifiedTime(container.getLastModifiedTime());
-        setParentId(container.getParentId());
-        setResourceId(container.getResourceId());
-        setResourceName(container.getResourceName());
+        create(baseUrl, path, userName, password, RESPONSE_TYPE_BLOCKING_REQUEST);
+    }
+
+    public void createNonBlocking(String baseUrl, String path, String userName, String password)
+            throws Exception {
+        create(baseUrl, path, userName, password,
+                RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH);
     }
 
     public void createAsync(
@@ -78,7 +74,8 @@ public class Container extends Resource {
     public static Container retrieve(
             String aeId, String baseUrl, String path, String userName, String password)
             throws Exception {
-        Container container = retrieveBase(aeId, baseUrl, path, userName, password).body()
+        Container container = retrieveBase(aeId, baseUrl, path, userName, password,
+                RESPONSE_TYPE_BLOCKING_REQUEST).body()
                 .getContainer();
         container.setAeId(aeId);
         container.setBaseUrl(baseUrl);
@@ -101,19 +98,22 @@ public class Container extends Resource {
     public static void retrieveAsync(String aeId, String baseUrl, String path,
                                      String userName, String password, DougalCallback dougalCallback) {
         retrieveAsyncBase(aeId, baseUrl, path, userName, password,
-                new RetrieveCallback<Container>(baseUrl, path, dougalCallback));
+                new RetrieveCallback<Container>(baseUrl, path, dougalCallback),
+                RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
     public static void retrieveLatestAsync(String aeId, String baseUrl, String path,
                                            String userName, String password, DougalCallback dougalCallback) {
         retrieveAsyncBase(aeId, baseUrl, path + LATEST_SUFFIX, userName, password,
-                new RetrieveCallback<ContentInstance>(baseUrl, path + LATEST_SUFFIX, dougalCallback));
+                new RetrieveCallback<ContentInstance>(baseUrl, path + LATEST_SUFFIX, dougalCallback),
+                RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
     public static void retrieveOldestAsync(String aeId, String baseUrl, String path,
                                            String userName, String password, DougalCallback dougalCallback) {
         retrieveAsyncBase(aeId, baseUrl, path + OLDEST_SUFFIX, userName, password,
-                new RetrieveCallback<ContentInstance>(baseUrl, path + OLDEST_SUFFIX, dougalCallback));
+                new RetrieveCallback<ContentInstance>(baseUrl, path + OLDEST_SUFFIX, dougalCallback),
+                RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
     public void update(String userName, String password) throws Exception {
@@ -146,37 +146,37 @@ public class Container extends Resource {
     public static void deleteAsync(String aeId, String baseUrl, String path,
                                    String userName, String password, DougalCallback dougalCallback) {
         deleteAsync(aeId, baseUrl, path, userName, password,
-                new DeleteCallback(dougalCallback));
+                new DeleteCallback(dougalCallback), RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
     public void deleteAsync(
             String userName, String password, DougalCallback dougalCallback) {
         deleteAsync(aeId, userName, password,
-                new DeleteCallback(dougalCallback));
+                new DeleteCallback(dougalCallback), RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
     public static void deleteLatestAsync(String aeId, String baseUrl, String path,
                                          String userName, String password, DougalCallback dougalCallback) {
         deleteAsync(aeId, baseUrl, path + LATEST_SUFFIX, userName, password,
-                new DeleteCallback(dougalCallback));
+                new DeleteCallback(dougalCallback), RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
     public static void deleteOldestAsync(String aeId, String baseUrl, String path,
                                          String userName, String password, DougalCallback dougalCallback) {
         deleteAsync(aeId, baseUrl, path + OLDEST_SUFFIX, userName, password,
-                new DeleteCallback(dougalCallback));
+                new DeleteCallback(dougalCallback), RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
     public void deleteLatestAsync(
             String userName, String password, DougalCallback dougalCallback) {
         deleteAsync(aeId, getBaseUrl(), getPath() + LATEST_SUFFIX, userName, password,
-                new DeleteCallback(dougalCallback));
+                new DeleteCallback(dougalCallback), RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
     public void deleteOldestAsync(
             String userName, String password, DougalCallback dougalCallback) {
         deleteAsync(aeId, getBaseUrl(), getPath() + OLDEST_SUFFIX, userName, password,
-                new DeleteCallback(dougalCallback));
+                new DeleteCallback(dougalCallback), RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
 //    public static Container getByName(Context context, String fqdn, int port, boolean useHttps,
@@ -244,6 +244,22 @@ public class Container extends Resource {
 
     public void setMaxNumberOfInstances(Integer maxNumberOfInstances) {
         this.maxNumberOfInstances = maxNumberOfInstances;
+    }
+
+    private void create(String baseUrl, String path, String userName, String password,
+                        @ResponseType int responseType)
+            throws Exception {
+        Response<ResponseHolder> response = create(aeId, baseUrl, path, userName, password,
+                responseType);
+        Container container = response.body().getContainer();
+        // Update current object.
+        // TODO URL returned?
+        setCreationTime(container.getCreationTime());
+        setExpiryTime(container.getExpiryTime());
+        setLastModifiedTime(container.getLastModifiedTime());
+        setParentId(container.getParentId());
+        setResourceId(container.getResourceId());
+        setResourceName(container.getResourceName());
     }
 
 }
