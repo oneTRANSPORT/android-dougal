@@ -3,6 +3,8 @@ package com.interdigital.android.dougal;
 import com.interdigital.android.dougal.network.request.RequestHolder;
 import com.interdigital.android.dougal.network.response.ResponseHolder;
 
+import java.util.Map;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -13,6 +15,7 @@ import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import retrofit2.http.QueryMap;
 
 public interface DougalService {
 
@@ -31,7 +34,8 @@ public interface DougalService {
             @Header("X-M2M-Origin") String aeId,
             @Path(value = "path", encoded = true) String path,
             @Header("Authorization") String authorization,
-            @Header("X-M2M-RI") String requestId);
+            @Header("X-M2M-RI") String requestId,
+            @QueryMap Map<String, String> queryMap);
 
     @Headers({
             "Content-Type: application/json"
@@ -42,14 +46,16 @@ public interface DougalService {
             @Path(value = "path", encoded = true) String path,
             @Header("Authorization") String authorization,
             @Header("X-M2M-RI") String requestId,
-            @Body RequestHolder requestHolder);
+            @Body RequestHolder requestHolder,
+            @QueryMap Map<String, String> queryMap);
 
     @DELETE("{path}")
     Call<Void> delete(
             @Header("X-M2M-Origin") String aeId,
             @Path(value = "path", encoded = true) String path,
             @Header("Authorization") String authorization,
-            @Header("X-M2M-RI") String requestId);
+            @Header("X-M2M-RI") String requestId,
+            @QueryMap Map<String, String> queryMap);
 
     @GET("{path}?fu=1")
     Call<ResponseHolder> discover(
@@ -57,5 +63,5 @@ public interface DougalService {
             @Path(value = "path", encoded = true) String path,
             @Header("Authorization") String authorization,
             @Header("X-M2M-RI") String requestId,
-            @Query("rty") @Types.ResourceType int resourceType);
+            @QueryMap Map<String, String> queryMap);
 }

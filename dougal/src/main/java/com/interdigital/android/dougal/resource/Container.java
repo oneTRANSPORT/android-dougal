@@ -9,10 +9,11 @@ import com.interdigital.android.dougal.network.response.ResponseHolder;
 import com.interdigital.android.dougal.resource.callback.CreateCallback;
 import com.interdigital.android.dougal.resource.callback.DeleteCallback;
 import com.interdigital.android.dougal.resource.callback.RetrieveCallback;
+import com.interdigital.android.dougal.shared.FilterCriteria;
 
 import retrofit2.Response;
 
-public class Container extends Resource {
+public class Container extends AnnounceableResource {
 
     private static final String LATEST_SUFFIX = "/la";
     private static final String OLDEST_SUFFIX = "/ol";
@@ -73,10 +74,23 @@ public class Container extends Resource {
                 new CreateCallback<Container>(this, dougalCallback));
     }
 
+    // TODO merge with routine below.
     public static Container retrieve(
             String aeId, String baseUrl, String path, String userName, String password)
             throws Exception {
-        Container container = retrieveBase(aeId, baseUrl, path, userName, password).body()
+        Container container = retrieveBase(aeId, baseUrl, path, userName, password, null).body()
+                .getContainer();
+        container.setAeId(aeId);
+        container.setBaseUrl(baseUrl);
+        container.setPath(path);
+        return container;
+    }
+
+    // TODO Order filterCriteria params the same?
+    public static Container retrieve(String aeId, String baseUrl, String path, FilterCriteria filterCriteria,
+                                     String userName, String password)
+            throws Exception {
+        Container container = retrieveBase(aeId, baseUrl, path, userName, password, filterCriteria).body()
                 .getContainer();
         container.setAeId(aeId);
         container.setBaseUrl(baseUrl);
@@ -179,14 +193,34 @@ public class Container extends Resource {
 
     public static Discovery discover(String aeId, String baseUrl, String path,
                                      String userName, String password) throws Exception {
-        return discover(aeId, baseUrl, path, Types.RESOURCE_TYPE_CONTAINER,
-                userName, password).body().getDiscovery();
+        FilterCriteria filterCriteria = new FilterCriteria();
+        filterCriteria.putResourceType(Types.RESOURCE_TYPE_CONTAINER);
+        return discoverBase(aeId, baseUrl, path, filterCriteria, userName, password).body().getDiscovery();
     }
 
     public static void discoverAsync(String aeId, String baseUrl, String path,
                                      String userName, String password, DougalCallback dougalCallback) {
-        discoverAsync(aeId, baseUrl, path, Types.RESOURCE_TYPE_CONTAINER,
-                userName, password, new RetrieveCallback<Discovery>(baseUrl, path, dougalCallback));
+        FilterCriteria filterCriteria = new FilterCriteria();
+        filterCriteria.putResourceType(Types.RESOURCE_TYPE_CONTAINER);
+        discoverAsync(aeId, baseUrl, path, filterCriteria, userName, password,
+                new RetrieveCallback<Discovery>(baseUrl, path, dougalCallback));
+    }
+
+    public static Discovery discover(String aeId, String baseUrl, String path, FilterCriteria filterCriteria,
+                                     String userName, String password) throws Exception {
+        if (filterCriteria.getResourceType() == null) {
+            filterCriteria.putResourceType(Types.RESOURCE_TYPE_CONTAINER);
+        }
+        return discoverBase(aeId, baseUrl, path, filterCriteria, userName, password).body().getDiscovery();
+    }
+
+    public static void discoverAsync(String aeId, String baseUrl, String path, FilterCriteria filterCriteria,
+                                     String userName, String password, DougalCallback dougalCallback) {
+        if (filterCriteria.getResourceType() == null) {
+            filterCriteria.putResourceType(Types.RESOURCE_TYPE_CONTAINER);
+        }
+        discoverAsync(aeId, baseUrl, path, filterCriteria, userName, password,
+                new RetrieveCallback<Discovery>(baseUrl, path, dougalCallback));
     }
 
     public String getAeId() {

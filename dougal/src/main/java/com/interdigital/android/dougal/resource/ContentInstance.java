@@ -9,11 +9,12 @@ import com.interdigital.android.dougal.network.response.ResponseHolder;
 import com.interdigital.android.dougal.resource.callback.CreateCallback;
 import com.interdigital.android.dougal.resource.callback.DeleteCallback;
 import com.interdigital.android.dougal.resource.callback.RetrieveCallback;
+import com.interdigital.android.dougal.shared.FilterCriteria;
 
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ContentInstance extends Resource {
+public class ContentInstance extends AnnounceableResource {
 
     private String aeId;
     @Expose
@@ -66,8 +67,8 @@ public class ContentInstance extends Resource {
     public static ContentInstance retrieve(
             String aeId, String baseUrl, String path, String userName, String password)
             throws Exception {
-        ContentInstance contentInstance = retrieveBase(aeId, baseUrl, path, userName, password).body()
-                .getContentInstance();
+        ContentInstance contentInstance = retrieveBase(aeId, baseUrl, path, userName, password,
+                null).body().getContentInstance();
         contentInstance.setAeId(aeId);
         contentInstance.setBaseUrl(baseUrl);
         contentInstance.setPath(path);
@@ -108,14 +109,17 @@ public class ContentInstance extends Resource {
 
     public static Discovery discover(String aeId, String baseUrl, String path,
                                      String userName, String password) throws Exception {
-        return discover(aeId, baseUrl, path, Types.RESOURCE_TYPE_CONTENT_INSTANCE,
-                userName, password).body().getDiscovery();
+        FilterCriteria filterCriteria = new FilterCriteria();
+        filterCriteria.putResourceType(Types.RESOURCE_TYPE_CONTENT_INSTANCE);
+        return discoverBase(aeId, baseUrl, path, filterCriteria, userName, password).body().getDiscovery();
     }
 
     public static void discoverAsync(String aeId, String baseUrl, String path,
                                      String userName, String password, DougalCallback dougalCallback) {
-        discoverAsync(aeId, baseUrl, path, Types.RESOURCE_TYPE_CONTENT_INSTANCE,
-                userName, password, new RetrieveCallback<Discovery>(baseUrl, path, dougalCallback));
+        FilterCriteria filterCriteria = new FilterCriteria();
+        filterCriteria.putResourceType(Types.RESOURCE_TYPE_CONTENT_INSTANCE);
+        discoverAsync(aeId, baseUrl, path, filterCriteria, userName, password,
+                new RetrieveCallback<Discovery>(baseUrl, path, dougalCallback));
     }
 
     public String getAeId() {

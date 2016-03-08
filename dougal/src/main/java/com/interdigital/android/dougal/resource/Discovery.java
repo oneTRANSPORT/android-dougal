@@ -13,9 +13,10 @@ public class Discovery extends Resource {
     @SerializedName("truncated")
     private boolean truncated;
 
-    public Discovery(String resourceId, String resourceName, @Types.ResourceType int resourceType,
-                     String parentId, String expiryTime, String[] accessControlPolicyIds, String[] labels) {
-        super(resourceId, resourceName, resourceType, parentId, expiryTime, accessControlPolicyIds, labels);
+    public Discovery() {
+        // TODO Obviously not an AE but we don't have a resource type for discovery.
+        // TODO Spec change required to make it a resource.
+        super(null, null, Types.RESOURCE_TYPE_APPLICATION_ENTITY, null, null);
     }
 
     public String[] getDiscoveredUri() {
