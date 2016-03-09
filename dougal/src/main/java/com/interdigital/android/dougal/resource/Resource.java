@@ -38,7 +38,8 @@ public abstract class Resource {
     private static Gson gson;
     // On the off-chance that we need to connect to multiple oneM2M servers with different
     // base URLs.
-    private static HashMap<String, DougalService> oneM2MServiceMap = new HashMap<>();
+    private static HashMap<String, DougalService> oneM2MServiceMapJson = new HashMap<>();
+    private static HashMap<String, DougalService> oneM2MServiceMapPlain = new HashMap<>();
 
     // The request id must be unique to this session.
     private static long requestId = 1L;
@@ -66,10 +67,6 @@ public abstract class Resource {
     @Expose
     @SerializedName("lbl")
     private String[] labels;
-    // TODO We don't know where this should go yet.
-//    @Expose
-//    @SerializedName("st")
-//    private Integer stateTag = null; // Strictly an unsigned int.
     //    @Expose  We don't know what the link attribute is.
     //    @SerializedName("")
     //    Private link
@@ -111,11 +108,11 @@ public abstract class Resource {
 
     public Response<ResponseHolder> create(@NonNull String aeId, @NonNull String baseUrl,
                                            @NonNull String path, String userName, String password) throws Exception {
-        maybeMakeOneM2MService(baseUrl);
+        maybeMakeOneM2MService(baseUrl, oneM2MServiceMapJson);
         String auth = Credentials.basic(userName, password);
         RequestHolder requestHolder = new RequestHolder(this);
         String contentType = CONTENT_TYPE_PREFIX + resourceType;
-        Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).create(
+        Call<ResponseHolder> call = oneM2MServiceMapJson.get(baseUrl).create(
                 aeId, path, auth, resourceName, contentType, getRequestId(), requestHolder);
         Response<ResponseHolder> response = call.execute();
         checkStatusCodes(response, Types.STATUS_CODE_CREATED);
@@ -124,11 +121,11 @@ public abstract class Resource {
 
     public void createAsync(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
                             String userName, String password, Callback<ResponseHolder> callback) {
-        maybeMakeOneM2MService(baseUrl);
+        maybeMakeOneM2MService(baseUrl, oneM2MServiceMapJson);
         String auth = Credentials.basic(userName, password);
         RequestHolder requestHolder = new RequestHolder(this);
         String contentType = CONTENT_TYPE_PREFIX + resourceType;
-        Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).create(
+        Call<ResponseHolder> call = oneM2MServiceMapJson.get(baseUrl).create(
                 aeId, path, auth, resourceName, contentType, getRequestId(), requestHolder);
         call.enqueue(callback);
     }
@@ -137,13 +134,13 @@ public abstract class Resource {
                                                         @NonNull String baseUrl, @NonNull String path,
                                                         String userName, String password, FilterCriteria filterCriteria)
             throws Exception {
-        maybeMakeOneM2MService(baseUrl);
+        maybeMakeOneM2MService(baseUrl, oneM2MServiceMapJson);
         String auth = Credentials.basic(userName, password);
         Map<String, String> queryMap = null;
         if (filterCriteria != null) {
             queryMap = filterCriteria.getQueryMap();
         }
-        Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl)
+        Call<ResponseHolder> call = oneM2MServiceMapJson.get(baseUrl)
                 .retrieve(aeId, path, auth, getRequestId(), queryMap);
         Response<ResponseHolder> response = call.execute();
         checkStatusCodes(response, Types.STATUS_CODE_OK);
@@ -153,9 +150,9 @@ public abstract class Resource {
     public static void retrieveAsyncBase(@NonNull String aeId, @NonNull String baseUrl,
                                          @NonNull String path, String userName, String password,
                                          Callback<ResponseHolder> callback) {
-        maybeMakeOneM2MService(baseUrl);
+        maybeMakeOneM2MService(baseUrl, oneM2MServiceMapJson);
         String auth = Credentials.basic(userName, password);
-        Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl)
+        Call<ResponseHolder> call = oneM2MServiceMapJson.get(baseUrl)
                 .retrieve(aeId, path, auth, getRequestId(), null);
         call.enqueue(callback);
     }
@@ -163,10 +160,10 @@ public abstract class Resource {
     // TODO Difficult because the CSE currently requires differential updates.
     public Response<ResponseHolder> update(
             @NonNull String aeId, String userName, String password) throws IOException {
-        maybeMakeOneM2MService(baseUrl);
+        maybeMakeOneM2MService(baseUrl, oneM2MServiceMapJson);
         String auth = Credentials.basic(userName, password);
         RequestHolder requestHolder = new RequestHolder(this);
-        Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).update(
+        Call<ResponseHolder> call = oneM2MServiceMapJson.get(baseUrl).update(
                 aeId, path, auth, getRequestId(), requestHolder, null);
         Response<ResponseHolder> response = call.execute();
         // TODO Decide what to do here.
@@ -175,45 +172,45 @@ public abstract class Resource {
 
     public void updateAsync(
             @NonNull String aeId, String userName, String password, Callback<ResponseHolder> callback) {
-        maybeMakeOneM2MService(baseUrl);
+        maybeMakeOneM2MService(baseUrl, oneM2MServiceMapJson);
         String auth = Credentials.basic(userName, password);
         RequestHolder requestHolder = new RequestHolder(this);
-        Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).update(
+        Call<ResponseHolder> call = oneM2MServiceMapJson.get(baseUrl).update(
                 aeId, path, auth, getRequestId(), requestHolder, null);
         call.enqueue(callback);
     }
 
     public static void delete(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
                               String userName, String password) throws Exception {
-        maybeMakeOneM2MService(baseUrl);
+        maybeMakeOneM2MService(baseUrl, oneM2MServiceMapJson);
         String auth = Credentials.basic(userName, password);
-        Call<Void> call = oneM2MServiceMap.get(baseUrl).delete(aeId, path, auth, getRequestId(), null);
+        Call<Void> call = oneM2MServiceMapJson.get(baseUrl).delete(aeId, path, auth, getRequestId(), null);
         Response<Void> response = call.execute();
         checkStatusCodes(response, Types.STATUS_CODE_DELETED);
     }
 
     public void delete(@NonNull String aeId, String userName, String password)
             throws Exception {
-        maybeMakeOneM2MService(baseUrl);
+        maybeMakeOneM2MService(baseUrl, oneM2MServiceMapJson);
         String auth = Credentials.basic(userName, password);
-        Call<Void> call = oneM2MServiceMap.get(baseUrl).delete(aeId, path, auth, getRequestId(), null);
+        Call<Void> call = oneM2MServiceMapJson.get(baseUrl).delete(aeId, path, auth, getRequestId(), null);
         Response<Void> response = call.execute();
         checkStatusCodes(response, Types.STATUS_CODE_DELETED);
     }
 
     public static void deleteAsync(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
                                    String userName, String password, Callback<Void> callback) {
-        maybeMakeOneM2MService(baseUrl);
+        maybeMakeOneM2MService(baseUrl, oneM2MServiceMapJson);
         String auth = Credentials.basic(userName, password);
-        Call<Void> call = oneM2MServiceMap.get(baseUrl).delete(aeId, path, auth, getRequestId(), null);
+        Call<Void> call = oneM2MServiceMapJson.get(baseUrl).delete(aeId, path, auth, getRequestId(), null);
         call.enqueue(callback);
     }
 
     public void deleteAsync(
             @NonNull String aeId, String userName, String password, Callback<Void> callback) {
-        maybeMakeOneM2MService(baseUrl);
+        maybeMakeOneM2MService(baseUrl, oneM2MServiceMapJson);
         String auth = Credentials.basic(userName, password);
-        Call<Void> call = oneM2MServiceMap.get(baseUrl).delete(aeId, path, auth, getRequestId(), null);
+        Call<Void> call = oneM2MServiceMapJson.get(baseUrl).delete(aeId, path, auth, getRequestId(), null);
         call.enqueue(callback);
     }
 
@@ -221,29 +218,29 @@ public abstract class Resource {
                                                         @NonNull String baseUrl, @NonNull String path,
                                                         FilterCriteria filterCriteria, String userName, String password)
             throws Exception {
-        maybeMakeOneM2MService(baseUrl);
+        maybeMakeOneM2MService(baseUrl, oneM2MServiceMapJson);
         String auth = Credentials.basic(userName, password);
         Map<String, String> queryMap = null;
         if (filterCriteria != null) {
             queryMap = filterCriteria.getQueryMap();
         }
-        Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl)
+        Call<ResponseHolder> call = oneM2MServiceMapJson.get(baseUrl)
                 .discover(aeId, path, auth, getRequestId(), queryMap);
         Response<ResponseHolder> response = call.execute();
         checkStatusCodes(response, Types.STATUS_CODE_OK);
         return response;
     }
 
-    public static void discoverAsync(@NonNull String aeId, @NonNull String baseUrl,
-                                     @NonNull String path, FilterCriteria filterCriteria,
-                                     String userName, String password, Callback<ResponseHolder> callback) {
-        maybeMakeOneM2MService(baseUrl);
+    public static void discoverAsyncBase(@NonNull String aeId, @NonNull String baseUrl,
+                                         @NonNull String path, FilterCriteria filterCriteria,
+                                         String userName, String password, Callback<ResponseHolder> callback) {
+        maybeMakeOneM2MService(baseUrl, oneM2MServiceMapJson);
         String auth = Credentials.basic(userName, password);
         Map<String, String> queryMap = null;
         if (filterCriteria != null) {
             queryMap = filterCriteria.getQueryMap();
         }
-        Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl)
+        Call<ResponseHolder> call = oneM2MServiceMapJson.get(baseUrl)
                 .discover(aeId, path, auth, getRequestId(), queryMap);
         call.enqueue(callback);
     }
@@ -330,7 +327,7 @@ public abstract class Resource {
     // Most applications should not need to call this.
     public void free() {
         gson = null;
-        oneM2MServiceMap.clear();
+        oneM2MServiceMapJson.clear();
     }
 
     public static int getCodeFromResponse(Response response) {
@@ -340,25 +337,25 @@ public abstract class Resource {
         return 0;
     }
 
-    private static void maybeMakeOneM2MService(String baseUrl) {
-        if (!oneM2MServiceMap.containsKey(baseUrl)) {
-            if (gson == null) {
-                gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-            }
+    private static void maybeMakeOneM2MService(String baseUrl,
+                                               HashMap<String, DougalService> serviceMap) {
+        if (!serviceMap.containsKey(baseUrl)) {
             httpLoggingInterceptor = new HttpLoggingInterceptor();
             httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
                     .addInterceptor(new AddHeadersInterceptor())
-                            // If we have logging enabled, the unit test will fail.
-                            // (Unimplemented Android framework class.)
                     .addInterceptor(httpLoggingInterceptor)
                     .build();
-            Retrofit retrofit = new Retrofit.Builder()
+            Retrofit.Builder builder = new Retrofit.Builder()
                     .baseUrl(baseUrl)
-                    .client(okHttpClient)
-                    .addConverterFactory(GsonConverterFactory.create(gson))
-                    .build();
-            oneM2MServiceMap.put(baseUrl, retrofit.create(DougalService.class));
+                    .client(okHttpClient);
+            if (serviceMap == oneM2MServiceMapJson) {
+                if (gson == null) {
+                    gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+                }
+                builder.addConverterFactory(GsonConverterFactory.create(gson));
+            }
+            serviceMap.put(baseUrl, builder.build().create(DougalService.class));
         }
     }
 

@@ -26,6 +26,9 @@ public class ContentInstance extends AnnounceableResource {
     @Expose
     @SerializedName("cs")
     private Long contentSize;
+    @Expose
+    @SerializedName("st")
+    private Integer stateTag = null; // Strictly an unsigned int.
 
     public ContentInstance(String aeId, String resourceId, String resourceName, String parentId,
                            String expiryTime, String contentInfo, String content, Long contentSize) {
@@ -114,11 +117,28 @@ public class ContentInstance extends AnnounceableResource {
         return discoverBase(aeId, baseUrl, path, filterCriteria, userName, password).body().getDiscovery();
     }
 
+    public static Discovery discover(String aeId, String baseUrl, String path, FilterCriteria filterCriteria,
+                                     String userName, String password) throws Exception {
+        if (filterCriteria.getResourceType() == null) {
+            filterCriteria.putResourceType(Types.RESOURCE_TYPE_CONTENT_INSTANCE);
+        }
+        return discoverBase(aeId, baseUrl, path, filterCriteria, userName, password).body().getDiscovery();
+    }
+
     public static void discoverAsync(String aeId, String baseUrl, String path,
                                      String userName, String password, DougalCallback dougalCallback) {
         FilterCriteria filterCriteria = new FilterCriteria();
         filterCriteria.putResourceType(Types.RESOURCE_TYPE_CONTENT_INSTANCE);
-        discoverAsync(aeId, baseUrl, path, filterCriteria, userName, password,
+        discoverAsyncBase(aeId, baseUrl, path, filterCriteria, userName, password,
+                new RetrieveCallback<Discovery>(baseUrl, path, dougalCallback));
+    }
+
+    public static void discoverAsync(String aeId, String baseUrl, String path, FilterCriteria filterCriteria,
+                                     String userName, String password, DougalCallback dougalCallback) {
+        if (filterCriteria.getResourceType() == null) {
+            filterCriteria.putResourceType(Types.RESOURCE_TYPE_CONTENT_INSTANCE);
+        }
+        discoverAsyncBase(aeId, baseUrl, path, filterCriteria, userName, password,
                 new RetrieveCallback<Discovery>(baseUrl, path, dougalCallback));
     }
 
@@ -154,6 +174,13 @@ public class ContentInstance extends AnnounceableResource {
         this.contentSize = contentSize;
     }
 
+    public Integer getStateTag() {
+        return stateTag;
+    }
+
+    public void setStateTag(Integer stateTag) {
+        this.stateTag = stateTag;
+    }
 }
 
 //{"m2m:cin":{
