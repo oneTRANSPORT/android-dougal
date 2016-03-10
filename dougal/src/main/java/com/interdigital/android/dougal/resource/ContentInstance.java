@@ -9,11 +9,12 @@ import com.interdigital.android.dougal.network.response.ResponseHolder;
 import com.interdigital.android.dougal.resource.callback.CreateCallback;
 import com.interdigital.android.dougal.resource.callback.DeleteCallback;
 import com.interdigital.android.dougal.resource.callback.RetrieveCallback;
+import com.interdigital.android.dougal.shared.FilterCriteria;
 
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ContentInstance extends Resource {
+public class ContentInstance extends AnnounceableResource {
 
     private String aeId;
     @Expose
@@ -25,6 +26,9 @@ public class ContentInstance extends Resource {
     @Expose
     @SerializedName("cs")
     private Long contentSize;
+    @Expose
+    @SerializedName("st")
+    private Integer stateTag = null; // Strictly an unsigned int.
 
     public ContentInstance(String aeId, String resourceId, String resourceName, String parentId,
                            String expiryTime, String contentInfo, String content, Long contentSize) {
@@ -57,16 +61,14 @@ public class ContentInstance extends Resource {
     public void createAsync(
             String baseUrl, String path, String userName, String password, DougalCallback dougalCallback) {
         createAsync(aeId, baseUrl, path, userName, password,
-                new CreateCallback<ContentInstance>(this, dougalCallback),
-                RESPONSE_TYPE_BLOCKING_REQUEST);
+                new CreateCallback<ContentInstance>(this, dougalCallback));
     }
 
     public static ContentInstance retrieve(
             String aeId, String baseUrl, String path, String userName, String password)
             throws Exception {
         ContentInstance contentInstance = retrieveBase(aeId, baseUrl, path, userName, password,
-                RESPONSE_TYPE_BLOCKING_REQUEST).body()
-                .getContentInstance();
+                null).body().getContentInstance();
         contentInstance.setAeId(aeId);
         contentInstance.setBaseUrl(baseUrl);
         contentInstance.setPath(path);
@@ -76,8 +78,7 @@ public class ContentInstance extends Resource {
     public static void retrieveAsync(String aeId, String baseUrl, String path,
                                      String userName, String password, DougalCallback dougalCallback) {
         retrieveAsyncBase(aeId, baseUrl, path, userName, password,
-                new RetrieveCallback<ContentInstance>(baseUrl, path, dougalCallback),
-                RESPONSE_TYPE_BLOCKING_REQUEST);
+                new RetrieveCallback<ContentInstance>(baseUrl, path, dougalCallback));
     }
 
     @Override
@@ -96,74 +97,45 @@ public class ContentInstance extends Resource {
 
     public static void deleteAsync(String aeId, String baseUrl, String path,
                                    String userName, String password, DougalCallback dougalCallback) {
-        deleteAsync(aeId, baseUrl, path, userName, password,
-                new DeleteCallback(dougalCallback), RESPONSE_TYPE_BLOCKING_REQUEST);
+        deleteAsync(aeId, baseUrl, path, userName, password, new DeleteCallback(dougalCallback));
     }
 
     public void deleteAsync(
             String userName, String password, DougalCallback dougalCallback) {
-        deleteAsync(aeId, userName, password,
-                new DeleteCallback(dougalCallback), RESPONSE_TYPE_BLOCKING_REQUEST);
+        deleteAsync(aeId, userName, password, new DeleteCallback(dougalCallback));
     }
 
-//    public static ContentInstance retrieve(String fqdn, int port, boolean useHttps,
-//                                           String cseName, String aeName, String dcName, String ciName, String aeId,
-//                                           String userName, String password) {
-//        return Resource.retrieve(
-//                new Ri(fqdn, port, cseName + "/" + aeName + "/" + dcName + "/" + ciName, useHttps),
-//                aeId, userName, password).getContentInstance();
-//    }
+    public static Discovery discover(String aeId, String baseUrl, String path,
+                                     String userName, String password) throws Exception {
+        FilterCriteria filterCriteria = new FilterCriteria();
+        filterCriteria.putResourceType(Types.RESOURCE_TYPE_CONTENT_INSTANCE);
+        return discoverBase(aeId, baseUrl, path, filterCriteria, userName, password).body().getDiscovery();
+    }
 
-    // Needs a filter parameter for oldest and latest.
-//    public static ContentInstance retrieve(String fqdn, int port, boolean useHttps,
-//                                           String cseName, String aeName, String dcName, String aeId,
-//                                           String userName, String password) {
-//        return Resource.retrieve(
-//                new Ri(fqdn, port, cseName + "/" + aeName + "/" + dcName + "/" + LAST_CI, useHttps),
-//                aeId, userName, password).getContentInstance();
-//    }
+    public static Discovery discover(String aeId, String baseUrl, String path, FilterCriteria filterCriteria,
+                                     String userName, String password) throws Exception {
+        if (filterCriteria.getResourceType() == null) {
+            filterCriteria.putResourceType(Types.RESOURCE_TYPE_CONTENT_INSTANCE);
+        }
+        return discoverBase(aeId, baseUrl, path, filterCriteria, userName, password).body().getDiscovery();
+    }
 
-//    public static ContentInstance create(Context context, String fqdn, int port, boolean useHttps,
-//                                         String cseName, String aeName, String dcName, String aeId, String content,
-//                                         String userName, String password) {
-//        Ri ri = new Ri(fqdn, port, cseName + "/" + aeName + "/" + dcName);
-//        ContentInstance contentInstance = new ContentInstance();
-//        // TODO Is this needed?
-////        contentInstance.setContentInfo("application/json:0");
-//        contentInstance.setContent(content);
-//        RequestHolder requestHolder = new RequestHolder();
-//        requestHolder.setContentInstance(contentInstance);
-//        requestHolder.putOriginProperty(aeId);
-////        requestHolder.putContentTypeProperty("application/json; ty=4");
-//        requestHolder.putContentTypeProperty("application/vnd.onem2m-res+xml; ty=4");
-//        // TODO Assume an anonymous CI name for now.
-//        // The server will create a new CI name and add it to the data container.
-////        requestHolder.putNameProperty(ciName);
-//        ResponseHolder responseHolder = postCin(context, ri, useHttps, requestHolder, userName, password);
-//        if (responseHolder == null) {
-//            return null;
-//        }
-//        return responseHolder.getContentInstance();
-//    }
+    public static void discoverAsync(String aeId, String baseUrl, String path,
+                                     String userName, String password, DougalCallback dougalCallback) {
+        FilterCriteria filterCriteria = new FilterCriteria();
+        filterCriteria.putResourceType(Types.RESOURCE_TYPE_CONTENT_INSTANCE);
+        discoverAsyncBase(aeId, baseUrl, path, filterCriteria, userName, password,
+                new RetrieveCallback<Discovery>(baseUrl, path, dougalCallback));
+    }
 
-//    public static Discovery discoverByDc(Context context, String fqdn, int port, boolean useHttps,
-//                                         String cseName, String aeName, String dcName, String aeId,
-//                                         String userName, String password) {
-//        Ri ri = new Ri(fqdn, port, cseName + "/" + aeName + "/" + dcName + "?fu=1&rty=4");
-//        return discover(context, ri, useHttps, aeId, userName, password);
-//    }
-//
-//    public static Discovery discoverByAe(Context context, String fqdn, int port, boolean useHttps,
-//                                         String cseName, String aeName, String aeId, String userName, String password) {
-//        Ri ri = new Ri(fqdn, port, cseName + "/" + aeName + "?fu=1&rty=4");
-//        return discover(context, ri, useHttps, aeId, userName, password);
-//    }
-//
-//    public static Discovery discoverAll(Context context, String fqdn, int port, boolean useHttps,
-//                                        String cseName, String aeId, String userName, String password) {
-//        Ri ri = new Ri(fqdn, port, cseName + "?fu=1&rty=4");
-//        return discover(context, ri, useHttps, aeId, userName, password);
-//    }
+    public static void discoverAsync(String aeId, String baseUrl, String path, FilterCriteria filterCriteria,
+                                     String userName, String password, DougalCallback dougalCallback) {
+        if (filterCriteria.getResourceType() == null) {
+            filterCriteria.putResourceType(Types.RESOURCE_TYPE_CONTENT_INSTANCE);
+        }
+        discoverAsyncBase(aeId, baseUrl, path, filterCriteria, userName, password,
+                new RetrieveCallback<Discovery>(baseUrl, path, dougalCallback));
+    }
 
     public String getAeId() {
         return aeId;
@@ -199,9 +171,8 @@ public class ContentInstance extends Resource {
 
     private void create(String baseUrl, String path, String userName, String password,
                         @ResponseType int responseType)
-            throws Exception {
-        Response<ResponseHolder> response = create(aeId, baseUrl, path, userName, password,
-                responseType);
+            throws Exception { // TODO Add response type.
+        Response<ResponseHolder> response = create(aeId, baseUrl, path, userName, password);
         ContentInstance contentInstance = response.body().getContentInstance();
         // Update current object.
         // TODO URL returned?
@@ -213,6 +184,13 @@ public class ContentInstance extends Resource {
         setResourceName(contentInstance.getResourceName());
     }
 
+    public Integer getStateTag() {
+        return stateTag;
+    }
+
+    public void setStateTag(Integer stateTag) {
+        this.stateTag = stateTag;
+    }
 }
 
 //{"m2m:cin":{

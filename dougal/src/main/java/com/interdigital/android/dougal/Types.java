@@ -1,6 +1,7 @@
 package com.interdigital.android.dougal;
 
 import android.support.annotation.IntDef;
+import android.support.annotation.StringDef;
 
 import java.lang.annotation.Retention;
 
@@ -129,4 +130,43 @@ public class Types {
     public static final int STATUS_CODE_MGMT_CANCELLATION_FAILED = 6026;
     public static final int STATUS_CODE_ALREADY_COMPLETE = 6028;
     public static final int STATUS_CODE_COMMAND_NOT_CANCELLABLE = 6029;
+
+    @Retention(SOURCE)
+    @IntDef({FILTER_USAGE_DISCOVERY_CRITERIA,
+            FILTER_USAGE_CONDITIONAL_RETRIEVAL})
+    public @interface FilterUsage {
+    }
+
+    public static final int FILTER_USAGE_DISCOVERY_CRITERIA = 1;
+    public static final int FILTER_USAGE_CONDITIONAL_RETRIEVAL = 2; // Default.
+
+    @Retention(SOURCE)
+    @StringDef({FILTER_CRITERIA_CREATED_BEFORE,
+            FILTER_CRITERIA_CREATED_AFTER, FILTER_CRITERIA_MODIFIED_SINCE,
+            FILTER_CRITERIA_UNMODIFIED_SINCE, FILTER_CRITERIA_STATE_TAG_SMALLER,
+            FILTER_CRITERIA_STATE_TAG_BIGGER, FILTER_CRITERIA_EXPIRE_BEFORE,
+            FILTER_CRITERIA_EXPIRE_AFTER, FILTER_CRITERIA_LABELS,
+            FILTER_CRITERIA_RESOURCE_TYPE, FILTER_CRITERIA_SIZE_ABOVE,
+            FILTER_CRITERIA_SIZE_BELOW, FILTER_CRITERIA_CONTENT_TYPE,
+            FILTER_CRITERIA_LIMIT, FILTER_CRITERIA_ATTRIBUTE,
+            FILTER_CRITERIA_FILTER_USAGE})
+    // TODO Stop this colliding with the class definition.
+    public @interface FilterCriteria {
+    }
+    public static final String FILTER_CRITERIA_CREATED_BEFORE = "crb";
+    public static final String FILTER_CRITERIA_CREATED_AFTER = "cra";
+    public static final String FILTER_CRITERIA_MODIFIED_SINCE = "ms";
+    public static final String FILTER_CRITERIA_UNMODIFIED_SINCE = "us";
+    public static final String FILTER_CRITERIA_STATE_TAG_SMALLER = "sts";
+    public static final String FILTER_CRITERIA_STATE_TAG_BIGGER = "stb";
+    public static final String FILTER_CRITERIA_EXPIRE_BEFORE = "exb";
+    public static final String FILTER_CRITERIA_EXPIRE_AFTER = "exa";
+    public static final String FILTER_CRITERIA_LABELS = "lbl";
+    public static final String FILTER_CRITERIA_RESOURCE_TYPE = "rty";
+    public static final String FILTER_CRITERIA_SIZE_ABOVE = "sza";
+    public static final String FILTER_CRITERIA_SIZE_BELOW = "szb";
+    public static final String FILTER_CRITERIA_CONTENT_TYPE = "cty";
+    public static final String FILTER_CRITERIA_LIMIT = "lim";
+    public static final String FILTER_CRITERIA_ATTRIBUTE = "atr";
+    public static final String FILTER_CRITERIA_FILTER_USAGE = "fu";
 }

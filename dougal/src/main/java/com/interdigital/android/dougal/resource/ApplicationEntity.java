@@ -8,10 +8,11 @@ import com.interdigital.android.dougal.resource.callback.CreateCallback;
 import com.interdigital.android.dougal.resource.callback.DeleteCallback;
 import com.interdigital.android.dougal.resource.callback.RetrieveCallback;
 import com.interdigital.android.dougal.resource.callback.UpdateCallback;
+import com.interdigital.android.dougal.shared.FilterCriteria;
 
 import retrofit2.Response;
 
-public class ApplicationEntity extends Resource {
+public class ApplicationEntity extends AnnounceableResource {
 
     // The AE id.
     //    @Expose
@@ -68,16 +69,14 @@ public class ApplicationEntity extends Resource {
     public void createAsync(
             String baseUrl, String path, String userName, String password, DougalCallback dougalCallback) {
         createAsync(id, baseUrl, path, userName, password,
-                new CreateCallback<ApplicationEntity>(this, dougalCallback),
-                RESPONSE_TYPE_BLOCKING_REQUEST);
+                new CreateCallback<ApplicationEntity>(this, dougalCallback));
     }
 
     public static ApplicationEntity retrieve(
             String aeId, String baseUrl, String path, String userName, String password)
             throws Exception {
         ApplicationEntity applicationEntity = retrieveBase(aeId, baseUrl, path, userName, password,
-                RESPONSE_TYPE_BLOCKING_REQUEST).body()
-                .getApplicationEntity();
+                null).body().getApplicationEntity();
         applicationEntity.setBaseUrl(baseUrl);
         applicationEntity.setPath(path);
         return applicationEntity;
@@ -86,8 +85,7 @@ public class ApplicationEntity extends Resource {
     public static void retrieveAsync(String aeId, String baseUrl, String path,
                                      String userName, String password, DougalCallback dougalCallback) {
         retrieveAsyncBase(aeId, baseUrl, path, userName, password,
-                new RetrieveCallback<ApplicationEntity>(baseUrl, path, dougalCallback),
-                RESPONSE_TYPE_BLOCKING_REQUEST);
+                new RetrieveCallback<ApplicationEntity>(baseUrl, path, dougalCallback));
     }
 
     public void update(String userName, String password) throws Exception {
@@ -106,20 +104,45 @@ public class ApplicationEntity extends Resource {
     public static void deleteAsync(String aeId, String baseUrl, String path,
                                    String userName, String password, DougalCallback dougalCallback) {
         deleteAsync(aeId, baseUrl, path, userName, password,
-                new DeleteCallback(dougalCallback), RESPONSE_TYPE_BLOCKING_REQUEST);
+                new DeleteCallback(dougalCallback));
     }
 
     public void deleteAsync(
             String userName, String password, DougalCallback dougalCallback) {
-        deleteAsync(id, userName, password,
-                new DeleteCallback(dougalCallback), RESPONSE_TYPE_BLOCKING_REQUEST);
+        deleteAsync(id, userName, password, new DeleteCallback(dougalCallback));
     }
 
-//    public static Discovery discoverAll(Context context, String fqdn, int port, boolean useHttps,
-//                                        String cseName, String aeId, String userName, String password) {
-//        Ri ri = new Ri(fqdn, port, cseName + "?fu=1&rty=ae");
-//        return discover(context, ri, useHttps, aeId, userName, password);
-//    }
+    public static Discovery discover(String aeId, String baseUrl, String path,
+                                     String userName, String password) throws Exception {
+        FilterCriteria filterCriteria = new FilterCriteria();
+        filterCriteria.putResourceType(Types.RESOURCE_TYPE_APPLICATION_ENTITY);
+        return discoverBase(aeId, baseUrl, path, filterCriteria, userName, password).body().getDiscovery();
+    }
+
+    public static Discovery discover(String aeId, String baseUrl, String path, FilterCriteria filterCriteria,
+                                     String userName, String password) throws Exception {
+        if (filterCriteria.getResourceType() == null) {
+            filterCriteria.putResourceType(Types.RESOURCE_TYPE_APPLICATION_ENTITY);
+        }
+        return discoverBase(aeId, baseUrl, path, filterCriteria, userName, password).body().getDiscovery();
+    }
+
+    public static void discoverAsync(String aeId, String baseUrl, String path,
+                                     String userName, String password, DougalCallback dougalCallback) {
+        FilterCriteria filterCriteria = new FilterCriteria();
+        filterCriteria.putResourceType(Types.RESOURCE_TYPE_APPLICATION_ENTITY);
+        discoverAsyncBase(aeId, baseUrl, path, filterCriteria, userName, password,
+                new RetrieveCallback<Discovery>(baseUrl, path, dougalCallback));
+    }
+
+    public static void discoverAsync(String aeId, String baseUrl, String path, FilterCriteria filterCriteria,
+                                     String userName, String password, DougalCallback dougalCallback) {
+        if (filterCriteria.getResourceType() == null) {
+            filterCriteria.putResourceType(Types.RESOURCE_TYPE_APPLICATION_ENTITY);
+        }
+        discoverAsyncBase(aeId, baseUrl, path, filterCriteria, userName, password,
+                new RetrieveCallback<Discovery>(baseUrl, path, dougalCallback));
+    }
 
     public String getId() {
         return id;
@@ -171,9 +194,8 @@ public class ApplicationEntity extends Resource {
 
     private void create(String baseUrl, String path, String userName, String password,
                         @ResponseType int responseType)
-            throws Exception {
-        Response<ResponseHolder> response = create(id, baseUrl, path, userName, password,
-                responseType);
+            throws Exception { // TODO Add response type.
+        Response<ResponseHolder> response = create(id, baseUrl, path, userName, password);
         ApplicationEntity applicationEntity = response.body().getApplicationEntity();
         // Update current object.
         // TODO URL returned?

@@ -2,10 +2,11 @@ package com.interdigital.android.dougal.network.response;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.interdigital.android.dougal.resource.Resource;
 import com.interdigital.android.dougal.resource.ApplicationEntity;
-import com.interdigital.android.dougal.resource.ContentInstance;
 import com.interdigital.android.dougal.resource.Container;
+import com.interdigital.android.dougal.resource.ContentInstance;
+import com.interdigital.android.dougal.resource.Discovery;
+import com.interdigital.android.dougal.resource.Resource;
 
 import okhttp3.Headers;
 
@@ -26,9 +27,9 @@ public class ResponseHolder {
     @Expose
     @SerializedName("m2m:cin")
     private ContentInstance contentInstance;
-//    @SerializedName("m2m:discovery")
-//    private Discovery discovery;
-
+    @Expose
+    @SerializedName("m2m:discovery")
+    private Discovery discovery;
 
     public int getStatusCode() {
         return statusCode;
@@ -72,6 +73,9 @@ public class ResponseHolder {
         if (contentInstance != null) {
             return contentInstance;
         }
+        if (discovery != null) {
+            return discovery;
+        }
         return null;
     }
 
@@ -99,11 +103,11 @@ public class ResponseHolder {
         this.contentInstance = contentInstance;
     }
 
-//    public Discovery getDiscovery() {
-//        return discovery;
-//    }
-//
-//    public void setDiscovery(Discovery discovery) {
-//        this.discovery = discovery;
-//    }
+    public Discovery getDiscovery() {
+        return discovery;
+    }
+
+    public void setDiscovery(Discovery discovery) {
+        this.discovery = discovery;
+    }
 }

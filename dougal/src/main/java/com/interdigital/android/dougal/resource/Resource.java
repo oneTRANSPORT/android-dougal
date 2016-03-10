@@ -13,10 +13,12 @@ import com.interdigital.android.dougal.exception.DougalException;
 import com.interdigital.android.dougal.network.AddHeadersInterceptor;
 import com.interdigital.android.dougal.network.request.RequestHolder;
 import com.interdigital.android.dougal.network.response.ResponseHolder;
+import com.interdigital.android.dougal.shared.FilterCriteria;
 
 import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
@@ -51,7 +53,8 @@ public abstract class Resource {
     private static Gson gson;
     // On the off-chance that we need to connect to multiple oneM2M servers with different
     // base URLs.
-    private static HashMap<String, DougalService> oneM2MServiceMap = new HashMap<>();
+    private static HashMap<String, DougalService> oneM2MServiceMapJson = new HashMap<>();
+    private static HashMap<String, DougalService> oneM2MServiceMapPlain = new HashMap<>();
 
     // The request id must be unique to this session.
     private static long requestId = 1L;
@@ -77,40 +80,21 @@ public abstract class Resource {
     @SerializedName("lt")
     private String lastModifiedTime;
     @Expose
-    @SerializedName("et")
-    private String expiryTime;
-    @Expose
-    @SerializedName("acpi")
-    private String[] accessControlPolicyIds;
-    @Expose
     @SerializedName("lbl")
     private String[] labels;
-    @Expose
-    @SerializedName("st")
-    private Integer stateTag = null; // Strictly an unsigned int.
     //    @Expose  We don't know what the link attribute is.
     //    @SerializedName("")
     //    Private link
-    @Expose
-    @SerializedName("at")
-    private String announceTo;
-    @Expose
-    @SerializedName("aa")
-    private String announcedAttribute;
 
     private String baseUrl;
     private String path;
 
-    // No network request.
-    // Builder pattern would be better here?
     public Resource(String resourceId, String resourceName, @Types.ResourceType int resourceType,
-                    String parentId, String expiryTime, String[] accessControlPolicyIds, String[] labels) {
+                    String parentId, String[] labels) {
         this.resourceId = resourceId;
         this.resourceName = resourceName;
         this.resourceType = resourceType;
         this.parentId = parentId;
-        this.expiryTime = expiryTime;
-        this.accessControlPolicyIds = accessControlPolicyIds;
         this.labels = labels;
     }
 
@@ -137,41 +121,47 @@ public abstract class Resource {
     // Delete DELETE
     // Notify POST
 
+    // TODO Need to pass responseType.
+    // Need to add filtering on all RUD methods.
     public Response<ResponseHolder> create(@NonNull String aeId, @NonNull String baseUrl,
-                                           @NonNull String path, String userName, String password,
-                                           @ResponseType int responseType) throws Exception {
-        maybeMakeOneM2MService(baseUrl);
+                                           @NonNull String path, String userName, String password) throws Exception {
+        maybeMakeOneM2MService(baseUrl, oneM2MServiceMapJson);
         String auth = Credentials.basic(userName, password);
         RequestHolder requestHolder = new RequestHolder(this);
         String contentType = CONTENT_TYPE_PREFIX + resourceType;
-        Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).create(
-                aeId, path, auth, resourceName, contentType, getRequestId(), responseType, requestHolder);
+        Call<ResponseHolder> call = oneM2MServiceMapJson.get(baseUrl).create(
+                aeId, path, auth, resourceName, contentType, getRequestId(),
+                RESPONSE_TYPE_BLOCKING_REQUEST, requestHolder);
         Response<ResponseHolder> response = call.execute();
         checkStatusCodes(response, Types.STATUS_CODE_CREATED);
         return response;
     }
 
     public void createAsync(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
-                            String userName, String password, Callback<ResponseHolder> callback,
-                            @ResponseType int responseType) {
-        maybeMakeOneM2MService(baseUrl);
+                            String userName, String password, Callback<ResponseHolder> callback) {
+        maybeMakeOneM2MService(baseUrl, oneM2MServiceMapJson);
         String auth = Credentials.basic(userName, password);
         RequestHolder requestHolder = new RequestHolder(this);
         String contentType = CONTENT_TYPE_PREFIX + resourceType;
-        Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).create(
+        Call<ResponseHolder> call = oneM2MServiceMapJson.get(baseUrl).create(
                 aeId, path, auth, resourceName, contentType, getRequestId(),
-                responseType, requestHolder);
+                RESPONSE_TYPE_BLOCKING_REQUEST, requestHolder);
         call.enqueue(callback);
     }
 
     public static Response<ResponseHolder> retrieveBase(@NonNull String aeId,
                                                         @NonNull String baseUrl, @NonNull String path,
-                                                        String userName, String password, @ResponseType int responseType)
+                                                        String userName, String password, FilterCriteria filterCriteria)
             throws Exception {
-        maybeMakeOneM2MService(baseUrl);
+        maybeMakeOneM2MService(baseUrl, oneM2MServiceMapJson);
         String auth = Credentials.basic(userName, password);
-        Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl)
-                .retrieve(aeId, path, auth, getRequestId(), responseType);
+        Map<String, String> queryMap = null;
+        if (filterCriteria != null) {
+            queryMap = filterCriteria.getQueryMap();
+        }
+        Call<ResponseHolder> call = oneM2MServiceMapJson.get(baseUrl)
+                .retrieve(aeId, path, auth, getRequestId(), RESPONSE_TYPE_BLOCKING_REQUEST,
+                        queryMap);
         Response<ResponseHolder> response = call.execute();
         checkStatusCodes(response, Types.STATUS_CODE_OK);
         return response;
@@ -179,22 +169,23 @@ public abstract class Resource {
 
     public static void retrieveAsyncBase(@NonNull String aeId, @NonNull String baseUrl,
                                          @NonNull String path, String userName, String password,
-                                         Callback<ResponseHolder> callback, @ResponseType int responseType) {
-        maybeMakeOneM2MService(baseUrl);
+                                         Callback<ResponseHolder> callback) {
+        maybeMakeOneM2MService(baseUrl, oneM2MServiceMapJson);
         String auth = Credentials.basic(userName, password);
-        Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl)
-                .retrieve(aeId, path, auth, getRequestId(), responseType);
+        Call<ResponseHolder> call = oneM2MServiceMapJson.get(baseUrl)
+                .retrieve(aeId, path, auth, getRequestId(), RESPONSE_TYPE_BLOCKING_REQUEST, null);
         call.enqueue(callback);
     }
 
     // TODO Difficult because the CSE currently requires differential updates.
     public Response<ResponseHolder> update(
             @NonNull String aeId, String userName, String password) throws IOException {
-        maybeMakeOneM2MService(baseUrl);
+        maybeMakeOneM2MService(baseUrl, oneM2MServiceMapJson);
         String auth = Credentials.basic(userName, password);
         RequestHolder requestHolder = new RequestHolder(this);
-        Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).update(
-                aeId, path, auth, getRequestId(), RESPONSE_TYPE_BLOCKING_REQUEST, requestHolder);
+        Call<ResponseHolder> call = oneM2MServiceMapJson.get(baseUrl).update(
+                aeId, path, auth, getRequestId(), RESPONSE_TYPE_BLOCKING_REQUEST,
+                null, requestHolder);
         Response<ResponseHolder> response = call.execute();
         // TODO Decide what to do here.
         return response;
@@ -202,50 +193,81 @@ public abstract class Resource {
 
     public void updateAsync(
             @NonNull String aeId, String userName, String password, Callback<ResponseHolder> callback) {
-        maybeMakeOneM2MService(baseUrl);
+        maybeMakeOneM2MService(baseUrl, oneM2MServiceMapJson);
         String auth = Credentials.basic(userName, password);
         RequestHolder requestHolder = new RequestHolder(this);
-        Call<ResponseHolder> call = oneM2MServiceMap.get(baseUrl).update(
-                aeId, path, auth, getRequestId(), RESPONSE_TYPE_BLOCKING_REQUEST, requestHolder);
+        Call<ResponseHolder> call = oneM2MServiceMapJson.get(baseUrl).update(
+                aeId, path, auth, getRequestId(), RESPONSE_TYPE_BLOCKING_REQUEST, null,
+                requestHolder);
         call.enqueue(callback);
     }
 
     public static void delete(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
-                              String userName, String password)
-            throws Exception {
-        maybeMakeOneM2MService(baseUrl);
+                              String userName, String password) throws Exception {
+        maybeMakeOneM2MService(baseUrl, oneM2MServiceMapJson);
         String auth = Credentials.basic(userName, password);
-        Call<Void> call = oneM2MServiceMap.get(baseUrl).delete(aeId, path, auth, getRequestId(),
-                RESPONSE_TYPE_BLOCKING_REQUEST);
+        Call<Void> call = oneM2MServiceMapJson.get(baseUrl).delete(aeId, path, auth, getRequestId(),
+                RESPONSE_TYPE_BLOCKING_REQUEST, null);
         Response<Void> response = call.execute();
         checkStatusCodes(response, Types.STATUS_CODE_DELETED);
     }
 
     public void delete(@NonNull String aeId, String userName, String password) throws Exception {
-        maybeMakeOneM2MService(baseUrl);
+        maybeMakeOneM2MService(baseUrl, oneM2MServiceMapJson);
         String auth = Credentials.basic(userName, password);
-        Call<Void> call = oneM2MServiceMap.get(baseUrl).delete(aeId, path, auth, getRequestId(),
-                RESPONSE_TYPE_BLOCKING_REQUEST);
+        Call<Void> call = oneM2MServiceMapJson.get(baseUrl).delete(aeId, path, auth, getRequestId(),
+                RESPONSE_TYPE_BLOCKING_REQUEST, null);
         Response<Void> response = call.execute();
         checkStatusCodes(response, Types.STATUS_CODE_DELETED);
     }
 
-    public static void deleteAsync(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
-                                   String userName, String password, Callback<Void> callback,
-                                   @ResponseType int responseType) {
-        maybeMakeOneM2MService(baseUrl);
+    public static void deleteAsync(@NonNull String aeId, @NonNull String
+            baseUrl, @NonNull String path,
+                                   String userName, String password, Callback<Void> callback) {
+        maybeMakeOneM2MService(baseUrl, oneM2MServiceMapJson);
         String auth = Credentials.basic(userName, password);
-        Call<Void> call = oneM2MServiceMap.get(baseUrl).delete(aeId, path, auth, getRequestId(),
-                responseType);
+        Call<Void> call = oneM2MServiceMapJson.get(baseUrl).delete(aeId, path, auth, getRequestId(),
+                RESPONSE_TYPE_BLOCKING_REQUEST, null);
         call.enqueue(callback);
     }
 
-    public void deleteAsync(@NonNull String aeId, String userName, String password,
-                            Callback<Void> callback, @ResponseType int responseType) {
-        maybeMakeOneM2MService(baseUrl);
+    public void deleteAsync(
+            @NonNull String aeId, String userName, String password, Callback<Void> callback) {
+        maybeMakeOneM2MService(baseUrl, oneM2MServiceMapJson);
         String auth = Credentials.basic(userName, password);
-        Call<Void> call = oneM2MServiceMap.get(baseUrl).delete(aeId, path, auth, getRequestId(),
-                responseType);
+        Call<Void> call = oneM2MServiceMapJson.get(baseUrl).delete(aeId, path, auth, getRequestId(),
+                RESPONSE_TYPE_BLOCKING_REQUEST, null);
+        call.enqueue(callback);
+    }
+
+    public static Response<ResponseHolder> discoverBase(@NonNull String aeId,
+                                                        @NonNull String baseUrl, @NonNull String path,
+                                                        FilterCriteria filterCriteria, String userName, String password)
+            throws Exception {
+        maybeMakeOneM2MService(baseUrl, oneM2MServiceMapJson);
+        String auth = Credentials.basic(userName, password);
+        Map<String, String> queryMap = null;
+        if (filterCriteria != null) {
+            queryMap = filterCriteria.getQueryMap();
+        }
+        Call<ResponseHolder> call = oneM2MServiceMapJson.get(baseUrl)
+                .discover(aeId, path, auth, getRequestId(), queryMap);
+        Response<ResponseHolder> response = call.execute();
+        checkStatusCodes(response, Types.STATUS_CODE_OK);
+        return response;
+    }
+
+    public static void discoverAsyncBase(@NonNull String aeId, @NonNull String baseUrl,
+                                         @NonNull String path, FilterCriteria filterCriteria,
+                                         String userName, String password, Callback<ResponseHolder> callback) {
+        maybeMakeOneM2MService(baseUrl, oneM2MServiceMapJson);
+        String auth = Credentials.basic(userName, password);
+        Map<String, String> queryMap = null;
+        if (filterCriteria != null) {
+            queryMap = filterCriteria.getQueryMap();
+        }
+        Call<ResponseHolder> call = oneM2MServiceMapJson.get(baseUrl)
+                .discover(aeId, path, auth, getRequestId(), queryMap);
         call.enqueue(callback);
     }
 
@@ -298,52 +320,12 @@ public abstract class Resource {
         this.lastModifiedTime = lastModifiedTime;
     }
 
-    public String getExpiryTime() {
-        return expiryTime;
-    }
-
-    public void setExpiryTime(String expiryTime) {
-        this.expiryTime = expiryTime;
-    }
-
-    public String[] getAccessControlPolicyIds() {
-        return accessControlPolicyIds;
-    }
-
-    public void setAccessControlPolicyIds(String[] accessControlPolicyIds) {
-        this.accessControlPolicyIds = accessControlPolicyIds;
-    }
-
     public String[] getLabels() {
         return labels;
     }
 
     public void setLabels(String[] labels) {
         this.labels = labels;
-    }
-
-    public void setStateTag(Integer stateTag) {
-        this.stateTag = stateTag;
-    }
-
-    public Integer getStateTag() {
-        return stateTag;
-    }
-
-    public void setAnnounceTo(String announceTo) {
-        this.announceTo = announceTo;
-    }
-
-    public String getAnnounceTo() {
-        return announceTo;
-    }
-
-    public void setAnnouncedAttribute(String announcedAttribute) {
-        this.announcedAttribute = announcedAttribute;
-    }
-
-    public String getAnnouncedAttribute() {
-        return announcedAttribute;
     }
 
     public void setBaseUrl(String baseUrl) {
@@ -371,7 +353,7 @@ public abstract class Resource {
     // Most applications should not need to call this.
     public void free() {
         gson = null;
-        oneM2MServiceMap.clear();
+        oneM2MServiceMapJson.clear();
     }
 
     public static int getCodeFromResponse(Response response) {
@@ -381,25 +363,25 @@ public abstract class Resource {
         return 0;
     }
 
-    private static void maybeMakeOneM2MService(String baseUrl) {
-        if (!oneM2MServiceMap.containsKey(baseUrl)) {
-            if (gson == null) {
-                gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-            }
+    private static void maybeMakeOneM2MService(String baseUrl,
+                                               HashMap<String, DougalService> serviceMap) {
+        if (!serviceMap.containsKey(baseUrl)) {
             httpLoggingInterceptor = new HttpLoggingInterceptor();
             httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
                     .addInterceptor(new AddHeadersInterceptor())
-                            // If we have logging enabled, the unit test will fail.
-                            // (Unimplemented Android framework class.)
                     .addInterceptor(httpLoggingInterceptor)
                     .build();
-            Retrofit retrofit = new Retrofit.Builder()
+            Retrofit.Builder builder = new Retrofit.Builder()
                     .baseUrl(baseUrl)
-                    .client(okHttpClient)
-                    .addConverterFactory(GsonConverterFactory.create(gson))
-                    .build();
-            oneM2MServiceMap.put(baseUrl, retrofit.create(DougalService.class));
+                    .client(okHttpClient);
+            if (serviceMap == oneM2MServiceMapJson) {
+                if (gson == null) {
+                    gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+                }
+                builder.addConverterFactory(GsonConverterFactory.create(gson));
+            }
+            serviceMap.put(baseUrl, builder.build().create(DougalService.class));
         }
     }
 

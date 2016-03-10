@@ -24,7 +24,6 @@ public class CreateCallback<R extends Resource> extends BaseCallback<R, Response
             // These are common to all resources.
             // For the full resource, do a RETRIEVE request.
             resource.setCreationTime(r.getCreationTime());
-            resource.setExpiryTime(r.getExpiryTime());
             resource.setLastModifiedTime(r.getLastModifiedTime());
             resource.setParentId(r.getParentId());
             resource.setResourceId(r.getResourceId());

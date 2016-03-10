@@ -9,10 +9,11 @@ import com.interdigital.android.dougal.network.response.ResponseHolder;
 import com.interdigital.android.dougal.resource.callback.CreateCallback;
 import com.interdigital.android.dougal.resource.callback.DeleteCallback;
 import com.interdigital.android.dougal.resource.callback.RetrieveCallback;
+import com.interdigital.android.dougal.shared.FilterCriteria;
 
 import retrofit2.Response;
 
-public class Container extends Resource {
+public class Container extends AnnounceableResource {
 
     private static final String LATEST_SUFFIX = "/la";
     private static final String OLDEST_SUFFIX = "/ol";
@@ -34,6 +35,9 @@ public class Container extends Resource {
     @Expose
     @SerializedName("mni")
     private Integer maxNumberOfInstances;
+    @Expose
+    @SerializedName("st")
+    private Integer stateTag = null; // Strictly an unsigned int.
 
     public Container(String aeId, String resourceId, String resourceName, String parentId,
                      String expiryTime, Long maxByteSize, Long maxInstanceAge, Integer maxNumberOfInstances) {
@@ -54,28 +58,39 @@ public class Container extends Resource {
     }
 
     public void create(String baseUrl, String path, String userName, String password)
-            throws Exception {
-        create(baseUrl, path, userName, password, RESPONSE_TYPE_BLOCKING_REQUEST);
+            throws Exception { // TODO add blocking request.
+        create(aeId, baseUrl, path, userName, password);
     }
 
-    public void createNonBlocking(String baseUrl, String path, String userName, String password)
-            throws Exception {
-        create(baseUrl, path, userName, password,
-                RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH);
-    }
+//    public void createNonBlocking(String baseUrl, String path, String userName, String password)
+//            throws Exception {
+//        create(aeId,baseUrl, path, userName, password,
+//                RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH);
+//    }
 
     public void createAsync(
             String baseUrl, String path, String userName, String password, DougalCallback dougalCallback) {
         createAsync(aeId, baseUrl, path, userName, password,
-                new CreateCallback<Container>(this, dougalCallback),
-                RESPONSE_TYPE_BLOCKING_REQUEST);
+                new CreateCallback<Container>(this, dougalCallback));
     }
 
+    // TODO merge with routine below.
     public static Container retrieve(
             String aeId, String baseUrl, String path, String userName, String password)
             throws Exception {
-        Container container = retrieveBase(aeId, baseUrl, path, userName, password,
-                RESPONSE_TYPE_BLOCKING_REQUEST).body()
+        Container container = retrieveBase(aeId, baseUrl, path, userName, password, null).body()
+                .getContainer();
+        container.setAeId(aeId);
+        container.setBaseUrl(baseUrl);
+        container.setPath(path);
+        return container;
+    }
+
+    // TODO Order filterCriteria params the same?
+    public static Container retrieve(String aeId, String baseUrl, String path, FilterCriteria filterCriteria,
+                                     String userName, String password)
+            throws Exception {
+        Container container = retrieveBase(aeId, baseUrl, path, userName, password, filterCriteria).body()
                 .getContainer();
         container.setAeId(aeId);
         container.setBaseUrl(baseUrl);
@@ -98,22 +113,19 @@ public class Container extends Resource {
     public static void retrieveAsync(String aeId, String baseUrl, String path,
                                      String userName, String password, DougalCallback dougalCallback) {
         retrieveAsyncBase(aeId, baseUrl, path, userName, password,
-                new RetrieveCallback<Container>(baseUrl, path, dougalCallback),
-                RESPONSE_TYPE_BLOCKING_REQUEST);
+                new RetrieveCallback<Container>(baseUrl, path, dougalCallback));
     }
 
     public static void retrieveLatestAsync(String aeId, String baseUrl, String path,
                                            String userName, String password, DougalCallback dougalCallback) {
         retrieveAsyncBase(aeId, baseUrl, path + LATEST_SUFFIX, userName, password,
-                new RetrieveCallback<ContentInstance>(baseUrl, path + LATEST_SUFFIX, dougalCallback),
-                RESPONSE_TYPE_BLOCKING_REQUEST);
+                new RetrieveCallback<ContentInstance>(baseUrl, path + LATEST_SUFFIX, dougalCallback));
     }
 
     public static void retrieveOldestAsync(String aeId, String baseUrl, String path,
                                            String userName, String password, DougalCallback dougalCallback) {
         retrieveAsyncBase(aeId, baseUrl, path + OLDEST_SUFFIX, userName, password,
-                new RetrieveCallback<ContentInstance>(baseUrl, path + OLDEST_SUFFIX, dougalCallback),
-                RESPONSE_TYPE_BLOCKING_REQUEST);
+                new RetrieveCallback<ContentInstance>(baseUrl, path + OLDEST_SUFFIX, dougalCallback));
     }
 
     public void update(String userName, String password) throws Exception {
@@ -146,57 +158,70 @@ public class Container extends Resource {
     public static void deleteAsync(String aeId, String baseUrl, String path,
                                    String userName, String password, DougalCallback dougalCallback) {
         deleteAsync(aeId, baseUrl, path, userName, password,
-                new DeleteCallback(dougalCallback), RESPONSE_TYPE_BLOCKING_REQUEST);
+                new DeleteCallback(dougalCallback));
     }
 
     public void deleteAsync(
             String userName, String password, DougalCallback dougalCallback) {
         deleteAsync(aeId, userName, password,
-                new DeleteCallback(dougalCallback), RESPONSE_TYPE_BLOCKING_REQUEST);
+                new DeleteCallback(dougalCallback));
     }
 
     public static void deleteLatestAsync(String aeId, String baseUrl, String path,
                                          String userName, String password, DougalCallback dougalCallback) {
         deleteAsync(aeId, baseUrl, path + LATEST_SUFFIX, userName, password,
-                new DeleteCallback(dougalCallback), RESPONSE_TYPE_BLOCKING_REQUEST);
+                new DeleteCallback(dougalCallback));
     }
 
     public static void deleteOldestAsync(String aeId, String baseUrl, String path,
                                          String userName, String password, DougalCallback dougalCallback) {
         deleteAsync(aeId, baseUrl, path + OLDEST_SUFFIX, userName, password,
-                new DeleteCallback(dougalCallback), RESPONSE_TYPE_BLOCKING_REQUEST);
+                new DeleteCallback(dougalCallback));
     }
 
     public void deleteLatestAsync(
             String userName, String password, DougalCallback dougalCallback) {
         deleteAsync(aeId, getBaseUrl(), getPath() + LATEST_SUFFIX, userName, password,
-                new DeleteCallback(dougalCallback), RESPONSE_TYPE_BLOCKING_REQUEST);
+                new DeleteCallback(dougalCallback));
     }
 
     public void deleteOldestAsync(
             String userName, String password, DougalCallback dougalCallback) {
         deleteAsync(aeId, getBaseUrl(), getPath() + OLDEST_SUFFIX, userName, password,
-                new DeleteCallback(dougalCallback), RESPONSE_TYPE_BLOCKING_REQUEST);
+                new DeleteCallback(dougalCallback));
     }
 
-//    public static Container getByName(Context context, String fqdn, int port, boolean useHttps,
-//                                          String cseName, String aeName, String dcName, String aeId,
-//                                          String userName, String password) {
-//        Ri ri = new Ri(fqdn, port, cseName + "/" + aeName + "/" + dcName);
-//        return create(context, ri, useHttps, aeId, userName, password).getDataContainer();
-//    }
+    public static Discovery discover(String aeId, String baseUrl, String path,
+                                     String userName, String password) throws Exception {
+        FilterCriteria filterCriteria = new FilterCriteria();
+        filterCriteria.putResourceType(Types.RESOURCE_TYPE_CONTAINER);
+        return discoverBase(aeId, baseUrl, path, filterCriteria, userName, password).body().getDiscovery();
+    }
 
-//    public static Discovery discoverByAe(Context context, String fqdn, int port, boolean useHttps,
-//                                         String cseName, String aeName, String aeId, String userName, String password) {
-//        Ri ri = new Ri(fqdn, port, cseName + "/" + aeName + "?fu=1&rty=3");
-//        return discover(context, ri, useHttps, aeId, userName, password);
-//    }
+    public static Discovery discover(String aeId, String baseUrl, String path, FilterCriteria filterCriteria,
+                                     String userName, String password) throws Exception {
+        if (filterCriteria.getResourceType() == null) {
+            filterCriteria.putResourceType(Types.RESOURCE_TYPE_CONTAINER);
+        }
+        return discoverBase(aeId, baseUrl, path, filterCriteria, userName, password).body().getDiscovery();
+    }
 
-//    public static Discovery discoverAll(Context context, String fqdn, int port, boolean useHttps,
-//                                        String cseName, String aeId, String userName, String password) {
-//        Ri ri = new Ri(fqdn, port, cseName + "?fu=1&rty=3");
-//        return discover(context, ri, useHttps, aeId, userName, password);
-//    }
+    public static void discoverAsync(String aeId, String baseUrl, String path,
+                                     String userName, String password, DougalCallback dougalCallback) {
+        FilterCriteria filterCriteria = new FilterCriteria();
+        filterCriteria.putResourceType(Types.RESOURCE_TYPE_CONTAINER);
+        discoverAsyncBase(aeId, baseUrl, path, filterCriteria, userName, password,
+                new RetrieveCallback<Discovery>(baseUrl, path, dougalCallback));
+    }
+
+    public static void discoverAsync(String aeId, String baseUrl, String path, FilterCriteria filterCriteria,
+                                     String userName, String password, DougalCallback dougalCallback) {
+        if (filterCriteria.getResourceType() == null) {
+            filterCriteria.putResourceType(Types.RESOURCE_TYPE_CONTAINER);
+        }
+        discoverAsyncBase(aeId, baseUrl, path, filterCriteria, userName, password,
+                new RetrieveCallback<Discovery>(baseUrl, path, dougalCallback));
+    }
 
     public String getAeId() {
         return aeId;
@@ -246,20 +271,26 @@ public class Container extends Resource {
         this.maxNumberOfInstances = maxNumberOfInstances;
     }
 
-    private void create(String baseUrl, String path, String userName, String password,
-                        @ResponseType int responseType)
-            throws Exception {
-        Response<ResponseHolder> response = create(aeId, baseUrl, path, userName, password,
-                responseType);
-        Container container = response.body().getContainer();
-        // Update current object.
-        // TODO URL returned?
-        setCreationTime(container.getCreationTime());
-        setExpiryTime(container.getExpiryTime());
-        setLastModifiedTime(container.getLastModifiedTime());
-        setParentId(container.getParentId());
-        setResourceId(container.getResourceId());
-        setResourceName(container.getResourceName());
+//    private void create(String baseUrl, String path, String userName, String password,
+//                        @ResponseType int responseType)
+//            throws Exception {
+//        Response<ResponseHolder> response = create(aeId, baseUrl, path, userName, password,
+//                responseType);
+//        Container container = response.body().getContainer();
+//        // Update current object.
+//        // TODO URL returned?
+//        setCreationTime(container.getCreationTime());
+//        setExpiryTime(container.getExpiryTime());
+//        setLastModifiedTime(container.getLastModifiedTime());
+//        setParentId(container.getParentId());
+//        setResourceId(container.getResourceId());
+//        setResourceName(container.getResourceName());
+//    }
+
+    // There is no setStateTag as the CSE assigns this value,
+    // incrementing on modification.
+    public Integer getStateTag() {
+        return stateTag;
     }
 
 }
