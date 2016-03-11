@@ -61,14 +61,16 @@ public class ContentInstance extends AnnounceableResource {
     public void createAsync(
             String baseUrl, String path, String userName, String password, DougalCallback dougalCallback) {
         createAsync(aeId, baseUrl, path, userName, password,
-                new CreateCallback<ContentInstance>(this, dougalCallback));
+                new CreateCallback<ContentInstance>(this, dougalCallback),
+                RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
+    // TODO Sort out the order of parameters?
     public static ContentInstance retrieve(
             String aeId, String baseUrl, String path, String userName, String password)
             throws Exception {
         ContentInstance contentInstance = retrieveBase(aeId, baseUrl, path, userName, password,
-                null).body().getContentInstance();
+                RESPONSE_TYPE_BLOCKING_REQUEST, null).body().getContentInstance();
         contentInstance.setAeId(aeId);
         contentInstance.setBaseUrl(baseUrl);
         contentInstance.setPath(path);
@@ -78,38 +80,50 @@ public class ContentInstance extends AnnounceableResource {
     public static void retrieveAsync(String aeId, String baseUrl, String path,
                                      String userName, String password, DougalCallback dougalCallback) {
         retrieveAsyncBase(aeId, baseUrl, path, userName, password,
+                RESPONSE_TYPE_BLOCKING_REQUEST,
                 new RetrieveCallback<ContentInstance>(baseUrl, path, dougalCallback));
     }
 
     @Override
-    public Response<ResponseHolder> update(@NonNull String aeId, String userName, String password) {
+    public Response<ResponseHolder> update(@NonNull String aeId, String userName, String password,
+                                           @ResponseType int responseType) {
         throw new UnsupportedOperationException("Content instances may not be updated");
     }
 
     @Override
-    public void updateAsync(@NonNull String aeId, String userName, String password, Callback<ResponseHolder> callback) {
+    public void updateAsync(@NonNull String aeId, String userName, String password,
+                            @ResponseType int responseType, Callback<ResponseHolder> callback) {
         throw new UnsupportedOperationException("Content instances may not be updated");
     }
 
     public void delete(String userName, String password) throws Exception {
-        delete(aeId, userName, password);
+        delete(aeId, userName, password, RESPONSE_TYPE_BLOCKING_REQUEST);
+    }
+
+    public static void delete(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
+                              String userName, String password)
+            throws Exception {
+        delete(aeId, baseUrl, path, userName, password, RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
     public static void deleteAsync(String aeId, String baseUrl, String path,
                                    String userName, String password, DougalCallback dougalCallback) {
-        deleteAsync(aeId, baseUrl, path, userName, password, new DeleteCallback(dougalCallback));
+        deleteAsync(aeId, baseUrl, path, userName, password,
+                RESPONSE_TYPE_BLOCKING_REQUEST, new DeleteCallback(dougalCallback));
     }
 
     public void deleteAsync(
             String userName, String password, DougalCallback dougalCallback) {
-        deleteAsync(aeId, userName, password, new DeleteCallback(dougalCallback));
+        deleteAsync(aeId, userName, password, RESPONSE_TYPE_BLOCKING_REQUEST,
+                new DeleteCallback(dougalCallback));
     }
 
     public static Discovery discover(String aeId, String baseUrl, String path,
                                      String userName, String password) throws Exception {
         FilterCriteria filterCriteria = new FilterCriteria();
         filterCriteria.putResourceType(Types.RESOURCE_TYPE_CONTENT_INSTANCE);
-        return discoverBase(aeId, baseUrl, path, filterCriteria, userName, password).body().getDiscovery();
+        return discoverBase(aeId, baseUrl, path, userName, password,
+                RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria).body().getDiscovery();
     }
 
     public static Discovery discover(String aeId, String baseUrl, String path, FilterCriteria filterCriteria,
@@ -117,14 +131,16 @@ public class ContentInstance extends AnnounceableResource {
         if (filterCriteria.getResourceType() == null) {
             filterCriteria.putResourceType(Types.RESOURCE_TYPE_CONTENT_INSTANCE);
         }
-        return discoverBase(aeId, baseUrl, path, filterCriteria, userName, password).body().getDiscovery();
+        return discoverBase(aeId, baseUrl, path, userName, password,
+                RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria).body().getDiscovery();
     }
 
     public static void discoverAsync(String aeId, String baseUrl, String path,
                                      String userName, String password, DougalCallback dougalCallback) {
         FilterCriteria filterCriteria = new FilterCriteria();
         filterCriteria.putResourceType(Types.RESOURCE_TYPE_CONTENT_INSTANCE);
-        discoverAsyncBase(aeId, baseUrl, path, filterCriteria, userName, password,
+        discoverAsyncBase(aeId, baseUrl, path, userName, password,
+                RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria,
                 new RetrieveCallback<Discovery>(baseUrl, path, dougalCallback));
     }
 
@@ -133,7 +149,8 @@ public class ContentInstance extends AnnounceableResource {
         if (filterCriteria.getResourceType() == null) {
             filterCriteria.putResourceType(Types.RESOURCE_TYPE_CONTENT_INSTANCE);
         }
-        discoverAsyncBase(aeId, baseUrl, path, filterCriteria, userName, password,
+        discoverAsyncBase(aeId, baseUrl, path, userName, password,
+                RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria,
                 new RetrieveCallback<Discovery>(baseUrl, path, dougalCallback));
     }
 
@@ -172,7 +189,8 @@ public class ContentInstance extends AnnounceableResource {
     private void create(String baseUrl, String path, String userName, String password,
                         @ResponseType int responseType)
             throws Exception { // TODO Add response type.
-        Response<ResponseHolder> response = create(aeId, baseUrl, path, userName, password);
+        Response<ResponseHolder> response = create(aeId, baseUrl, path, userName, password,
+                RESPONSE_TYPE_BLOCKING_REQUEST);
         ContentInstance contentInstance = response.body().getContentInstance();
         // Update current object.
         // TODO URL returned?

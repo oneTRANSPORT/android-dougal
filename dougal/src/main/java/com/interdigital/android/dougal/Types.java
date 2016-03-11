@@ -153,6 +153,7 @@ public class Types {
     // TODO Stop this colliding with the class definition.
     public @interface FilterCriteria {
     }
+
     public static final String FILTER_CRITERIA_CREATED_BEFORE = "crb";
     public static final String FILTER_CRITERIA_CREATED_AFTER = "cra";
     public static final String FILTER_CRITERIA_MODIFIED_SINCE = "ms";

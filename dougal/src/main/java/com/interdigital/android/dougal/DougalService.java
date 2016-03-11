@@ -68,5 +68,6 @@ public interface DougalService {
             @Path(value = "path", encoded = true) String path,
             @Header("Authorization") String authorization,
             @Header("X-M2M-RI") String requestId,
+            @Query("rt") @Resource.ResponseType int responseType,
             @QueryMap Map<String, String> queryMap);
 }

@@ -16,8 +16,11 @@ public class ResponseHolder {
     private Headers headers;
     private String body;
 
-    //    @SerializedName("m2m:cb")
-//    private CommonServicesEntity commonServicesEntity;
+    // This field is returned by the CSE as plain text, but we rewrite the response and
+    // wrap it in a JSON container so it can be dealt with by Gson.
+    @Expose
+    @SerializedName("rewrite:id")
+    private Resource plainTextId;
     @Expose
     @SerializedName("m2m:ae")
     private ApplicationEntity applicationEntity;
@@ -55,15 +58,10 @@ public class ResponseHolder {
         return body;
     }
 
-    //    public CommonServicesEntity getCommonServicesEntity() {
-//        return commonServicesEntity;
-//    }
-
-//    public void setCommonServicesEntity(CommonServicesEntity commonServicesEntity) {
-//        this.commonServicesEntity = commonServicesEntity;
-//    }
-
     public Resource getResource() {
+        if (plainTextId != null) {
+            return plainTextId;
+        }
         if (applicationEntity != null) {
             return applicationEntity;
         }

@@ -11,6 +11,7 @@ import com.interdigital.android.dougal.DougalService;
 import com.interdigital.android.dougal.Types;
 import com.interdigital.android.dougal.exception.DougalException;
 import com.interdigital.android.dougal.network.AddHeadersInterceptor;
+import com.interdigital.android.dougal.network.RewriteCompatibilityInterceptor;
 import com.interdigital.android.dougal.network.request.RequestHolder;
 import com.interdigital.android.dougal.network.response.ResponseHolder;
 import com.interdigital.android.dougal.shared.FilterCriteria;
@@ -50,23 +51,27 @@ public abstract class Resource {
     private static final String CONTENT_TYPE_PREFIX = "application/json; ty=";
 
     // We should be able to use one Gson instance for everything.  Should be thread-safe.
-    private static Gson gson;
+    public static Gson gson;
+
+    private static final String RESPONSE_STATUS_CODE = "X-M2M-RSC";
+
     // On the off-chance that we need to connect to multiple oneM2M servers with different
-    // base URLs.
-    private static HashMap<String, DougalService> oneM2MServiceMapJson = new HashMap<>();
-    private static HashMap<String, DougalService> oneM2MServiceMapPlain = new HashMap<>();
+    // base URLs, use a map of services.
+    private static HashMap<String, DougalService> dougalServiceMap = new HashMap<>();
 
     // The request id must be unique to this session.
     private static long requestId = 1L;
     private static HttpLoggingInterceptor httpLoggingInterceptor;
 
-    //    @Expose
+    // The CSE doesn't like receiving the ri or rn attributes in a create request.
+//    @Expose
 //    @SerializedName("ri")
     private String resourceId;
-    //    @Expose
+//    @Expose
 //    @SerializedName("rn")
     private String resourceName;
-    //    @Expose // This is sent in the Content-Type header.
+    // This is sent in the Content-Type header.
+    //    @Expose
 //    @SerializedName("ty")
     @Types.ResourceType
     private int resourceType;
@@ -88,6 +93,8 @@ public abstract class Resource {
 
     private String baseUrl;
     private String path;
+
+    // TODO Make methods protected instead of public.
 
     public Resource(String resourceId, String resourceName, @Types.ResourceType int resourceType,
                     String parentId, String[] labels) {
@@ -124,150 +131,189 @@ public abstract class Resource {
     // TODO Need to pass responseType.
     // Need to add filtering on all RUD methods.
     public Response<ResponseHolder> create(@NonNull String aeId, @NonNull String baseUrl,
-                                           @NonNull String path, String userName, String password) throws Exception {
-        maybeMakeOneM2MService(baseUrl, oneM2MServiceMapJson);
+                                           @NonNull String path, String userName, String password,
+                                           @ResponseType int responseType) throws Exception {
+        maybeCreateDougalService(baseUrl);
         String auth = Credentials.basic(userName, password);
         RequestHolder requestHolder = new RequestHolder(this);
         String contentType = CONTENT_TYPE_PREFIX + resourceType;
-        Call<ResponseHolder> call = oneM2MServiceMapJson.get(baseUrl).create(
-                aeId, path, auth, resourceName, contentType, getRequestId(),
-                RESPONSE_TYPE_BLOCKING_REQUEST, requestHolder);
+        Call<ResponseHolder> call = dougalServiceMap.get(baseUrl).create(aeId, path, auth,
+                resourceName, contentType, getRequestId(), responseType, requestHolder);
         Response<ResponseHolder> response = call.execute();
-        checkStatusCodes(response, Types.STATUS_CODE_CREATED);
+        switch (responseType) {
+            case RESPONSE_TYPE_BLOCKING_REQUEST:
+                checkStatusCodes(response, Types.STATUS_CODE_CREATED);
+                break;
+            default:
+                checkStatusCodes(response, Types.STATUS_CODE_ACCEPTED);
+                break;
+        }
         return response;
     }
 
+    // TODO Callbacks need to support async ACCEPTED.
     public void createAsync(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
-                            String userName, String password, Callback<ResponseHolder> callback) {
-        maybeMakeOneM2MService(baseUrl, oneM2MServiceMapJson);
+                            String userName, String password, Callback<ResponseHolder> callback,
+                            @ResponseType int responseType) {
+        maybeCreateDougalService(baseUrl);
         String auth = Credentials.basic(userName, password);
         RequestHolder requestHolder = new RequestHolder(this);
         String contentType = CONTENT_TYPE_PREFIX + resourceType;
-        Call<ResponseHolder> call = oneM2MServiceMapJson.get(baseUrl).create(
-                aeId, path, auth, resourceName, contentType, getRequestId(),
-                RESPONSE_TYPE_BLOCKING_REQUEST, requestHolder);
+        Call<ResponseHolder> call = dougalServiceMap.get(baseUrl).create(aeId, path, auth,
+                resourceName, contentType, getRequestId(), responseType, requestHolder);
         call.enqueue(callback);
     }
 
     public static Response<ResponseHolder> retrieveBase(@NonNull String aeId,
                                                         @NonNull String baseUrl, @NonNull String path,
-                                                        String userName, String password, FilterCriteria filterCriteria)
+                                                        String userName, String password,
+                                                        @ResponseType int responseType, FilterCriteria filterCriteria)
             throws Exception {
-        maybeMakeOneM2MService(baseUrl, oneM2MServiceMapJson);
+        maybeCreateDougalService(baseUrl);
         String auth = Credentials.basic(userName, password);
         Map<String, String> queryMap = null;
         if (filterCriteria != null) {
             queryMap = filterCriteria.getQueryMap();
         }
-        Call<ResponseHolder> call = oneM2MServiceMapJson.get(baseUrl)
-                .retrieve(aeId, path, auth, getRequestId(), RESPONSE_TYPE_BLOCKING_REQUEST,
-                        queryMap);
+        Call<ResponseHolder> call = dougalServiceMap.get(baseUrl)
+                .retrieve(aeId, path, auth, getRequestId(), responseType, queryMap);
         Response<ResponseHolder> response = call.execute();
-        checkStatusCodes(response, Types.STATUS_CODE_OK);
+        switch (responseType) {
+            case RESPONSE_TYPE_BLOCKING_REQUEST:
+                checkStatusCodes(response, Types.STATUS_CODE_OK);
+                break;
+            default:
+                checkStatusCodes(response, Types.STATUS_CODE_ACCEPTED);
+                break;
+        }
         return response;
     }
 
     public static void retrieveAsyncBase(@NonNull String aeId, @NonNull String baseUrl,
                                          @NonNull String path, String userName, String password,
+                                         @ResponseType int responseType,
                                          Callback<ResponseHolder> callback) {
-        maybeMakeOneM2MService(baseUrl, oneM2MServiceMapJson);
+        maybeCreateDougalService(baseUrl);
         String auth = Credentials.basic(userName, password);
-        Call<ResponseHolder> call = oneM2MServiceMapJson.get(baseUrl)
-                .retrieve(aeId, path, auth, getRequestId(), RESPONSE_TYPE_BLOCKING_REQUEST, null);
+        Call<ResponseHolder> call = dougalServiceMap.get(baseUrl)
+                .retrieve(aeId, path, auth, getRequestId(), responseType, null);
         call.enqueue(callback);
     }
 
     // TODO Difficult because the CSE currently requires differential updates.
     public Response<ResponseHolder> update(
-            @NonNull String aeId, String userName, String password) throws IOException {
-        maybeMakeOneM2MService(baseUrl, oneM2MServiceMapJson);
+            @NonNull String aeId, String userName, String password,
+            @ResponseType int responseType) throws IOException {
+        maybeCreateDougalService(baseUrl);
         String auth = Credentials.basic(userName, password);
         RequestHolder requestHolder = new RequestHolder(this);
-        Call<ResponseHolder> call = oneM2MServiceMapJson.get(baseUrl).update(
-                aeId, path, auth, getRequestId(), RESPONSE_TYPE_BLOCKING_REQUEST,
-                null, requestHolder);
+        Call<ResponseHolder> call = dougalServiceMap.get(baseUrl).update(
+                aeId, path, auth, getRequestId(), responseType, null, requestHolder);
         Response<ResponseHolder> response = call.execute();
         // TODO Decide what to do here.
         return response;
     }
 
-    public void updateAsync(
-            @NonNull String aeId, String userName, String password, Callback<ResponseHolder> callback) {
-        maybeMakeOneM2MService(baseUrl, oneM2MServiceMapJson);
+    public void updateAsync(@NonNull String aeId, String userName, String password,
+                            @ResponseType int responseType, Callback<ResponseHolder> callback) {
+        maybeCreateDougalService(baseUrl);
         String auth = Credentials.basic(userName, password);
         RequestHolder requestHolder = new RequestHolder(this);
-        Call<ResponseHolder> call = oneM2MServiceMapJson.get(baseUrl).update(
-                aeId, path, auth, getRequestId(), RESPONSE_TYPE_BLOCKING_REQUEST, null,
-                requestHolder);
+        Call<ResponseHolder> call = dougalServiceMap.get(baseUrl).update(
+                aeId, path, auth, getRequestId(), responseType, null, requestHolder);
         call.enqueue(callback);
     }
 
     public static void delete(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
-                              String userName, String password) throws Exception {
-        maybeMakeOneM2MService(baseUrl, oneM2MServiceMapJson);
+                              String userName, String password, @ResponseType int responseType)
+            throws Exception {
+        maybeCreateDougalService(baseUrl);
         String auth = Credentials.basic(userName, password);
-        Call<Void> call = oneM2MServiceMapJson.get(baseUrl).delete(aeId, path, auth, getRequestId(),
-                RESPONSE_TYPE_BLOCKING_REQUEST, null);
+        Call<Void> call = dougalServiceMap.get(baseUrl).delete(aeId, path, auth, getRequestId(),
+                responseType, null);
         Response<Void> response = call.execute();
-        checkStatusCodes(response, Types.STATUS_CODE_DELETED);
+        switch (responseType) {
+            case RESPONSE_TYPE_BLOCKING_REQUEST:
+                checkStatusCodes(response, Types.STATUS_CODE_DELETED);
+                break;
+            default:
+                checkStatusCodes(response, Types.STATUS_CODE_ACCEPTED);
+                break;
+        }
     }
 
-    public void delete(@NonNull String aeId, String userName, String password) throws Exception {
-        maybeMakeOneM2MService(baseUrl, oneM2MServiceMapJson);
+    public void delete(@NonNull String aeId, String userName, String password,
+                       @ResponseType int responseType) throws Exception {
+        maybeCreateDougalService(baseUrl);
         String auth = Credentials.basic(userName, password);
-        Call<Void> call = oneM2MServiceMapJson.get(baseUrl).delete(aeId, path, auth, getRequestId(),
-                RESPONSE_TYPE_BLOCKING_REQUEST, null);
+        Call<Void> call = dougalServiceMap.get(baseUrl).delete(aeId, path, auth, getRequestId(),
+                responseType, null);
         Response<Void> response = call.execute();
-        checkStatusCodes(response, Types.STATUS_CODE_DELETED);
+        switch (responseType) {
+            case RESPONSE_TYPE_BLOCKING_REQUEST:
+                checkStatusCodes(response, Types.STATUS_CODE_DELETED);
+                break;
+            default:
+                checkStatusCodes(response, Types.STATUS_CODE_ACCEPTED);
+                break;
+        }
     }
 
-    public static void deleteAsync(@NonNull String aeId, @NonNull String
-            baseUrl, @NonNull String path,
-                                   String userName, String password, Callback<Void> callback) {
-        maybeMakeOneM2MService(baseUrl, oneM2MServiceMapJson);
+    public static void deleteAsync(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
+                                   String userName, String password,
+                                   @ResponseType int responseType, Callback<Void> callback) {
+        maybeCreateDougalService(baseUrl);
         String auth = Credentials.basic(userName, password);
-        Call<Void> call = oneM2MServiceMapJson.get(baseUrl).delete(aeId, path, auth, getRequestId(),
-                RESPONSE_TYPE_BLOCKING_REQUEST, null);
+        Call<Void> call = dougalServiceMap.get(baseUrl).delete(aeId, path, auth, getRequestId(),
+                responseType, null);
         call.enqueue(callback);
     }
 
-    public void deleteAsync(
-            @NonNull String aeId, String userName, String password, Callback<Void> callback) {
-        maybeMakeOneM2MService(baseUrl, oneM2MServiceMapJson);
+    public void deleteAsync(@NonNull String aeId, String userName, String password,
+                            @ResponseType int responseType, Callback<Void> callback) {
+        maybeCreateDougalService(baseUrl);
         String auth = Credentials.basic(userName, password);
-        Call<Void> call = oneM2MServiceMapJson.get(baseUrl).delete(aeId, path, auth, getRequestId(),
-                RESPONSE_TYPE_BLOCKING_REQUEST, null);
+        Call<Void> call = dougalServiceMap.get(baseUrl).delete(aeId, path, auth, getRequestId(),
+                responseType, null);
         call.enqueue(callback);
     }
 
     public static Response<ResponseHolder> discoverBase(@NonNull String aeId,
                                                         @NonNull String baseUrl, @NonNull String path,
-                                                        FilterCriteria filterCriteria, String userName, String password)
-            throws Exception {
-        maybeMakeOneM2MService(baseUrl, oneM2MServiceMapJson);
+                                                        String userName, String password, @ResponseType int responseType,
+                                                        FilterCriteria filterCriteria) throws Exception {
+        maybeCreateDougalService(baseUrl);
         String auth = Credentials.basic(userName, password);
         Map<String, String> queryMap = null;
         if (filterCriteria != null) {
             queryMap = filterCriteria.getQueryMap();
         }
-        Call<ResponseHolder> call = oneM2MServiceMapJson.get(baseUrl)
-                .discover(aeId, path, auth, getRequestId(), queryMap);
+        Call<ResponseHolder> call = dougalServiceMap.get(baseUrl)
+                .discover(aeId, path, auth, getRequestId(), responseType, queryMap);
         Response<ResponseHolder> response = call.execute();
-        checkStatusCodes(response, Types.STATUS_CODE_OK);
+        switch (responseType) {
+            case RESPONSE_TYPE_BLOCKING_REQUEST:
+                checkStatusCodes(response, Types.STATUS_CODE_OK);
+                break;
+            default:
+                checkStatusCodes(response, Types.STATUS_CODE_ACCEPTED);
+                break;
+        }
         return response;
     }
 
     public static void discoverAsyncBase(@NonNull String aeId, @NonNull String baseUrl,
-                                         @NonNull String path, FilterCriteria filterCriteria,
-                                         String userName, String password, Callback<ResponseHolder> callback) {
-        maybeMakeOneM2MService(baseUrl, oneM2MServiceMapJson);
+                                         @NonNull String path, String userName, String password,
+                                         @ResponseType int responseType, FilterCriteria filterCriteria,
+                                         Callback<ResponseHolder> callback) {
+        maybeCreateDougalService(baseUrl);
         String auth = Credentials.basic(userName, password);
         Map<String, String> queryMap = null;
         if (filterCriteria != null) {
             queryMap = filterCriteria.getQueryMap();
         }
-        Call<ResponseHolder> call = oneM2MServiceMapJson.get(baseUrl)
-                .discover(aeId, path, auth, getRequestId(), queryMap);
+        Call<ResponseHolder> call = dougalServiceMap.get(baseUrl)
+                .discover(aeId, path, auth, getRequestId(), responseType, queryMap);
         call.enqueue(callback);
     }
 
@@ -353,35 +399,35 @@ public abstract class Resource {
     // Most applications should not need to call this.
     public void free() {
         gson = null;
-        oneM2MServiceMapJson.clear();
+        dougalServiceMap.clear();
     }
 
     public static int getCodeFromResponse(Response response) {
-        if (response.headers().get("X-M2M-RSC") != null) {
-            return Integer.parseInt(response.headers().get("X-M2M-RSC"));
+        String code = response.headers().get(RESPONSE_STATUS_CODE);
+        if (code != null) {
+            return Integer.parseInt(code);
         }
         return 0;
     }
 
-    private static void maybeMakeOneM2MService(String baseUrl,
-                                               HashMap<String, DougalService> serviceMap) {
-        if (!serviceMap.containsKey(baseUrl)) {
+    private static void maybeCreateDougalService(String baseUrl) {
+        if (!dougalServiceMap.containsKey(baseUrl)) {
             httpLoggingInterceptor = new HttpLoggingInterceptor();
             httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
                     .addInterceptor(new AddHeadersInterceptor())
+                    .addInterceptor(new RewriteCompatibilityInterceptor())
                     .addInterceptor(httpLoggingInterceptor)
                     .build();
-            Retrofit.Builder builder = new Retrofit.Builder()
-                    .baseUrl(baseUrl)
-                    .client(okHttpClient);
-            if (serviceMap == oneM2MServiceMapJson) {
-                if (gson == null) {
-                    gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-                }
-                builder.addConverterFactory(GsonConverterFactory.create(gson));
+            if (gson == null) {
+                gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
             }
-            serviceMap.put(baseUrl, builder.build().create(DougalService.class));
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(baseUrl)
+                    .client(okHttpClient)
+                    .addConverterFactory(GsonConverterFactory.create(gson))
+                    .build();
+            dougalServiceMap.put(baseUrl, retrofit.create(DougalService.class));
         }
     }
 
