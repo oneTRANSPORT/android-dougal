@@ -77,6 +77,14 @@ public class ResponseHolder {
         return null;
     }
 
+    public Resource getPlainTextId() {
+        return plainTextId;
+    }
+
+    public void setPlainTextId(Resource plainTextId) {
+        this.plainTextId = plainTextId;
+    }
+
     public ApplicationEntity getApplicationEntity() {
         return applicationEntity;
     }

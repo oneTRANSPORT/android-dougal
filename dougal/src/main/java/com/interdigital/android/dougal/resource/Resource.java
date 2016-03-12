@@ -64,11 +64,11 @@ public abstract class Resource {
     private static HttpLoggingInterceptor httpLoggingInterceptor;
 
     // The CSE doesn't like receiving the ri or rn attributes in a create request.
-//    @Expose
-//    @SerializedName("ri")
+    @Expose
+    @SerializedName("ri")
     private String resourceId;
-//    @Expose
-//    @SerializedName("rn")
+    @Expose
+    @SerializedName("rn")
     private String resourceName;
     // This is sent in the Content-Type header.
     //    @Expose
@@ -130,7 +130,7 @@ public abstract class Resource {
 
     // TODO Need to pass responseType.
     // Need to add filtering on all RUD methods.
-    public Response<ResponseHolder> create(@NonNull String aeId, @NonNull String baseUrl,
+    protected Response<ResponseHolder> create(@NonNull String aeId, @NonNull String baseUrl,
                                            @NonNull String path, String userName, String password,
                                            @ResponseType int responseType) throws Exception {
         maybeCreateDougalService(baseUrl);
@@ -152,7 +152,7 @@ public abstract class Resource {
     }
 
     // TODO Callbacks need to support async ACCEPTED.
-    public void createAsync(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
+    protected void createAsync(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
                             String userName, String password, Callback<ResponseHolder> callback,
                             @ResponseType int responseType) {
         maybeCreateDougalService(baseUrl);
@@ -164,7 +164,7 @@ public abstract class Resource {
         call.enqueue(callback);
     }
 
-    public static Response<ResponseHolder> retrieveBase(@NonNull String aeId,
+    protected static Response<ResponseHolder> retrieveBase(@NonNull String aeId,
                                                         @NonNull String baseUrl, @NonNull String path,
                                                         String userName, String password,
                                                         @ResponseType int responseType, FilterCriteria filterCriteria)
@@ -189,7 +189,7 @@ public abstract class Resource {
         return response;
     }
 
-    public static void retrieveAsyncBase(@NonNull String aeId, @NonNull String baseUrl,
+    protected static void retrieveAsyncBase(@NonNull String aeId, @NonNull String baseUrl,
                                          @NonNull String path, String userName, String password,
                                          @ResponseType int responseType,
                                          Callback<ResponseHolder> callback) {
@@ -201,7 +201,7 @@ public abstract class Resource {
     }
 
     // TODO Difficult because the CSE currently requires differential updates.
-    public Response<ResponseHolder> update(
+    protected Response<ResponseHolder> update(
             @NonNull String aeId, String userName, String password,
             @ResponseType int responseType) throws IOException {
         maybeCreateDougalService(baseUrl);
@@ -214,7 +214,7 @@ public abstract class Resource {
         return response;
     }
 
-    public void updateAsync(@NonNull String aeId, String userName, String password,
+    protected void updateAsync(@NonNull String aeId, String userName, String password,
                             @ResponseType int responseType, Callback<ResponseHolder> callback) {
         maybeCreateDougalService(baseUrl);
         String auth = Credentials.basic(userName, password);
@@ -224,7 +224,7 @@ public abstract class Resource {
         call.enqueue(callback);
     }
 
-    public static void delete(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
+    protected static void delete(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
                               String userName, String password, @ResponseType int responseType)
             throws Exception {
         maybeCreateDougalService(baseUrl);
@@ -242,7 +242,7 @@ public abstract class Resource {
         }
     }
 
-    public void delete(@NonNull String aeId, String userName, String password,
+    protected void delete(@NonNull String aeId, String userName, String password,
                        @ResponseType int responseType) throws Exception {
         maybeCreateDougalService(baseUrl);
         String auth = Credentials.basic(userName, password);
@@ -259,7 +259,7 @@ public abstract class Resource {
         }
     }
 
-    public static void deleteAsync(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
+    protected static void deleteAsync(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
                                    String userName, String password,
                                    @ResponseType int responseType, Callback<Void> callback) {
         maybeCreateDougalService(baseUrl);
@@ -269,7 +269,7 @@ public abstract class Resource {
         call.enqueue(callback);
     }
 
-    public void deleteAsync(@NonNull String aeId, String userName, String password,
+    protected void deleteAsync(@NonNull String aeId, String userName, String password,
                             @ResponseType int responseType, Callback<Void> callback) {
         maybeCreateDougalService(baseUrl);
         String auth = Credentials.basic(userName, password);
@@ -278,7 +278,7 @@ public abstract class Resource {
         call.enqueue(callback);
     }
 
-    public static Response<ResponseHolder> discoverBase(@NonNull String aeId,
+    protected static Response<ResponseHolder> discoverBase(@NonNull String aeId,
                                                         @NonNull String baseUrl, @NonNull String path,
                                                         String userName, String password, @ResponseType int responseType,
                                                         FilterCriteria filterCriteria) throws Exception {
@@ -302,7 +302,7 @@ public abstract class Resource {
         return response;
     }
 
-    public static void discoverAsyncBase(@NonNull String aeId, @NonNull String baseUrl,
+    protected static void discoverAsyncBase(@NonNull String aeId, @NonNull String baseUrl,
                                          @NonNull String path, String userName, String password,
                                          @ResponseType int responseType, FilterCriteria filterCriteria,
                                          Callback<ResponseHolder> callback) {
@@ -416,8 +416,8 @@ public abstract class Resource {
             httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
                     .addInterceptor(new AddHeadersInterceptor())
-                    .addInterceptor(new RewriteCompatibilityInterceptor())
                     .addInterceptor(httpLoggingInterceptor)
+                    .addInterceptor(new RewriteCompatibilityInterceptor())
                     .build();
             if (gson == null) {
                 gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();

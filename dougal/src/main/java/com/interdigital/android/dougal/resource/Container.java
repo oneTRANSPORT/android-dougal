@@ -80,7 +80,6 @@ public class Container extends AnnounceableResource {
                 RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
-    // TODO merge with routine below.
     public static Container retrieve(
             String aeId, String baseUrl, String path, String userName, String password)
             throws Exception {
@@ -93,6 +92,13 @@ public class Container extends AnnounceableResource {
         return container;
     }
 
+    public static Resource retrieveNonBlocking(
+            String aeId, String baseUrl, String path, String userName, String password)
+            throws Exception {
+        return retrieveBase(aeId, baseUrl, path, userName, password,
+                RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH, null).body().getResource();
+    }
+
     // TODO Order filterCriteria params the same?
     public static Container retrieve(String aeId, String baseUrl, String path, FilterCriteria filterCriteria,
                                      String userName, String password)
@@ -100,9 +106,11 @@ public class Container extends AnnounceableResource {
         Container container = retrieveBase(aeId, baseUrl, path, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria).body()
                 .getContainer();
-        container.setAeId(aeId);
-        container.setBaseUrl(baseUrl);
-        container.setPath(path);
+        if (container != null) {
+            container.setAeId(aeId);
+            container.setBaseUrl(baseUrl);
+            container.setPath(path);
+        }
         return container;
     }
 

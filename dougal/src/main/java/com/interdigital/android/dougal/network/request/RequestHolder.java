@@ -27,6 +27,19 @@ public class RequestHolder {
         setResource(resource);
     }
 
+    public Resource getResource() {
+        if (applicationEntity != null) {
+            return applicationEntity;
+        }
+        if (container != null) {
+            return container;
+        }
+        if (contentInstance != null) {
+            return contentInstance;
+        }
+        return null;
+    }
+
     public void setResource(Resource resource) {
         // TODO Add all the rest of the objects.
         switch (resource.getResourceType()) {
