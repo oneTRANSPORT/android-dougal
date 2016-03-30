@@ -102,10 +102,9 @@ public class Container extends AnnounceableResource {
     public static Container retrieveNonBlockingPayload(
             String aeId, String baseUrl, String path, String userName, String password)
             throws Exception {
-        return new Container(aeId,"fred","jimbo","sheila","00",null,null,null);
-//        return ((NonBlockingResource) retrieveBase(aeId, baseUrl, path, userName, password,
-//                RESPONSE_TYPE_BLOCKING_REQUEST, null).body().getResource())
-//                .getOperationResult().getPrimitiveContent().getContainer();
+        return ((NonBlockingResource) retrieveBase(aeId, baseUrl, path, userName, password,
+                RESPONSE_TYPE_BLOCKING_REQUEST, null).body().getResource())
+                .getOperationResult().getPrimitiveContent().getContainer();
     }
 
     // TODO Order filterCriteria params the same?

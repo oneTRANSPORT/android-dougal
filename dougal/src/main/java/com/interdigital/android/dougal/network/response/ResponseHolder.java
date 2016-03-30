@@ -78,6 +78,9 @@ public class ResponseHolder {
         if (discovery != null) {
             return discovery;
         }
+        if (nonBlockingResource != null) {
+            return nonBlockingResource;
+        }
         return null;
     }
 

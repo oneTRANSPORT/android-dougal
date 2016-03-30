@@ -1,5 +1,7 @@
 package com.interdigital.android.dougal.shared;
 
+import android.util.Log;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.interdigital.android.dougal.Types;
