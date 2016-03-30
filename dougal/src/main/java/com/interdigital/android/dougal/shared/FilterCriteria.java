@@ -7,6 +7,8 @@ import java.util.HashMap;
 // TODO Stop this colliding with the enum definition.
 public class FilterCriteria {
 
+    // TODO Add JSON parameters.
+
     private HashMap<String, String> queryMap = new HashMap<>();
 
     public HashMap<String, String> getQueryMap() {

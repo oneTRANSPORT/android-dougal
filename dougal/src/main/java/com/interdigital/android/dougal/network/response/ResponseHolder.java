@@ -6,6 +6,7 @@ import com.interdigital.android.dougal.resource.ApplicationEntity;
 import com.interdigital.android.dougal.resource.Container;
 import com.interdigital.android.dougal.resource.ContentInstance;
 import com.interdigital.android.dougal.resource.Discovery;
+import com.interdigital.android.dougal.resource.NonBlockingResource;
 import com.interdigital.android.dougal.resource.Resource;
 
 import okhttp3.Headers;
@@ -33,6 +34,9 @@ public class ResponseHolder {
     @Expose
     @SerializedName("m2m:discovery")
     private Discovery discovery;
+    @Expose
+    @SerializedName("m2m:req")
+    private NonBlockingResource nonBlockingResource;
 
     public int getStatusCode() {
         return statusCode;
@@ -116,4 +120,13 @@ public class ResponseHolder {
     public void setDiscovery(Discovery discovery) {
         this.discovery = discovery;
     }
+
+    public NonBlockingResource getNonBlockingResource() {
+        return nonBlockingResource;
+    }
+
+    public void setNonBlockingResource(NonBlockingResource nonBlockingResource) {
+        this.nonBlockingResource = nonBlockingResource;
+    }
+
 }

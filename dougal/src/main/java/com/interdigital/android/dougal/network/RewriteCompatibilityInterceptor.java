@@ -3,6 +3,7 @@ package com.interdigital.android.dougal.network;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.interdigital.android.dougal.network.request.RequestHolder;
 import com.interdigital.android.dougal.resource.Resource;
@@ -28,7 +29,11 @@ public class RewriteCompatibilityInterceptor implements Interceptor {
         String content = processResponse(originalResponse);
         ResponseBody newResponseBody = ResponseBody.create(
                 MediaType.parse("application/json"), content);
-        return originalResponse.newBuilder().body(newResponseBody).build();
+        return originalResponse.newBuilder()
+                .body(newResponseBody)
+                .header("Content-type", "application/json; charset=utf-8")
+                .header("Content-length", String.valueOf(content.length()))
+                .build();
     }
 
     private Response processRequest(Chain chain) throws IOException {
@@ -40,11 +45,13 @@ public class RewriteCompatibilityInterceptor implements Interceptor {
 
             // We remove ri and rn attributes from JSON in POST requests.
             // CSE doesn't like them.
+            // Also remove ty as this is sent in the request line.
             if (originalRequest.method().equalsIgnoreCase("post")) {
                 RequestHolder requestHolder = Resource.gson.fromJson(requestContent, RequestHolder.class);
                 Resource resource = requestHolder.getResource();
                 resource.setResourceId(null);
                 resource.setResourceName(null);
+                resource.setResourceType(null);
                 requestContent = Resource.gson.toJson(requestHolder);
             }
 
@@ -99,7 +106,8 @@ public class RewriteCompatibilityInterceptor implements Interceptor {
     }
 
     private String maybeConvertEmptyLists(String content) {
-        return content.replace("[\"\"]", "[]");
+        String newContent = content.replace("[\"\"]", "[]");
+        return newContent;
     }
 
     private boolean isJson(String s) {
