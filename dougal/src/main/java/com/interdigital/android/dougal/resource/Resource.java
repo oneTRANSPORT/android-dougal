@@ -189,15 +189,32 @@ public class Resource {
         return response;
     }
 
-    protected static void retrieveAsyncBase(@NonNull String aeId, @NonNull String baseUrl,
+    protected static void retrieveBaseAsync(@NonNull String aeId, @NonNull String baseUrl,
                                             @NonNull String path, String userName, String password,
-                                            @ResponseType int responseType,
+                                            @ResponseType int responseType, FilterCriteria filterCriteria,
                                             Callback<ResponseHolder> callback) {
         maybeCreateDougalService(baseUrl);
         String auth = Credentials.basic(userName, password);
+        Map<String, String> queryMap = new HashMap<>();
+        if (filterCriteria != null) {
+            queryMap = filterCriteria.getQueryMap();
+        }
         Call<ResponseHolder> call = dougalServiceMap.get(baseUrl)
-                .retrieve(aeId, path, auth, getRequestId(), responseType, new HashMap<String, String>());
+                .retrieve(aeId, path, auth, getRequestId(), responseType, queryMap);
         call.enqueue(callback);
+    }
+
+    public static Resource retrieveIdNonBlocking(String aeId, String baseUrl, String path, String userName,
+                                                 String password, FilterCriteria filterCriteria) throws Exception {
+        return retrieveBase(aeId, baseUrl, path, userName, password,
+                RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH, filterCriteria).body().getResource();
+    }
+
+    public static void retrieveIdNonBlockingAsync(String aeId, String baseUrl, String path,
+                                                  String userName, String password, FilterCriteria filterCriteria,
+                                                  Callback<ResponseHolder> callback) throws Exception {
+        retrieveBaseAsync(aeId, baseUrl, path, userName, password,
+                RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH, filterCriteria, callback);
     }
 
     // TODO Difficult because the CSE currently requires differential updates.
@@ -225,6 +242,8 @@ public class Resource {
                 requestHolder);
         call.enqueue(callback);
     }
+
+    // TODO Non-blocking updates.
 
     protected static void delete(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
                                  String userName, String password, @ResponseType int responseType)

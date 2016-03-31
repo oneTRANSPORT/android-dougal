@@ -79,9 +79,17 @@ public class ContentInstance extends AnnounceableResource {
 
     public static void retrieveAsync(String aeId, String baseUrl, String path,
                                      String userName, String password, DougalCallback dougalCallback) {
-        retrieveAsyncBase(aeId, baseUrl, path, userName, password,
+        retrieveBaseAsync(aeId, baseUrl, path, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST,
                 new RetrieveCallback<ContentInstance>(baseUrl, path, dougalCallback));
+    }
+
+    public static Container retrieveNonBlockingPayload(
+            String aeId, String baseUrl, String path, String userName, String password)
+            throws Exception {
+        return ((NonBlockingResource) retrieveBase(aeId, baseUrl, path, userName, password,
+                RESPONSE_TYPE_BLOCKING_REQUEST, null).body().getResource())
+                .getOperationResult().getPrimitiveContent().getContainer();
     }
 
     @Override

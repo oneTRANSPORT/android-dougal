@@ -95,7 +95,7 @@ public class ApplicationEntity extends AnnounceableResource {
 
     public static void retrieveAsync(String aeId, String baseUrl, String path,
                                      String userName, String password, DougalCallback dougalCallback) {
-        retrieveAsyncBase(aeId, baseUrl, path, userName, password,
+        retrieveBaseAsync(aeId, baseUrl, path, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST,
                 new RetrieveCallback<ApplicationEntity>(baseUrl, path, dougalCallback));
     }
