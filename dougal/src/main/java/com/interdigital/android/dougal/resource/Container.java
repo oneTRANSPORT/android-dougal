@@ -8,6 +8,7 @@ import com.interdigital.android.dougal.Types;
 import com.interdigital.android.dougal.network.response.ResponseHolder;
 import com.interdigital.android.dougal.resource.callback.CreateCallback;
 import com.interdigital.android.dougal.resource.callback.DeleteCallback;
+import com.interdigital.android.dougal.resource.callback.NonBlockingIdCallback;
 import com.interdigital.android.dougal.resource.callback.RetrieveCallback;
 import com.interdigital.android.dougal.shared.FilterCriteria;
 
@@ -90,7 +91,8 @@ public class Container extends AnnounceableResource {
     // TODO Test.  Fix callback.
     public Resource createNonBlockingAsync(
             String baseUrl, String path, String userName, String password, DougalCallback dougalCallback) {
-        createAsync(aeId, baseUrl, path, userName, password, new CreateCallback<>(this, dougalCallback),
+        createAsync(aeId, baseUrl, path, userName, password,
+                new NonBlockingIdCallback<>(dougalCallback),
                 RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH);
         return null;
     }
@@ -125,7 +127,7 @@ public class Container extends AnnounceableResource {
                 .getOperationResult().getPrimitiveContent().getContainer();
     }
 
-    // TODO Test.  Fix callback.
+    // TODO Test.
     public static void retrievePayloadNonBlockingAsync(String aeId, String baseUrl, String path,
                                                        String userName, String password, DougalCallback dougalCallback) {
         retrieveBaseAsync(aeId, baseUrl, path, userName, password,

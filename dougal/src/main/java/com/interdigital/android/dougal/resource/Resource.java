@@ -14,6 +14,7 @@ import com.interdigital.android.dougal.network.AddHeadersInterceptor;
 import com.interdigital.android.dougal.network.RewriteCompatibilityInterceptor;
 import com.interdigital.android.dougal.network.request.RequestHolder;
 import com.interdigital.android.dougal.network.response.ResponseHolder;
+import com.interdigital.android.dougal.resource.callback.NonBlockingIdCallback;
 import com.interdigital.android.dougal.shared.FilterCriteria;
 
 import java.io.IOException;
@@ -212,7 +213,8 @@ public class Resource {
 
     public static void retrieveIdNonBlockingAsync(String aeId, String baseUrl, String path,
                                                   String userName, String password, FilterCriteria filterCriteria,
-                                                  Callback<ResponseHolder> callback) throws Exception {
+                                                  DougalCallback dougalCallback) {
+        NonBlockingIdCallback<Resource> callback = new NonBlockingIdCallback<>(dougalCallback);
         retrieveBaseAsync(aeId, baseUrl, path, userName, password,
                 RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH, filterCriteria, callback);
     }

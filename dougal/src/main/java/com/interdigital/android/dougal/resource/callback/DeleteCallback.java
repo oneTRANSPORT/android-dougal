@@ -3,7 +3,6 @@ package com.interdigital.android.dougal.resource.callback;
 import com.interdigital.android.dougal.Types;
 import com.interdigital.android.dougal.resource.DougalCallback;
 import com.interdigital.android.dougal.resource.Resource;
-import com.interdigital.android.dougal.resource.callback.BaseCallback;
 
 import retrofit2.Callback;
 

@@ -23,6 +23,7 @@ public class RetrieveCallback<R extends Resource> extends BaseCallback<R, Respon
     protected R processResponse(ResponseHolder responseHolder) {
         R r = (R) responseHolder.getResource();
         if (r != null) {
+            r = checkNonBlocking(r);
             r.setBaseUrl(baseUrl);
             r.setPath(path);
         }

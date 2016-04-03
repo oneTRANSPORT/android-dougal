@@ -7,18 +7,15 @@ import com.interdigital.android.dougal.resource.Resource;
 
 import retrofit2.Callback;
 
-public class UpdateCallback<R extends Resource> extends BaseCallback<R, ResponseHolder>
+public class NonBlockingIdCallback<R extends Resource> extends BaseCallback<R, ResponseHolder>
         implements Callback<ResponseHolder> {
 
-    private R resource;
-
-    public UpdateCallback(R resource, DougalCallback dougalCallback) {
-        super(Types.STATUS_CODE_UPDATED, dougalCallback);
-        this.resource = resource;
+    public NonBlockingIdCallback(DougalCallback dougalCallback) {
+        super(Types.STATUS_CODE_ACCEPTED, dougalCallback);
     }
 
     @Override
     protected R processResponse(ResponseHolder responseHolder) {
-        return resource;
+        return (R) responseHolder.getResource();
     }
 }

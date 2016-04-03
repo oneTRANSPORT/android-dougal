@@ -20,7 +20,8 @@ public class CreateCallback<R extends Resource> extends BaseCallback<R, Response
     @Override
     protected R processResponse(ResponseHolder responseHolder) {
         R r = (R) responseHolder.getResource();
-        if (resource != null) {
+        if (resource != null && r != null) {
+            r = checkNonBlocking(r);
             // These are common to all resources.
             // For the full resource, do a RETRIEVE request.
             resource.setCreationTime(r.getCreationTime());
