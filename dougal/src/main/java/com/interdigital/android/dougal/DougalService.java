@@ -25,7 +25,7 @@ public interface DougalService {
             @Header("X-M2M-Origin") String aeId,
             @Path(value = "path", encoded = true) String path,
             @Header("Authorization") String authorization,
-            @Header("X-M2M-NM") String aeName,
+//            @Header("X-M2M-NM") String aeName,
             @Header("Content-Type") String contentType,
             @Header("X-M2M-RI") String requestId,
             @Query("rt") @Resource.ResponseType int responseType,

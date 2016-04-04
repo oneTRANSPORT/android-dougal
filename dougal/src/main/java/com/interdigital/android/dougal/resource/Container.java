@@ -11,6 +11,7 @@ import com.interdigital.android.dougal.resource.callback.DeleteCallback;
 import com.interdigital.android.dougal.resource.callback.NonBlockingIdCallback;
 import com.interdigital.android.dougal.resource.callback.RetrieveCallback;
 import com.interdigital.android.dougal.shared.FilterCriteria;
+import com.interdigital.android.dougal.shared.OperationResult;
 
 import retrofit2.Response;
 
@@ -122,9 +123,13 @@ public class Container extends AnnounceableResource {
     public static Container retrievePayloadNonBlocking(
             String aeId, String baseUrl, String path, String userName, String password)
             throws Exception {
-        return ((NonBlockingResource) retrieveBase(aeId, baseUrl, path, userName, password,
-                RESPONSE_TYPE_BLOCKING_REQUEST, null).body().getResource())
-                .getOperationResult().getPrimitiveContent().getContainer();
+        OperationResult operationResult = ((NonBlockingResource) retrieveBase(aeId, baseUrl, path,
+                userName, password, RESPONSE_TYPE_BLOCKING_REQUEST, null).body().getResource())
+                .getOperationResult();
+        if (operationResult != null) {
+            return operationResult.getPrimitiveContent().getContainer();
+        }
+        return null;
     }
 
     // TODO Test.

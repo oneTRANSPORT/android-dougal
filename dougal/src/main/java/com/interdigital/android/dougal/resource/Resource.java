@@ -139,7 +139,7 @@ public class Resource {
         RequestHolder requestHolder = new RequestHolder(this);
         String contentType = CONTENT_TYPE_PREFIX + resourceType;
         Call<ResponseHolder> call = dougalServiceMap.get(baseUrl).create(aeId, path, auth,
-                resourceName, contentType, getRequestId(), responseType, requestHolder);
+                contentType, getRequestId(), responseType, requestHolder);
         Response<ResponseHolder> response = call.execute();
         switch (responseType) {
             case RESPONSE_TYPE_BLOCKING_REQUEST:
@@ -161,7 +161,7 @@ public class Resource {
         RequestHolder requestHolder = new RequestHolder(this);
         String contentType = CONTENT_TYPE_PREFIX + resourceType;
         Call<ResponseHolder> call = dougalServiceMap.get(baseUrl).create(aeId, path, auth,
-                resourceName, contentType, getRequestId(), responseType, requestHolder);
+                contentType, getRequestId(), responseType, requestHolder);
         call.enqueue(callback);
     }
 

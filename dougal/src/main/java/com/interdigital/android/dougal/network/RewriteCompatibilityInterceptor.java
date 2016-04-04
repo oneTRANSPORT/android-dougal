@@ -43,14 +43,13 @@ public class RewriteCompatibilityInterceptor implements Interceptor {
         if (originalBody != null) {
             String requestContent = readContent(originalBody);
 
-            // We remove ri and rn attributes from JSON in POST requests.
-            // CSE doesn't like them.
+            // We remove the ri attribute from JSON in POST requests.
+            // CSE doesn't like it.
             // Also remove ty as this is sent in the request line.
             if (originalRequest.method().equalsIgnoreCase("post")) {
                 RequestHolder requestHolder = Resource.gson.fromJson(requestContent, RequestHolder.class);
                 Resource resource = requestHolder.getResource();
                 resource.setResourceId(null);
-                resource.setResourceName(null);
                 resource.setResourceType(null);
                 requestContent = Resource.gson.toJson(requestHolder);
             }
