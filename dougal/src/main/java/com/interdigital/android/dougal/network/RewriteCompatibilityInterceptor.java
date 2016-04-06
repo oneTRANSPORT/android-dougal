@@ -3,9 +3,9 @@ package com.interdigital.android.dougal.network;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.interdigital.android.dougal.network.request.RequestHolder;
+import com.interdigital.android.dougal.resource.ApplicationEntity;
 import com.interdigital.android.dougal.resource.Resource;
 
 import java.io.IOException;
@@ -42,18 +42,26 @@ public class RewriteCompatibilityInterceptor implements Interceptor {
         Response originalResponse;
         if (originalBody != null) {
             String requestContent = readContent(originalBody);
-
+            RequestHolder requestHolder = Resource.gson.fromJson(requestContent, RequestHolder.class);
+            Resource resource = requestHolder.getResource();
             // We remove the ri attribute from JSON in POST requests.
             // CSE doesn't like it.
             // Also remove ty as this is sent in the request line.
             if (originalRequest.method().equalsIgnoreCase("post")) {
-                RequestHolder requestHolder = Resource.gson.fromJson(requestContent, RequestHolder.class);
-                Resource resource = requestHolder.getResource();
                 resource.setResourceId(null);
                 resource.setResourceType(null);
-                requestContent = Resource.gson.toJson(requestHolder);
+            } else if (originalRequest.method().equalsIgnoreCase("put")) {
+                resource.setResourceId(null);
+                resource.setResourceType(null);
+                resource.setCreationTime(null);
+                resource.setLastModifiedTime(null);
+                resource.setParentId(null);
+                if (resource instanceof ApplicationEntity) {
+                    ((ApplicationEntity) resource).setApplicationId(null);
+                }
             }
 
+            requestContent = Resource.gson.toJson(requestHolder);
             originalResponse = sendNewRequest(chain, originalRequest, originalBody, requestContent);
         } else {
             originalResponse = chain.proceed(originalRequest);

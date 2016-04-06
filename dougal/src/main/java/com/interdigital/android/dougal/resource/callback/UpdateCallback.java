@@ -19,6 +19,12 @@ public class UpdateCallback<R extends Resource> extends BaseCallback<R, Response
 
     @Override
     protected R processResponse(ResponseHolder responseHolder) {
+        R r = (R) responseHolder.getResource();
+        if (resource != null && r != null) {
+            r = checkNonBlocking(r);
+            // This is common to all resources.
+            resource.setLastModifiedTime(r.getLastModifiedTime());
+        }
         return resource;
     }
 }

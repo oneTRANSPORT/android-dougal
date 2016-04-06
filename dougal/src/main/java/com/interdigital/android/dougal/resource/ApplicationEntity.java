@@ -19,7 +19,7 @@ public class ApplicationEntity extends AnnounceableResource {
     // The AE id.
     //    @Expose
 //    @SerializedName("aei")
-    private String id;
+//    private String id;  Should be the resourceId.
     //    @Expose
 //    @SerializedName("apn")
     private String appName;
@@ -48,7 +48,7 @@ public class ApplicationEntity extends AnnounceableResource {
                              String[] pointOfAccessList, String ontologyRef, String nodeLink) {
         super(id, appName, Types.RESOURCE_TYPE_APPLICATION_ENTITY, null, expiryTime,
                 accessControlPolicyIds, labels);
-        this.id = id;
+        setResourceId(id);
         this.appName = appName;
         this.applicationId = applicationId;
         this.requestReachable = requestReachable;
@@ -71,14 +71,13 @@ public class ApplicationEntity extends AnnounceableResource {
 
     public void createAsync(
             String baseUrl, String path, String userName, String password, DougalCallback dougalCallback) {
-        createAsync(id, baseUrl, path, userName, password,
-                new CreateCallback<>(this, dougalCallback),
-                RESPONSE_TYPE_BLOCKING_REQUEST);
+        createAsync(getResourceId(), baseUrl, path, userName, password,
+                new CreateCallback<>(this, dougalCallback), RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
     public void createAsyncNonBlocking(
             String baseUrl, String path, String userName, String password, DougalCallback dougalCallback) {
-        createAsync(id, baseUrl, path, userName, password,
+        createAsync(getResourceId(), baseUrl, path, userName, password,
                 new CreateCallback<>(this, dougalCallback),
                 RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH);
     }
@@ -101,18 +100,18 @@ public class ApplicationEntity extends AnnounceableResource {
     }
 
     public void update(String userName, String password) throws Exception {
-        // TODO Decide what to do here.
-        Response<ResponseHolder> response = update(id, userName, password,
+        Response<ResponseHolder> response = update(getResourceId(), userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST);
+        setLastModifiedTime(response.body().getApplicationEntity().getLastModifiedTime());
     }
 
     public void updateAsync(String userName, String password, DougalCallback dougalCallback) {
-        updateAsync(id, userName, password, RESPONSE_TYPE_BLOCKING_REQUEST,
+        updateAsync(getResourceId(), userName, password, RESPONSE_TYPE_BLOCKING_REQUEST,
                 new UpdateCallback<>(this, dougalCallback));
     }
 
     public void delete(String userName, String password) throws Exception {
-        delete(id, userName, password, RESPONSE_TYPE_BLOCKING_REQUEST);
+        delete(getResourceId(), userName, password, RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
     public static void delete(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
@@ -129,7 +128,7 @@ public class ApplicationEntity extends AnnounceableResource {
 
     public void deleteAsync(
             String userName, String password, DougalCallback dougalCallback) {
-        deleteAsync(id, userName, password, RESPONSE_TYPE_BLOCKING_REQUEST,
+        deleteAsync(getResourceId(), userName, password, RESPONSE_TYPE_BLOCKING_REQUEST,
                 new DeleteCallback(dougalCallback));
     }
 
@@ -167,14 +166,6 @@ public class ApplicationEntity extends AnnounceableResource {
         discoverAsyncBase(aeId, baseUrl, path, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria,
                 new RetrieveCallback<Discovery>(baseUrl, path, dougalCallback));
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getApplicationId() {
@@ -220,7 +211,7 @@ public class ApplicationEntity extends AnnounceableResource {
     private String create(String baseUrl, String path, String userName, String password,
                           @ResponseType int responseType)
             throws Exception {
-        Response<ResponseHolder> response = create(id, baseUrl, path, userName, password,
+        Response<ResponseHolder> response = create(getResourceId(), baseUrl, path, userName, password,
                 responseType);
         switch (responseType) {
             case RESPONSE_TYPE_BLOCKING_REQUEST:

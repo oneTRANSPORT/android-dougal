@@ -30,6 +30,6 @@ public class CreateCallback<R extends Resource> extends BaseCallback<R, Response
             resource.setResourceId(r.getResourceId());
             resource.setResourceName(r.getResourceName());
         }
-        return r;
+        return resource;
     }
 }

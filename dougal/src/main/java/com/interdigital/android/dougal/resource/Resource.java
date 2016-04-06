@@ -17,7 +17,6 @@ import com.interdigital.android.dougal.network.response.ResponseHolder;
 import com.interdigital.android.dougal.resource.callback.NonBlockingIdCallback;
 import com.interdigital.android.dougal.shared.FilterCriteria;
 
-import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,6 +49,7 @@ public class Resource {
     public static final int RESPONSE_TYPE_NON_BLOCKING_REQUEST_ASYNCH = 2;
     public static final int RESPONSE_TYPE_BLOCKING_REQUEST = 3;
 
+    private static final String KEY_RESPONSE_TYPE = "rt";
     private static final String CONTENT_TYPE_PREFIX = "application/json; ty=";
 
     // We should be able to use one Gson instance for everything.  Should be thread-safe.
@@ -176,8 +176,9 @@ public class Resource {
         if (filterCriteria != null) {
             queryMap = filterCriteria.getQueryMap();
         }
+        queryMap.put(KEY_RESPONSE_TYPE, String.valueOf(responseType));
         Call<ResponseHolder> call = dougalServiceMap.get(baseUrl)
-                .retrieve(aeId, path, auth, getRequestId(), responseType, queryMap);
+                .retrieve(aeId, path, auth, getRequestId(), queryMap);
         Response<ResponseHolder> response = call.execute();
         switch (responseType) {
             case RESPONSE_TYPE_BLOCKING_REQUEST:
@@ -200,8 +201,9 @@ public class Resource {
         if (filterCriteria != null) {
             queryMap = filterCriteria.getQueryMap();
         }
+        queryMap.put(KEY_RESPONSE_TYPE, String.valueOf(responseType));
         Call<ResponseHolder> call = dougalServiceMap.get(baseUrl)
-                .retrieve(aeId, path, auth, getRequestId(), responseType, queryMap);
+                .retrieve(aeId, path, auth, getRequestId(), queryMap);
         call.enqueue(callback);
     }
 
@@ -219,18 +221,25 @@ public class Resource {
                 RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH, filterCriteria, callback);
     }
 
-    // TODO Difficult because the CSE currently requires differential updates.
     protected Response<ResponseHolder> update(
             @NonNull String aeId, String userName, String password,
-            @ResponseType int responseType) throws IOException {
+            @ResponseType int responseType) throws Exception {
         maybeCreateDougalService(baseUrl);
         String auth = Credentials.basic(userName, password);
         RequestHolder requestHolder = new RequestHolder(this);
+        HashMap<String, String> queryMap = new HashMap<>();
+        queryMap.put(KEY_RESPONSE_TYPE, String.valueOf(responseType));
         Call<ResponseHolder> call = dougalServiceMap.get(baseUrl).update(
-                aeId, path, auth, getRequestId(), responseType, new HashMap<String, String>(),
-                requestHolder);
+                aeId, path, auth, getRequestId(), queryMap, requestHolder);
         Response<ResponseHolder> response = call.execute();
-        // TODO Decide what to do here.
+        switch (responseType) {
+            case RESPONSE_TYPE_BLOCKING_REQUEST:
+                checkStatusCodes(response, Types.STATUS_CODE_UPDATED);
+                break;
+            default:
+                checkStatusCodes(response, Types.STATUS_CODE_ACCEPTED);
+                break;
+        }
         return response;
     }
 
@@ -239,9 +248,10 @@ public class Resource {
         maybeCreateDougalService(baseUrl);
         String auth = Credentials.basic(userName, password);
         RequestHolder requestHolder = new RequestHolder(this);
+        HashMap<String, String> queryMap = new HashMap<>();
+        queryMap.put(KEY_RESPONSE_TYPE, String.valueOf(responseType));
         Call<ResponseHolder> call = dougalServiceMap.get(baseUrl).update(
-                aeId, path, auth, getRequestId(), responseType, new HashMap<String, String>(),
-                requestHolder);
+                aeId, path, auth, getRequestId(), queryMap, requestHolder);
         call.enqueue(callback);
     }
 
@@ -252,8 +262,10 @@ public class Resource {
             throws Exception {
         maybeCreateDougalService(baseUrl);
         String auth = Credentials.basic(userName, password);
+        HashMap<String, String> queryMap = new HashMap<>();
+        queryMap.put(KEY_RESPONSE_TYPE, String.valueOf(responseType));
         Call<Void> call = dougalServiceMap.get(baseUrl).delete(aeId, path, auth, getRequestId(),
-                responseType, new HashMap<String, String>());
+                queryMap);
         Response<Void> response = call.execute();
         switch (responseType) {
             case RESPONSE_TYPE_BLOCKING_REQUEST:
@@ -269,8 +281,10 @@ public class Resource {
                           @ResponseType int responseType) throws Exception {
         maybeCreateDougalService(baseUrl);
         String auth = Credentials.basic(userName, password);
+        HashMap<String, String> queryMap = new HashMap<>();
+        queryMap.put(KEY_RESPONSE_TYPE, String.valueOf(responseType));
         Call<Void> call = dougalServiceMap.get(baseUrl).delete(aeId, path, auth, getRequestId(),
-                responseType, new HashMap<String, String>());
+                queryMap);
         Response<Void> response = call.execute();
         switch (responseType) {
             case RESPONSE_TYPE_BLOCKING_REQUEST:
@@ -287,8 +301,10 @@ public class Resource {
                                       @ResponseType int responseType, Callback<Void> callback) {
         maybeCreateDougalService(baseUrl);
         String auth = Credentials.basic(userName, password);
+        HashMap<String, String> queryMap = new HashMap<>();
+        queryMap.put(KEY_RESPONSE_TYPE, String.valueOf(responseType));
         Call<Void> call = dougalServiceMap.get(baseUrl).delete(aeId, path, auth, getRequestId(),
-                responseType, new HashMap<String, String>());
+                queryMap);
         call.enqueue(callback);
     }
 
@@ -296,8 +312,10 @@ public class Resource {
                                @ResponseType int responseType, Callback<Void> callback) {
         maybeCreateDougalService(baseUrl);
         String auth = Credentials.basic(userName, password);
+        HashMap<String, String> queryMap = new HashMap<>();
+        queryMap.put(KEY_RESPONSE_TYPE, String.valueOf(responseType));
         Call<Void> call = dougalServiceMap.get(baseUrl).delete(aeId, path, auth, getRequestId(),
-                responseType, new HashMap<String, String>());
+                queryMap);
         call.enqueue(callback);
     }
 
@@ -311,8 +329,9 @@ public class Resource {
         if (filterCriteria != null) {
             queryMap = filterCriteria.getQueryMap();
         }
+        queryMap.put(KEY_RESPONSE_TYPE, String.valueOf(responseType));
         Call<ResponseHolder> call = dougalServiceMap.get(baseUrl)
-                .discover(aeId, path, auth, getRequestId(), responseType, queryMap);
+                .discover(aeId, path, auth, getRequestId(), queryMap);
         Response<ResponseHolder> response = call.execute();
         switch (responseType) {
             case RESPONSE_TYPE_BLOCKING_REQUEST:
@@ -335,8 +354,9 @@ public class Resource {
         if (filterCriteria != null) {
             queryMap = filterCriteria.getQueryMap();
         }
+        queryMap.put(KEY_RESPONSE_TYPE, String.valueOf(responseType));
         Call<ResponseHolder> call = dougalServiceMap.get(baseUrl)
-                .discover(aeId, path, auth, getRequestId(), responseType, queryMap);
+                .discover(aeId, path, auth, getRequestId(), queryMap);
         call.enqueue(callback);
     }
 
@@ -439,8 +459,8 @@ public class Resource {
             httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
                     .addInterceptor(new AddHeadersInterceptor())
-                    .addInterceptor(httpLoggingInterceptor)
                     .addInterceptor(new RewriteCompatibilityInterceptor())
+                    .addInterceptor(httpLoggingInterceptor)
                     .build();
             if (gson == null) {
                 gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
