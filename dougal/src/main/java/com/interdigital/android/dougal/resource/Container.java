@@ -10,6 +10,7 @@ import com.interdigital.android.dougal.resource.callback.CreateCallback;
 import com.interdigital.android.dougal.resource.callback.DeleteCallback;
 import com.interdigital.android.dougal.resource.callback.NonBlockingIdCallback;
 import com.interdigital.android.dougal.resource.callback.RetrieveCallback;
+import com.interdigital.android.dougal.resource.callback.UpdateCallback;
 import com.interdigital.android.dougal.shared.FilterCriteria;
 import com.interdigital.android.dougal.shared.OperationResult;
 
@@ -199,13 +200,14 @@ public class Container extends AnnounceableResource {
     }
 
     public void update(String userName, String password) throws Exception {
-        // TODO Decide what to do here.
-        Response<ResponseHolder> response = update(aeId, userName, password,
+        Response<ResponseHolder> response = update(getResourceId(), userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST);
+        setLastModifiedTime(response.body().getContainer().getLastModifiedTime());
     }
 
-    public void updateAsync() {
-        // TODO
+    public void updateAsync(String userName, String password, DougalCallback dougalCallback) {
+        updateAsync(getResourceId(), userName, password, RESPONSE_TYPE_BLOCKING_REQUEST,
+                new UpdateCallback<>(this, dougalCallback));
     }
 
     public Resource updateNonBlocking() {
@@ -484,12 +486,13 @@ public class Container extends AnnounceableResource {
         this.maxNumberOfInstances = maxNumberOfInstances;
     }
 
-    // There is no setStateTag as the CSE assigns this value,
-    // incrementing on modification.
     public Integer getStateTag() {
         return stateTag;
     }
 
+    public void setStateTag(Integer stateTag) {
+        this.stateTag = stateTag;
+    }
 }
 
 //{"m2m:cnt":{

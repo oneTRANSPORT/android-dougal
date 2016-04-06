@@ -6,6 +6,7 @@ import android.text.TextUtils;
 
 import com.interdigital.android.dougal.network.request.RequestHolder;
 import com.interdigital.android.dougal.resource.ApplicationEntity;
+import com.interdigital.android.dougal.resource.Container;
 import com.interdigital.android.dougal.resource.Resource;
 
 import java.io.IOException;
@@ -58,6 +59,9 @@ public class RewriteCompatibilityInterceptor implements Interceptor {
                 resource.setParentId(null);
                 if (resource instanceof ApplicationEntity) {
                     ((ApplicationEntity) resource).setApplicationId(null);
+                }
+                if (resource instanceof Container) {
+                    ((Container) resource).setStateTag(null);
                 }
             }
 
