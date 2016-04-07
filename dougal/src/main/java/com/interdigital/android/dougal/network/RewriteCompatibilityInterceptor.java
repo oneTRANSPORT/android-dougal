@@ -52,6 +52,7 @@ public class RewriteCompatibilityInterceptor implements Interceptor {
                 resource.setResourceId(null);
                 resource.setResourceType(null);
             } else if (originalRequest.method().equalsIgnoreCase("put")) {
+                // These fields cause a Bad Request.
                 resource.setResourceId(null);
                 resource.setResourceType(null);
                 resource.setCreationTime(null);
@@ -59,9 +60,11 @@ public class RewriteCompatibilityInterceptor implements Interceptor {
                 resource.setParentId(null);
                 if (resource instanceof ApplicationEntity) {
                     ((ApplicationEntity) resource).setApplicationId(null);
-                }
-                if (resource instanceof Container) {
-                    ((Container) resource).setStateTag(null);
+                } else if (resource instanceof Container) {
+                    Container container = (Container) resource;
+                    container.setStateTag(null);
+                    container.setCurrentNumberOfInstances(null);
+                    container.setCurrentByteSize(null);
                 }
             }
 
