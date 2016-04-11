@@ -75,7 +75,7 @@ public class ApplicationEntity extends AnnounceableResource {
                 new CreateCallback<>(this, dougalCallback), RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
-    public void createAsyncNonBlocking(
+    public void createNonBlockingAsync(
             String baseUrl, String path, String userName, String password, DougalCallback dougalCallback) {
         createAsync(getResourceId(), baseUrl, path, userName, password,
                 new CreateCallback<>(this, dougalCallback),
@@ -99,6 +99,8 @@ public class ApplicationEntity extends AnnounceableResource {
                 new RetrieveCallback<ApplicationEntity>(baseUrl, path, dougalCallback));
     }
 
+    // TODO Add non-blocking retrieval.
+
     public void update(String userName, String password) throws Exception {
         Response<ResponseHolder> response = update(getResourceId(), userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST);
@@ -108,6 +110,16 @@ public class ApplicationEntity extends AnnounceableResource {
     public void updateAsync(String userName, String password, DougalCallback dougalCallback) {
         updateAsync(getResourceId(), userName, password, RESPONSE_TYPE_BLOCKING_REQUEST,
                 new UpdateCallback<>(this, dougalCallback));
+    }
+
+    public Resource updateNonBlocking() {
+        // TODO
+        return null;
+    }
+
+    public Resource updateNonBlockingAsync() {
+        // TODO
+        return null;
     }
 
     public void delete(String userName, String password) throws Exception {

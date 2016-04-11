@@ -1,3 +1,6 @@
+[This document is now out of date]
+==================================
+
 Currently incomplete, proof-of-concept only
 ===========================================
 

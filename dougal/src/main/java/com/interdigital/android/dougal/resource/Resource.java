@@ -1,5 +1,6 @@
 package com.interdigital.android.dougal.resource;
 
+import android.os.SystemClock;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 
@@ -16,6 +17,7 @@ import com.interdigital.android.dougal.network.request.RequestHolder;
 import com.interdigital.android.dougal.network.response.ResponseHolder;
 import com.interdigital.android.dougal.resource.callback.NonBlockingIdCallback;
 import com.interdigital.android.dougal.shared.FilterCriteria;
+import com.interdigital.android.dougal.shared.OperationResult;
 
 import java.lang.annotation.Retention;
 import java.util.HashMap;
@@ -61,8 +63,6 @@ public class Resource {
     // base URLs, use a map of services.
     private static HashMap<String, DougalService> dougalServiceMap = new HashMap<>();
 
-    // The request id must be unique to this session.
-    private static long requestId = 1L;
     private static HttpLoggingInterceptor httpLoggingInterceptor;
 
     @Expose
@@ -220,6 +220,15 @@ public class Resource {
         retrieveBaseAsync(aeId, baseUrl, path, userName, password,
                 RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH, filterCriteria, callback);
     }
+
+    public static OperationResult retrievePayloadNonBlockingBase(
+            String aeId, String baseUrl, String path, String userName, String password)
+            throws Exception {
+        return ((NonBlockingResource) retrieveBase(aeId, baseUrl, path,
+                userName, password, RESPONSE_TYPE_BLOCKING_REQUEST, null).body().getResource())
+                .getOperationResult();
+    }
+
 
     protected Response<ResponseHolder> update(
             @NonNull String aeId, String userName, String password,
@@ -489,7 +498,7 @@ public class Resource {
 
     @NonNull
     private static synchronized String getRequestId() {
-        return String.valueOf(requestId++);
+        return "dougal-" + SystemClock.elapsedRealtime();
     }
 }
 

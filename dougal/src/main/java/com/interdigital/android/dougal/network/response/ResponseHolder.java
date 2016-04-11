@@ -6,6 +6,7 @@ import com.interdigital.android.dougal.resource.ApplicationEntity;
 import com.interdigital.android.dougal.resource.Container;
 import com.interdigital.android.dougal.resource.ContentInstance;
 import com.interdigital.android.dougal.resource.Discovery;
+import com.interdigital.android.dougal.resource.Group;
 import com.interdigital.android.dougal.resource.NonBlockingResource;
 import com.interdigital.android.dougal.resource.Resource;
 
@@ -37,6 +38,9 @@ public class ResponseHolder {
     @Expose
     @SerializedName("m2m:req")
     private NonBlockingResource nonBlockingResource;
+    @Expose
+    @SerializedName("m2m:grp")
+    private Group group;
 
     public int getStatusCode() {
         return statusCode;
@@ -80,6 +84,9 @@ public class ResponseHolder {
         }
         if (nonBlockingResource != null) {
             return nonBlockingResource;
+        }
+        if (group != null) {
+            return group;
         }
         return null;
     }
@@ -132,4 +139,11 @@ public class ResponseHolder {
         this.nonBlockingResource = nonBlockingResource;
     }
 
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
+    }
 }

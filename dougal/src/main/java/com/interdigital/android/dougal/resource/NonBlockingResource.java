@@ -17,7 +17,7 @@ public class NonBlockingResource extends RegularResource {
     @SerializedName("og")
     private String originator;
     @Expose
-    @SerializedName("ol")
+    @SerializedName("oprl") // Was ol.  TODO Check.
     private OperationResult operationResult;
     @Expose
     @SerializedName("op")

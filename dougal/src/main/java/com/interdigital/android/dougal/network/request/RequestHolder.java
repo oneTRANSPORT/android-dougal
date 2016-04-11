@@ -3,10 +3,11 @@ package com.interdigital.android.dougal.network.request;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.interdigital.android.dougal.Types;
-import com.interdigital.android.dougal.resource.Resource;
 import com.interdigital.android.dougal.resource.ApplicationEntity;
-import com.interdigital.android.dougal.resource.ContentInstance;
 import com.interdigital.android.dougal.resource.Container;
+import com.interdigital.android.dougal.resource.ContentInstance;
+import com.interdigital.android.dougal.resource.Group;
+import com.interdigital.android.dougal.resource.Resource;
 
 public class RequestHolder {
 
@@ -19,6 +20,9 @@ public class RequestHolder {
     @Expose
     @SerializedName("cnt")
     private Container container;
+    @Expose
+    @SerializedName("grp")
+    private Group group;
 
     public RequestHolder() {
     }
@@ -36,6 +40,9 @@ public class RequestHolder {
         }
         if (contentInstance != null) {
             return contentInstance;
+        }
+        if (group != null) {
+            return group;
         }
         return null;
     }
@@ -63,6 +70,7 @@ public class RequestHolder {
             case Types.RESOURCE_TYPE_EXEC_INSTANCE:
                 break;
             case Types.RESOURCE_TYPE_GROUP:
+                setGroup((Group) resource);
                 break;
             case Types.RESOURCE_TYPE_LOCATION_POLICY:
                 break;
@@ -127,4 +135,7 @@ public class RequestHolder {
         this.container = container;
     }
 
+    public void setGroup(Group group) {
+        this.group = group;
+    }
 }

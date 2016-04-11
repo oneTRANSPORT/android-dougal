@@ -90,13 +90,12 @@ public class Container extends AnnounceableResource {
                 RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH).body().getResource();
     }
 
-    // TODO Test.  Fix callback.
-    public Resource createNonBlockingAsync(
+    // TODO Test.
+    public void createNonBlockingAsync(
             String baseUrl, String path, String userName, String password, DougalCallback dougalCallback) {
         createAsync(aeId, baseUrl, path, userName, password,
                 new NonBlockingIdCallback<>(dougalCallback),
                 RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH);
-        return null;
     }
 
     public static Container retrieve(String aeId, String baseUrl, String path, String userName,
@@ -120,20 +119,17 @@ public class Container extends AnnounceableResource {
                 new RetrieveCallback<Container>(baseUrl, path, dougalCallback));
     }
 
-    // TODO Test.
     public static Container retrievePayloadNonBlocking(
             String aeId, String baseUrl, String path, String userName, String password)
             throws Exception {
-        OperationResult operationResult = ((NonBlockingResource) retrieveBase(aeId, baseUrl, path,
-                userName, password, RESPONSE_TYPE_BLOCKING_REQUEST, null).body().getResource())
-                .getOperationResult();
+        OperationResult operationResult = retrievePayloadNonBlockingBase(aeId, baseUrl, path,
+                userName, password);
         if (operationResult != null) {
             return operationResult.getPrimitiveContent().getContainer();
         }
         return null;
     }
 
-    // TODO Test.
     public static void retrievePayloadNonBlockingAsync(String aeId, String baseUrl, String path,
                                                        String userName, String password, DougalCallback dougalCallback) {
         retrieveBaseAsync(aeId, baseUrl, path, userName, password,
@@ -162,7 +158,7 @@ public class Container extends AnnounceableResource {
                 password, null);
     }
 
-    // TODO Test.  Fix callback.
+    // TODO Test.
     public static void retrieveLatestIdNonBlockingAsync(String aeId, String baseUrl, String path,
                                                         String userName, String password, DougalCallback dougalCallback) {
         retrieveBaseAsync(aeId, baseUrl, path + LATEST_SUFFIX, userName, password,

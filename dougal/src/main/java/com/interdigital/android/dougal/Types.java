@@ -56,6 +56,8 @@ public class Types {
     public static final int RESOURCE_TYPE_STATS_COLLECT = 21;
     public static final int RESOURCE_TYPE_STATS_CONFIG = 22;
     public static final int RESOURCE_TYPE_SUBSCRIPTION = 23;
+    // Needed for group member type.
+    public static final int RESOURCE_TYPE_MIXED = 24;
     public static final int RESOURCE_TYPE_ACCESS_CONTROL_POLICY_ANNC = 10001;
     public static final int RESOURCE_TYPE_AE_ANNC = 10002;
     public static final int RESOURCE_TYPE_CONTAINER_ANNC = 10003;
@@ -170,4 +172,15 @@ public class Types {
     public static final String FILTER_CRITERIA_LIMIT = "lim";
     public static final String FILTER_CRITERIA_ATTRIBUTE = "atr";
     public static final String FILTER_CRITERIA_FILTER_USAGE = "fu";
+
+    @Retention(SOURCE)
+    @IntDef({CONSISTENCY_STRATEGY_ABANDON_MEMBER,
+            CONSISTENCY_STRATEGY_ABANDON_GROUP,
+            CONSISTENCY_STRATEGY_SET_MIXED})
+    public @interface ConsistencyStrategy {
+    }
+
+    public static final int CONSISTENCY_STRATEGY_ABANDON_MEMBER = 1;
+    public static final int CONSISTENCY_STRATEGY_ABANDON_GROUP = 2;
+    public static final int CONSISTENCY_STRATEGY_SET_MIXED = 3;
 }

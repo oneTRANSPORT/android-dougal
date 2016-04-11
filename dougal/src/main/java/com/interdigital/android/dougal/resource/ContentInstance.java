@@ -84,12 +84,12 @@ public class ContentInstance extends AnnounceableResource {
                 new RetrieveCallback<ContentInstance>(baseUrl, path, dougalCallback));
     }
 
-    public static Container retrieveNonBlockingPayload(
+    public static ContentInstance retrieveNonBlockingPayload(
             String aeId, String baseUrl, String path, String userName, String password)
             throws Exception {
         return ((NonBlockingResource) retrieveBase(aeId, baseUrl, path, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST, null).body().getResource())
-                .getOperationResult().getPrimitiveContent().getContainer();
+                .getOperationResult().getPrimitiveContent().getContentInstance();
     }
 
     @Override
@@ -114,16 +114,16 @@ public class ContentInstance extends AnnounceableResource {
         delete(aeId, baseUrl, path, userName, password, RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
-    public static void deleteAsync(String aeId, String baseUrl, String path,
-                                   String userName, String password, DougalCallback dougalCallback) {
-        deleteAsync(aeId, baseUrl, path, userName, password,
-                RESPONSE_TYPE_BLOCKING_REQUEST, new DeleteCallback(dougalCallback));
-    }
-
     public void deleteAsync(
             String userName, String password, DougalCallback dougalCallback) {
         deleteAsync(aeId, userName, password, RESPONSE_TYPE_BLOCKING_REQUEST,
                 new DeleteCallback(dougalCallback));
+    }
+
+    public static void deleteAsync(String aeId, String baseUrl, String path,
+                                   String userName, String password, DougalCallback dougalCallback) {
+        deleteAsync(aeId, baseUrl, path, userName, password,
+                RESPONSE_TYPE_BLOCKING_REQUEST, new DeleteCallback(dougalCallback));
     }
 
     public static Discovery discover(String aeId, String baseUrl, String path,

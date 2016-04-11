@@ -11,7 +11,7 @@ public class OperationResult {
     @Expose
     @SerializedName("rsc")
     @Types.StatusCode
-    private int responseStatusCode;
+    private Integer responseStatusCode;
     @Expose
     @SerializedName("rqi")
     private String requestIdentifier;
@@ -34,11 +34,11 @@ public class OperationResult {
     @SerializedName("ec")
     private String eventCategory;
 
-    public int getResponseStatusCode() {
+    public Integer getResponseStatusCode() {
         return responseStatusCode;
     }
 
-    public void setResponseStatusCode(int responseStatusCode) {
+    public void setResponseStatusCode(Integer responseStatusCode) {
         this.responseStatusCode = responseStatusCode;
     }
 
