@@ -96,15 +96,16 @@ public class FilterCriteria {
     public void putExpireAfter(String expireAfter) {
         queryMap.put(Types.FILTER_CRITERIA_EXPIRE_AFTER, expireAfter);
     }
-// TODO Not sure how to inject these into Retrofit.
-// TODO Or how they should be added to the request, probably label[]=...&label[]=...
-//    public String[] getLabels() {
-//        return labels;
-//    }
-//
-//    public void setLabels(String[] labels) {
-//        this.labels = labels;
-//    }
+
+    // TODO Not sure how to inject these into Retrofit.
+    // TODO Or how they should be added to the request, maybe lbl[]=...&lbl[]=... ?
+    public String getLabels() {
+        return queryMap.get(Types.FILTER_CRITERIA_LABELS);
+    }
+
+    public void putLabels(String labels) {
+        queryMap.put(Types.FILTER_CRITERIA_LABELS, labels);
+    }
 
     public Integer getResourceType() {
         String type = queryMap.get(Types.FILTER_CRITERIA_RESOURCE_TYPE);
