@@ -22,6 +22,7 @@ public interface DougalService {
     @POST("{path}")
     Call<ResponseHolder> create(
             @Header("X-M2M-Origin") String aeId,
+            @Header("X-M2M-NAME") String resourceName, // v15.
             @Path(value = "path", encoded = true) String path,
             @Header("Authorization") String authorization,
             @Header("Content-Type") String contentType,

@@ -22,6 +22,7 @@ import com.interdigital.android.dougal.shared.OperationResult;
 import java.lang.annotation.Retention;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
@@ -138,7 +139,7 @@ public class Resource {
         String auth = Credentials.basic(userName, password);
         RequestHolder requestHolder = new RequestHolder(this);
         String contentType = CONTENT_TYPE_PREFIX + resourceType;
-        Call<ResponseHolder> call = dougalServiceMap.get(baseUrl).create(aeId, path, auth,
+        Call<ResponseHolder> call = dougalServiceMap.get(baseUrl).create(aeId, resourceName, path, auth,
                 contentType, getRequestId(), responseType, requestHolder);
         Response<ResponseHolder> response = call.execute();
         switch (responseType) {
@@ -160,7 +161,7 @@ public class Resource {
         String auth = Credentials.basic(userName, password);
         RequestHolder requestHolder = new RequestHolder(this);
         String contentType = CONTENT_TYPE_PREFIX + resourceType;
-        Call<ResponseHolder> call = dougalServiceMap.get(baseUrl).create(aeId, path, auth,
+        Call<ResponseHolder> call = dougalServiceMap.get(baseUrl).create(aeId, resourceName, path, auth,
                 contentType, getRequestId(), responseType, requestHolder);
         call.enqueue(callback);
     }
@@ -498,7 +499,7 @@ public class Resource {
 
     @NonNull
     private static synchronized String getRequestId() {
-        return "dougal-" + SystemClock.elapsedRealtime();
+        return UUID.randomUUID().toString();
     }
 }
 

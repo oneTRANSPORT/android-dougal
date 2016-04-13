@@ -51,6 +51,7 @@ public class RewriteCompatibilityInterceptor implements Interceptor {
             if (originalRequest.method().equalsIgnoreCase("post")) {
                 resource.setResourceId(null);
                 resource.setResourceType(null);
+                resource.setResourceName(null); // v15 only.
             } else if (originalRequest.method().equalsIgnoreCase("put")) {
                 // These fields cause a Bad Request.
                 resource.setResourceId(null);
