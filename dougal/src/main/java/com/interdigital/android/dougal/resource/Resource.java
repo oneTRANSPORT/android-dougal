@@ -1,6 +1,5 @@
 package com.interdigital.android.dougal.resource;
 
-import android.os.SystemClock;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 
@@ -22,6 +21,7 @@ import com.interdigital.android.dougal.shared.OperationResult;
 import java.lang.annotation.Retention;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
@@ -498,7 +498,7 @@ public class Resource {
 
     @NonNull
     private static synchronized String getRequestId() {
-        return "dougal-" + SystemClock.elapsedRealtime();
+        return UUID.randomUUID().toString();
     }
 }
 
