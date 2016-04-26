@@ -22,6 +22,7 @@ import java.lang.annotation.Retention;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
@@ -470,6 +471,9 @@ public class Resource {
                     .addInterceptor(new AddHeadersInterceptor())
                     .addInterceptor(new RewriteCompatibilityInterceptor())
                     .addInterceptor(httpLoggingInterceptor)
+                    .connectTimeout(30, TimeUnit.SECONDS)
+                    .readTimeout(30, TimeUnit.SECONDS)
+                    .writeTimeout(30, TimeUnit.SECONDS)
                     .build();
             if (gson == null) {
                 gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
