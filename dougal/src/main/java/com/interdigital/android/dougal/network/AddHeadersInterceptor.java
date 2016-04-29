@@ -14,6 +14,8 @@ public class AddHeadersInterceptor implements Interceptor {
         Request newRequest = request.newBuilder()
                 .addHeader("Accept", "application/json")
                 .addHeader("User-Agent", "OneM2M-Android")
+                // TODO Re-enable for production?
+                // .addHeader("Accept-Encoding", "gzip")
                 .build();
         Response response = chain.proceed(newRequest);
         return response;
