@@ -183,4 +183,21 @@ public class Types {
     public static final int CONSISTENCY_STRATEGY_ABANDON_MEMBER = 1;
     public static final int CONSISTENCY_STRATEGY_ABANDON_GROUP = 2;
     public static final int CONSISTENCY_STRATEGY_SET_MIXED = 3;
+
+    @Retention(SOURCE)
+    @IntDef({ACCESS_CONTROL_OPERATION_CREATE,
+            ACCESS_CONTROL_OPERATION_RETRIEVE,
+            ACCESS_CONTROL_OPERATION_UPDATE,
+            ACCESS_CONTROL_OPERATION_DELETE,
+            ACCESS_CONTROL_OPERATION_DISCOVERY,
+            ACCESS_CONTROL_OPERATION_NOTIFY})
+    public @interface AccessControlOperation {
+    }
+
+    public static final int ACCESS_CONTROL_OPERATION_CREATE = 1;
+    public static final int ACCESS_CONTROL_OPERATION_RETRIEVE = 2;
+    public static final int ACCESS_CONTROL_OPERATION_UPDATE = 4;
+    public static final int ACCESS_CONTROL_OPERATION_DELETE = 8;
+    public static final int ACCESS_CONTROL_OPERATION_DISCOVERY = 16;
+    public static final int ACCESS_CONTROL_OPERATION_NOTIFY = 32;
 }

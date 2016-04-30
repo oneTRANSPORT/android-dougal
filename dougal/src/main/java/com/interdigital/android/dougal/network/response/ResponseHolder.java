@@ -2,6 +2,7 @@ package com.interdigital.android.dougal.network.response;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.interdigital.android.dougal.resource.AccessControlPolicy;
 import com.interdigital.android.dougal.resource.ApplicationEntity;
 import com.interdigital.android.dougal.resource.Container;
 import com.interdigital.android.dougal.resource.ContentInstance;
@@ -41,6 +42,9 @@ public class ResponseHolder {
     @Expose
     @SerializedName("m2m:grp")
     private Group group;
+    @Expose
+    @SerializedName("m2m:what") // TODO find out.
+    private AccessControlPolicy accessControlPolicy;
 
     public int getStatusCode() {
         return statusCode;
@@ -87,6 +91,9 @@ public class ResponseHolder {
         }
         if (group != null) {
             return group;
+        }
+        if (accessControlPolicy != null) {
+            return accessControlPolicy;
         }
         return null;
     }
@@ -145,5 +152,13 @@ public class ResponseHolder {
 
     public void setGroup(Group group) {
         this.group = group;
+    }
+
+    public AccessControlPolicy getAccessControlPolicy() {
+        return accessControlPolicy;
+    }
+
+    public void setAccessControlPolicy(AccessControlPolicy accessControlPolicy) {
+        this.accessControlPolicy = accessControlPolicy;
     }
 }
