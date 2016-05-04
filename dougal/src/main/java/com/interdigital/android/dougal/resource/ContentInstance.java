@@ -16,7 +16,6 @@ import retrofit2.Response;
 
 public class ContentInstance extends AnnounceableResource {
 
-    private String aeId;
     @Expose
     @SerializedName("cnf")
     private String contentInfo;
@@ -41,7 +40,7 @@ public class ContentInstance extends AnnounceableResource {
                            String[] accessControlPolicyIds, String[] labels, String contentInfo, String content,
                            Long contentSize) {
         super(resourceId, resourceName, resourceType, parentId, expiryTime, accessControlPolicyIds, labels);
-        this.aeId = aeId;
+        setAeId(aeId);
         this.contentInfo = contentInfo;
         this.content = content;
         this.contentSize = contentSize;
@@ -60,7 +59,7 @@ public class ContentInstance extends AnnounceableResource {
 
     public void createAsync(
             String baseUrl, String path, String userName, String password, DougalCallback dougalCallback) {
-        createAsync(aeId, baseUrl, path, userName, password,
+        createAsync(getAeId(), baseUrl, path, userName, password,
                 new CreateCallback<ContentInstance>(this, dougalCallback),
                 RESPONSE_TYPE_BLOCKING_REQUEST);
     }
@@ -105,7 +104,7 @@ public class ContentInstance extends AnnounceableResource {
     }
 
     public void delete(String userName, String password) throws Exception {
-        delete(aeId, userName, password, RESPONSE_TYPE_BLOCKING_REQUEST);
+        delete(getAeId(), userName, password, RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
     public static void delete(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
@@ -116,7 +115,7 @@ public class ContentInstance extends AnnounceableResource {
 
     public void deleteAsync(
             String userName, String password, DougalCallback dougalCallback) {
-        deleteAsync(aeId, userName, password, RESPONSE_TYPE_BLOCKING_REQUEST,
+        deleteAsync(getAeId(), userName, password, RESPONSE_TYPE_BLOCKING_REQUEST,
                 new DeleteCallback(dougalCallback));
     }
 
@@ -162,14 +161,6 @@ public class ContentInstance extends AnnounceableResource {
                 new RetrieveCallback<Discovery>(baseUrl, path, dougalCallback));
     }
 
-    public String getAeId() {
-        return aeId;
-    }
-
-    public void setAeId(String aeId) {
-        this.aeId = aeId;
-    }
-
     public String getContentInfo() {
         return contentInfo;
     }
@@ -197,7 +188,7 @@ public class ContentInstance extends AnnounceableResource {
     private void create(String baseUrl, String path, String userName, String password,
                         @ResponseType int responseType)
             throws Exception { // TODO Add response type.
-        Response<ResponseHolder> response = create(aeId, baseUrl, path, userName, password,
+        Response<ResponseHolder> response = create(getAeId(), baseUrl, path, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST);
         ContentInstance contentInstance = response.body().getContentInstance();
         // Update current object.

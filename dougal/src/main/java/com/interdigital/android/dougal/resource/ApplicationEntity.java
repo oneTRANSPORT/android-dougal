@@ -16,6 +16,7 @@ import retrofit2.Response;
 
 public class ApplicationEntity extends AnnounceableResource {
 
+    // TODO Check this.
     // The AE id.
     //    @Expose
 //    @SerializedName("aei")

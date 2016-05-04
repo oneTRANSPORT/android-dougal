@@ -5,12 +5,14 @@ import com.google.gson.annotations.SerializedName;
 import com.interdigital.android.dougal.Types;
 import com.interdigital.android.dougal.network.response.ResponseHolder;
 import com.interdigital.android.dougal.resource.callback.CreateCallback;
+import com.interdigital.android.dougal.resource.callback.RetrieveCallback;
+import com.interdigital.android.dougal.resource.callback.UpdateCallback;
+import com.interdigital.android.dougal.shared.FilterCriteria;
 
 import retrofit2.Response;
 
 public class AccessControlPolicy extends AnnounceableSubordinateResource {
 
-    private String aeId;
     @Expose
     @SerializedName("pv")
     private SetOfAcrs privileges;
@@ -20,12 +22,12 @@ public class AccessControlPolicy extends AnnounceableSubordinateResource {
 
     public AccessControlPolicy(String aeId, String resourceId, String resourceName) {
         super(resourceId, resourceName, Types.RESOURCE_TYPE_ACCESS_CONTROL_POLICY, null);
-        this.aeId = aeId;
+        setAeId(aeId);
     }
 
     public void create(String baseUrl, String path, String userName, String password)
             throws Exception {
-        Response<ResponseHolder> response = create(aeId, baseUrl, path, userName, password,
+        Response<ResponseHolder> response = create(getAeId(), baseUrl, path, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST);
         AccessControlPolicy accessControlPolicy = response.body().getAccessControlPolicy();
         // Update current object.
@@ -39,8 +41,38 @@ public class AccessControlPolicy extends AnnounceableSubordinateResource {
 
     public void createAsync(
             String baseUrl, String path, String userName, String password, DougalCallback dougalCallback) {
-        createAsync(aeId, baseUrl, path, userName, password, new CreateCallback<>(this, dougalCallback),
+        createAsync(getAeId(), baseUrl, path, userName, password, new CreateCallback<>(this, dougalCallback),
                 RESPONSE_TYPE_BLOCKING_REQUEST);
+    }
+
+    public static AccessControlPolicy retrieve(String aeId, String baseUrl, String path,
+                                               String userName, String password, FilterCriteria filterCriteria)
+            throws Exception {
+        AccessControlPolicy accessControlPolicy = retrieveBase(aeId, baseUrl, path, userName, password,
+                RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria).body().getAccessControlPolicy();
+        accessControlPolicy.setAeId(aeId);
+        accessControlPolicy.setBaseUrl(baseUrl);
+        accessControlPolicy.setPath(path);
+        return accessControlPolicy;
+    }
+
+    public static void retrieveAsync(String aeId, String baseUrl, String path,
+                                     String userName, String password, FilterCriteria filterCriteria,
+                                     DougalCallback dougalCallback) {
+        retrieveBaseAsync(aeId, baseUrl, path, userName, password,
+                RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria,
+                new RetrieveCallback<AccessControlPolicy>(baseUrl, path, dougalCallback));
+    }
+
+    public void update(String userName, String password) throws Exception {
+        Response<ResponseHolder> response = update(getResourceId(), userName, password,
+                RESPONSE_TYPE_BLOCKING_REQUEST);
+        setLastModifiedTime(response.body().getAccessControlPolicy().getLastModifiedTime());
+    }
+
+    public void updateAsync(String userName, String password, DougalCallback dougalCallback) {
+        updateAsync(getResourceId(), userName, password, RESPONSE_TYPE_BLOCKING_REQUEST,
+                new UpdateCallback<>(this, dougalCallback));
     }
 
     public SetOfAcrs getPrivileges() {

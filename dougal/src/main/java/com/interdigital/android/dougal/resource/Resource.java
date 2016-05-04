@@ -66,6 +66,7 @@ public class Resource {
 
     private static HttpLoggingInterceptor httpLoggingInterceptor;
 
+    private String aeId;
     @Expose
     @SerializedName("ri")
     private String resourceId;
@@ -367,6 +368,14 @@ public class Resource {
         Call<ResponseHolder> call = dougalServiceMap.get(baseUrl)
                 .discover(aeId, path, auth, getRequestId(), queryMap);
         call.enqueue(callback);
+    }
+
+    public String getAeId() {
+        return aeId;
+    }
+
+    public void setAeId(String aeId) {
+        this.aeId = aeId;
     }
 
     public String getResourceId() {
