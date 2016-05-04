@@ -1,10 +1,13 @@
 package com.interdigital.android.dougal.resource;
 
+import android.support.annotation.NonNull;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.interdigital.android.dougal.Types;
 import com.interdigital.android.dougal.network.response.ResponseHolder;
 import com.interdigital.android.dougal.resource.callback.CreateCallback;
+import com.interdigital.android.dougal.resource.callback.DeleteCallback;
 import com.interdigital.android.dougal.resource.callback.RetrieveCallback;
 import com.interdigital.android.dougal.resource.callback.UpdateCallback;
 import com.interdigital.android.dougal.shared.FilterCriteria;
@@ -73,6 +76,27 @@ public class AccessControlPolicy extends AnnounceableSubordinateResource {
     public void updateAsync(String userName, String password, DougalCallback dougalCallback) {
         updateAsync(getResourceId(), userName, password, RESPONSE_TYPE_BLOCKING_REQUEST,
                 new UpdateCallback<>(this, dougalCallback));
+    }
+
+    public void delete(String userName, String password) throws Exception {
+        delete(getAeId(), userName, password, RESPONSE_TYPE_BLOCKING_REQUEST);
+    }
+
+    public static void delete(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
+                              String userName, String password) throws Exception {
+        delete(aeId, baseUrl, path, userName, password, RESPONSE_TYPE_BLOCKING_REQUEST);
+    }
+
+    public void deleteAsync(
+            String userName, String password, DougalCallback dougalCallback) {
+        deleteAsync(getAeId(), userName, password, RESPONSE_TYPE_BLOCKING_REQUEST,
+                new DeleteCallback(dougalCallback));
+    }
+
+    public static void deleteAsync(String aeId, String baseUrl, String path,
+                                   String userName, String password, DougalCallback dougalCallback) {
+        deleteAsync(aeId, baseUrl, path, userName, password, RESPONSE_TYPE_BLOCKING_REQUEST,
+                new DeleteCallback(dougalCallback));
     }
 
     public SetOfAcrs getPrivileges() {
