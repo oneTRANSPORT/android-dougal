@@ -43,7 +43,7 @@ public class ResponseHolder {
     @SerializedName("m2m:grp")
     private Group group;
     @Expose
-    @SerializedName("m2m:what") // TODO find out.
+    @SerializedName("m2m:acp")
     private AccessControlPolicy accessControlPolicy;
 
     public int getStatusCode() {

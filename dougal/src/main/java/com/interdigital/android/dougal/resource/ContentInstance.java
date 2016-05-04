@@ -186,11 +186,11 @@ public class ContentInstance extends AnnounceableResource {
         this.content = content;
     }
 
-    public long getContentSize() {
+    public Long getContentSize() {
         return contentSize;
     }
 
-    public void setContentSize(long contentSize) {
+    public void setContentSize(Long contentSize) {
         this.contentSize = contentSize;
     }
 

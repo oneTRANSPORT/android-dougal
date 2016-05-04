@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import com.interdigital.android.dougal.network.request.RequestHolder;
 import com.interdigital.android.dougal.resource.ApplicationEntity;
 import com.interdigital.android.dougal.resource.Container;
+import com.interdigital.android.dougal.resource.ContentInstance;
 import com.interdigital.android.dougal.resource.Resource;
 
 import java.io.IOException;
@@ -51,6 +52,21 @@ public class RewriteCompatibilityInterceptor implements Interceptor {
             if (originalRequest.method().equalsIgnoreCase("post")) {
                 resource.setResourceId(null);
                 resource.setResourceType(null);
+                resource.setCreationTime(null);
+                resource.setLastModifiedTime(null);
+                resource.setParentId(null);
+                if (resource instanceof ApplicationEntity) {
+                    ((ApplicationEntity) resource).setNodeLink(null);
+                } else if (resource instanceof Container) {
+                    Container container = (Container) resource;
+                    container.setStateTag(null);
+                    container.setCurrentNumberOfInstances(null);
+                    container.setCurrentByteSize(null);
+                } else if (resource instanceof ContentInstance) {
+                    ContentInstance contentInstance = (ContentInstance) resource;
+                    contentInstance.setStateTag(null);
+                    contentInstance.setContentSize(null);
+                }
             } else if (originalRequest.method().equalsIgnoreCase("put")) {
                 // These fields cause a Bad Request.
                 resource.setResourceId(null);
@@ -60,6 +76,7 @@ public class RewriteCompatibilityInterceptor implements Interceptor {
                 resource.setParentId(null);
                 if (resource instanceof ApplicationEntity) {
                     ((ApplicationEntity) resource).setApplicationId(null);
+                    ((ApplicationEntity) resource).setNodeLink(null);
                 } else if (resource instanceof Container) {
                     Container container = (Container) resource;
                     container.setStateTag(null);

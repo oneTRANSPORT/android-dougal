@@ -4,6 +4,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.interdigital.android.dougal.Types;
 import com.interdigital.android.dougal.network.response.ResponseHolder;
+import com.interdigital.android.dougal.resource.callback.CreateCallback;
 
 import retrofit2.Response;
 
@@ -12,14 +13,13 @@ public class AccessControlPolicy extends AnnounceableSubordinateResource {
     private String aeId;
     @Expose
     @SerializedName("pv")
-    private AccessControlRule[] privileges;
+    private SetOfAcrs privileges;
     @Expose
     @SerializedName("pvs")
-    private AccessControlRule[] selfPrivileges;
+    private SetOfAcrs selfPrivileges;
 
-    public AccessControlPolicy(String aeId, String resourceId, String resourceName,
-                               @Types.ResourceType int resourceType, String parentId, String[] labels) {
-        super(resourceId, resourceName, resourceType, parentId, labels);
+    public AccessControlPolicy(String aeId, String resourceId, String resourceName) {
+        super(resourceId, resourceName, Types.RESOURCE_TYPE_ACCESS_CONTROL_POLICY, null);
         this.aeId = aeId;
     }
 
@@ -29,28 +29,33 @@ public class AccessControlPolicy extends AnnounceableSubordinateResource {
                 RESPONSE_TYPE_BLOCKING_REQUEST);
         AccessControlPolicy accessControlPolicy = response.body().getAccessControlPolicy();
         // Update current object.
-        // TODO URL returned?
-//        setCreationTime(contentInstance.getCreationTime());
-//        setExpiryTime(contentInstance.getExpiryTime());
-//        setLastModifiedTime(contentInstance.getLastModifiedTime());
-//        setParentId(contentInstance.getParentId());
-//        setResourceId(contentInstance.getResourceId());
-//        setResourceName(contentInstance.getResourceName());
+        // TODO Move these to super method?
+        setCreationTime(accessControlPolicy.getCreationTime());
+        setExpiryTime(accessControlPolicy.getExpiryTime());
+        setLastModifiedTime(accessControlPolicy.getLastModifiedTime());
+        setParentId(accessControlPolicy.getParentId());
+        setResourceId(accessControlPolicy.getResourceId());
     }
 
-    public AccessControlRule[] getPrivileges() {
+    public void createAsync(
+            String baseUrl, String path, String userName, String password, DougalCallback dougalCallback) {
+        createAsync(aeId, baseUrl, path, userName, password, new CreateCallback<>(this, dougalCallback),
+                RESPONSE_TYPE_BLOCKING_REQUEST);
+    }
+
+    public SetOfAcrs getPrivileges() {
         return privileges;
     }
 
-    public void setPrivileges(AccessControlRule[] privileges) {
+    public void setPrivileges(SetOfAcrs privileges) {
         this.privileges = privileges;
     }
 
-    public AccessControlRule[] getSelfPrivileges() {
+    public SetOfAcrs getSelfPrivileges() {
         return selfPrivileges;
     }
 
-    public void setSelfPrivileges(AccessControlRule[] selfPrivileges) {
+    public void setSelfPrivileges(SetOfAcrs selfPrivileges) {
         this.selfPrivileges = selfPrivileges;
     }
 }

@@ -17,8 +17,8 @@ public class AnnounceableSubordinateResource extends Resource {
     private String expiryTime;
 
     public AnnounceableSubordinateResource(String resourceId, String resourceName,
-                                           @Types.ResourceType int resourceType, String parentId, String[] labels) {
-        super(resourceId, resourceName, resourceType, parentId, labels);
+                                           @Types.ResourceType int resourceType, String[] labels) {
+        super(resourceId, resourceName, resourceType,  labels);
     }
 
     public String[] getAnnounceTo() {

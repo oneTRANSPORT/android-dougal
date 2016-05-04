@@ -38,7 +38,7 @@ public class NonBlockingResource extends RegularResource {
     public NonBlockingResource(String resourceId, String resourceName,
                                @Types.ResourceType int resourceType, String parentId, String expiryTime,
                                String[] accessControlPolicyIds, String[] labels) {
-        super(resourceId, resourceName, resourceType, parentId, expiryTime, accessControlPolicyIds, labels);
+        super(resourceId, resourceName, resourceType, expiryTime, accessControlPolicyIds, labels);
     }
 
     public MetaInformation getMetaInformation() {

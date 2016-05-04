@@ -99,11 +99,10 @@ public class Resource {
     // TODO Make methods protected instead of public.
 
     public Resource(String resourceId, String resourceName, @Types.ResourceType int resourceType,
-                    String parentId, String[] labels) {
+                    String[] labels) {
         this.resourceId = resourceId;
         this.resourceName = resourceName;
         this.resourceType = resourceType;
-        this.parentId = parentId;
         this.labels = labels;
     }
 

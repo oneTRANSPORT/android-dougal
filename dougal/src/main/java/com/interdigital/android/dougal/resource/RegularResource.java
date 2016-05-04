@@ -14,9 +14,9 @@ public class RegularResource extends Resource {
     private String[] accessControlPolicyIds;
 
     public RegularResource(String resourceId, String resourceName,
-                           @Types.ResourceType int resourceType, String parentId, String expiryTime,
+                           @Types.ResourceType int resourceType, String expiryTime,
                            String[] accessControlPolicyIds, String[] labels) {
-        super(resourceId, resourceName, resourceType, parentId, labels);
+        super(resourceId, resourceName, resourceType, labels);
         this.expiryTime = expiryTime;
         this.accessControlPolicyIds = accessControlPolicyIds;
     }

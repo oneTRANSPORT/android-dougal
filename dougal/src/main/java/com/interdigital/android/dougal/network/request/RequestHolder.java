@@ -3,6 +3,7 @@ package com.interdigital.android.dougal.network.request;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.interdigital.android.dougal.Types;
+import com.interdigital.android.dougal.resource.AccessControlPolicy;
 import com.interdigital.android.dougal.resource.ApplicationEntity;
 import com.interdigital.android.dougal.resource.Container;
 import com.interdigital.android.dougal.resource.ContentInstance;
@@ -23,6 +24,9 @@ public class RequestHolder {
     @Expose
     @SerializedName("grp")
     private Group group;
+    @Expose
+    @SerializedName("acp")
+    private AccessControlPolicy accessControlPolicy;
 
     public RequestHolder() {
     }
@@ -44,6 +48,9 @@ public class RequestHolder {
         if (group != null) {
             return group;
         }
+        if (accessControlPolicy != null) {
+            return accessControlPolicy;
+        }
         return null;
     }
 
@@ -51,6 +58,7 @@ public class RequestHolder {
         // TODO Add all the rest of the objects.
         switch (resource.getResourceType()) {
             case Types.RESOURCE_TYPE_ACCESS_CONTROL_POLICY:
+                setAccessControlPolicy((AccessControlPolicy) resource);
                 break;
             case Types.RESOURCE_TYPE_APPLICATION_ENTITY:
                 setApplicationEntity((ApplicationEntity) resource);
@@ -137,5 +145,13 @@ public class RequestHolder {
 
     public void setGroup(Group group) {
         this.group = group;
+    }
+
+    public AccessControlPolicy getAccessControlPolicy() {
+        return accessControlPolicy;
+    }
+
+    public void setAccessControlPolicy(AccessControlPolicy accessControlPolicy) {
+        this.accessControlPolicy = accessControlPolicy;
     }
 }
