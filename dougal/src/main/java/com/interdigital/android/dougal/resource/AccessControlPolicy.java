@@ -12,7 +12,6 @@ import com.interdigital.android.dougal.resource.callback.NonBlockingIdCallback;
 import com.interdigital.android.dougal.resource.callback.RetrieveCallback;
 import com.interdigital.android.dougal.resource.callback.UpdateCallback;
 import com.interdigital.android.dougal.shared.FilterCriteria;
-import com.interdigital.android.dougal.shared.OperationResult;
 
 import retrofit2.Response;
 
@@ -82,12 +81,6 @@ public class AccessControlPolicy extends AnnounceableSubordinateResource {
                 new RetrieveCallback<AccessControlPolicy>(baseUrl, path, dougalCallback));
     }
 
-    public void update(String userName, String password) throws Exception {
-        Response<ResponseHolder> response = update(getResourceId(), userName, password,
-                RESPONSE_TYPE_BLOCKING_REQUEST);
-        setLastModifiedTime(response.body().getAccessControlPolicy().getLastModifiedTime());
-    }
-
     public static AccessControlPolicy retrievePayloadNonBlocking(
             String aeId, String baseUrl, String path, String userName, String password)
             throws Exception {
@@ -106,8 +99,26 @@ public class AccessControlPolicy extends AnnounceableSubordinateResource {
                 new RetrieveCallback<AccessControlPolicy>(baseUrl, path, dougalCallback));
     }
 
+    public void update(String userName, String password) throws Exception {
+        Response<ResponseHolder> response = update(getResourceId(), userName, password,
+                RESPONSE_TYPE_BLOCKING_REQUEST);
+        setLastModifiedTime(response.body().getAccessControlPolicy().getLastModifiedTime());
+    }
+
     public void updateAsync(String userName, String password, DougalCallback dougalCallback) {
         updateAsync(getResourceId(), userName, password, RESPONSE_TYPE_BLOCKING_REQUEST,
+                new UpdateCallback<>(this, dougalCallback));
+    }
+
+    public Resource updateNonBlocking(String userName, String password) throws Exception {
+        return update(getResourceId(), userName, password,
+                RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH).body().getResource();
+    }
+
+    public void updateNonBlockingAsync(
+            String baseUrl, String path, String userName, String password, DougalCallback dougalCallback) {
+        updateAsync(getAeId(), userName, password,
+                RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH,
                 new UpdateCallback<>(this, dougalCallback));
     }
 
@@ -131,6 +142,34 @@ public class AccessControlPolicy extends AnnounceableSubordinateResource {
         deleteAsync(aeId, baseUrl, path, userName, password, RESPONSE_TYPE_BLOCKING_REQUEST,
                 new DeleteCallback(dougalCallback));
     }
+
+    public static Discovery discover(String aeId, String baseUrl, String path,
+                                     String userName, String password, FilterCriteria filterCriteria) throws Exception {
+        if (filterCriteria == null) {
+            filterCriteria = new FilterCriteria();
+        }
+        if (filterCriteria.getResourceType() == null) {
+            filterCriteria.putResourceType(Types.RESOURCE_TYPE_ACCESS_CONTROL_POLICY);
+        }
+        return discoverBase(aeId, baseUrl, path, userName, password,
+                RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria).body().getDiscovery();
+    }
+
+    public static void discoverAsync(String aeId, String baseUrl, String path,
+                                     String userName, String password, FilterCriteria filterCriteria,
+                                     DougalCallback dougalCallback) {
+        if (filterCriteria == null) {
+            filterCriteria = new FilterCriteria();
+        }
+        if (filterCriteria.getResourceType() == null) {
+            filterCriteria.putResourceType(Types.RESOURCE_TYPE_ACCESS_CONTROL_POLICY);
+        }
+        discoverAsyncBase(aeId, baseUrl, path, userName, password,
+                RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria,
+                new RetrieveCallback<Discovery>(baseUrl, path, dougalCallback));
+    }
+
+
 
     public SetOfAcrs getPrivileges() {
         return privileges;

@@ -198,6 +198,6 @@ public class Types {
     public static final int ACCESS_CONTROL_OPERATION_RETRIEVE = 2;
     public static final int ACCESS_CONTROL_OPERATION_UPDATE = 4;
     public static final int ACCESS_CONTROL_OPERATION_DELETE = 8;
-    public static final int ACCESS_CONTROL_OPERATION_DISCOVERY = 16;
-    public static final int ACCESS_CONTROL_OPERATION_NOTIFY = 32;
+    public static final int ACCESS_CONTROL_OPERATION_NOTIFY = 16;
+    public static final int ACCESS_CONTROL_OPERATION_DISCOVERY = 32;
 }

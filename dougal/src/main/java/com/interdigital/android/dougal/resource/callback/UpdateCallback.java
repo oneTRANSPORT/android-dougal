@@ -23,6 +23,7 @@ public class UpdateCallback<R extends Resource> extends BaseCallback<R, Response
         if (resource != null && r != null) {
             r = checkNonBlocking(r);
             // This is common to all resources.
+            // TODO Find all.
             resource.setLastModifiedTime(r.getLastModifiedTime());
         }
         return resource;

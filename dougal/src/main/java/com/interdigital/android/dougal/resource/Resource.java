@@ -231,7 +231,6 @@ public class Resource {
         return responseHolder;
     }
 
-
     protected Response<ResponseHolder> update(
             @NonNull String aeId, String userName, String password,
             @ResponseType int responseType) throws Exception {
