@@ -22,6 +22,9 @@ public class Container extends AnnounceableResource {
     private static final String OLDEST_SUFFIX = "/ol";
 
     @Expose
+    @SerializedName("cr")
+    private String creator;
+    @Expose
     @SerializedName("cbs")
     private Long currentByteSize;
     @Expose
@@ -431,6 +434,14 @@ public class Container extends AnnounceableResource {
         discoverAsyncBase(aeId, baseUrl, path, userName, password,
                 RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH, filterCriteria,
                 new RetrieveCallback<Discovery>(baseUrl, path, dougalCallback));
+    }
+
+    public String getCreator() {
+        return creator;
+    }
+
+    public void setCreator(String creator) {
+        this.creator = creator;
     }
 
     public Long getCurrentByteSize() {

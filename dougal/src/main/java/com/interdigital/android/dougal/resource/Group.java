@@ -16,6 +16,9 @@ public class Group extends AnnounceableResource {
 
     private String aeId;
     @Expose
+    @SerializedName("cr")
+    private String creator;
+    @Expose
     @SerializedName("mt")
     @Types.ResourceType
     private Integer memberType;
@@ -116,6 +119,13 @@ public class Group extends AnnounceableResource {
                 new DeleteCallback(dougalCallback));
     }
 
+    public String getCreator() {
+        return creator;
+    }
+
+    public void setCreator(String creator) {
+        this.creator = creator;
+    }
 
     @Types.ResourceType
     public Integer getMemberType() {

@@ -18,6 +18,9 @@ import retrofit2.Response;
 public class ContentInstance extends AnnounceableResource {
 
     @Expose
+    @SerializedName("cr")
+    private String creator;
+    @Expose
     @SerializedName("cnf")
     private String contentInfo;
     @Expose
@@ -151,6 +154,14 @@ public class ContentInstance extends AnnounceableResource {
         discoverAsyncBase(aeId, baseUrl, path, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria,
                 new RetrieveCallback<Discovery>(baseUrl, path, dougalCallback));
+    }
+
+    public String getCreator() {
+        return creator;
+    }
+
+    public void setCreator(String creator) {
+        this.creator = creator;
     }
 
     public String getContentInfo() {
