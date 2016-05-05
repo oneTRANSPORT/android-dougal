@@ -1,6 +1,7 @@
 package com.interdigital.android.dougal.resource;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -144,7 +145,8 @@ public class AccessControlPolicy extends AnnounceableSubordinateResource {
     }
 
     public static Discovery discover(String aeId, String baseUrl, String path,
-                                     String userName, String password, FilterCriteria filterCriteria) throws Exception {
+                                     String userName, String password, @Nullable FilterCriteria filterCriteria)
+            throws Exception {
         if (filterCriteria == null) {
             filterCriteria = new FilterCriteria();
         }
@@ -156,7 +158,7 @@ public class AccessControlPolicy extends AnnounceableSubordinateResource {
     }
 
     public static void discoverAsync(String aeId, String baseUrl, String path,
-                                     String userName, String password, FilterCriteria filterCriteria,
+                                     String userName, String password, @Nullable FilterCriteria filterCriteria,
                                      DougalCallback dougalCallback) {
         if (filterCriteria == null) {
             filterCriteria = new FilterCriteria();
@@ -168,7 +170,6 @@ public class AccessControlPolicy extends AnnounceableSubordinateResource {
                 RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria,
                 new RetrieveCallback<Discovery>(baseUrl, path, dougalCallback));
     }
-
 
 
     public SetOfAcrs getPrivileges() {

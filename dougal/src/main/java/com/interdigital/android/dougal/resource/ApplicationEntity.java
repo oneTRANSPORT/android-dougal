@@ -1,6 +1,7 @@
 package com.interdigital.android.dougal.resource;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -146,15 +147,11 @@ public class ApplicationEntity extends AnnounceableResource {
     }
 
     public static Discovery discover(String aeId, String baseUrl, String path,
-                                     String userName, String password) throws Exception {
-        FilterCriteria filterCriteria = new FilterCriteria();
-        filterCriteria.putResourceType(Types.RESOURCE_TYPE_APPLICATION_ENTITY);
-        return discoverBase(aeId, baseUrl, path, userName, password,
-                RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria).body().getDiscovery();
-    }
-
-    public static Discovery discover(String aeId, String baseUrl, String path, FilterCriteria filterCriteria,
-                                     String userName, String password) throws Exception {
+                                     String userName, String password, @Nullable FilterCriteria filterCriteria)
+            throws Exception {
+        if (filterCriteria == null) {
+            filterCriteria = new FilterCriteria();
+        }
         if (filterCriteria.getResourceType() == null) {
             filterCriteria.putResourceType(Types.RESOURCE_TYPE_APPLICATION_ENTITY);
         }
@@ -163,16 +160,11 @@ public class ApplicationEntity extends AnnounceableResource {
     }
 
     public static void discoverAsync(String aeId, String baseUrl, String path,
-                                     String userName, String password, DougalCallback dougalCallback) {
-        FilterCriteria filterCriteria = new FilterCriteria();
-        filterCriteria.putResourceType(Types.RESOURCE_TYPE_APPLICATION_ENTITY);
-        discoverAsyncBase(aeId, baseUrl, path, userName, password,
-                RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria,
-                new RetrieveCallback<Discovery>(baseUrl, path, dougalCallback));
-    }
-
-    public static void discoverAsync(String aeId, String baseUrl, String path, FilterCriteria filterCriteria,
-                                     String userName, String password, DougalCallback dougalCallback) {
+                                     String userName, String password, @Nullable FilterCriteria filterCriteria,
+                                     DougalCallback dougalCallback) {
+        if (filterCriteria == null) {
+            filterCriteria = new FilterCriteria();
+        }
         if (filterCriteria.getResourceType() == null) {
             filterCriteria.putResourceType(Types.RESOURCE_TYPE_APPLICATION_ENTITY);
         }
