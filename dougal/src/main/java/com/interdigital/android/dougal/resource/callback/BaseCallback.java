@@ -4,9 +4,8 @@ import com.interdigital.android.dougal.Types;
 import com.interdigital.android.dougal.exception.DougalException;
 import com.interdigital.android.dougal.network.response.ResponseHolder;
 import com.interdigital.android.dougal.resource.DougalCallback;
-import com.interdigital.android.dougal.resource.NonBlockingResource;
+import com.interdigital.android.dougal.resource.NonBlockingRequest;
 import com.interdigital.android.dougal.resource.Resource;
-import com.interdigital.android.dougal.shared.OperationResult;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -57,12 +56,9 @@ public abstract class BaseCallback<R extends Resource, C> implements Callback<C>
         // Is this payload from a non-blocking request?
         // If so, unpack operation result.
         if (type != null && type == Types.RESOURCE_TYPE_REQUEST) {
-            OperationResult operationResult = ((NonBlockingResource) r).getOperationResult();
-            if (operationResult != null) {
-                ResponseHolder primitiveContent = operationResult.getPrimitiveContent();
-                if (primitiveContent != null) {
-                    r = (R) primitiveContent.getResource();
-                }
+            ResponseHolder responseHolder = ((NonBlockingRequest) r).getPrimitiveContent();
+            if (responseHolder != null) {
+                r = (R) responseHolder.getResource();
             }
         }
         return r;

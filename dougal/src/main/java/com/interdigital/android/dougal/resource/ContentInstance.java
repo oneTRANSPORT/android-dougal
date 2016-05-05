@@ -86,9 +86,9 @@ public class ContentInstance extends AnnounceableResource {
     public static ContentInstance retrieveNonBlockingPayload(
             String aeId, String baseUrl, String path, String userName, String password)
             throws Exception {
-        return ((NonBlockingResource) retrieveBase(aeId, baseUrl, path, userName, password,
+        return ((NonBlockingRequest) retrieveBase(aeId, baseUrl, path, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST, null).body().getResource())
-                .getOperationResult().getPrimitiveContent().getContentInstance();
+                .getPrimitiveContent().getContentInstance();
     }
 
     @Override

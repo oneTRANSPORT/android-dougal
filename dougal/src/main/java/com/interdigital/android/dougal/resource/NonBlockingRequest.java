@@ -5,10 +5,11 @@ import android.support.annotation.NonNull;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.interdigital.android.dougal.Types;
+import com.interdigital.android.dougal.network.response.ResponseHolder;
 import com.interdigital.android.dougal.shared.MetaInformation;
 import com.interdigital.android.dougal.shared.OperationResult;
 
-public class NonBlockingResource extends RegularResource {
+public class NonBlockingRequest extends RegularResource {
 
     @Expose
     @SerializedName("mi")
@@ -17,7 +18,7 @@ public class NonBlockingResource extends RegularResource {
     @SerializedName("og")
     private String originator;
     @Expose
-    @SerializedName("oprl") // Was ol.  TODO Check.
+    @SerializedName("oprl")
     private OperationResult operationResult;
     @Expose
     @SerializedName("op")
@@ -34,10 +35,13 @@ public class NonBlockingResource extends RegularResource {
     @Expose
     @SerializedName("tg")
     private String target;
+    @Expose
+    @SerializedName("pc")
+    private String primitiveContent;
 
-    public NonBlockingResource(String resourceId, String resourceName,
-                               @Types.ResourceType int resourceType, String parentId, String expiryTime,
-                               String[] accessControlPolicyIds, String[] labels) {
+    public NonBlockingRequest(String resourceId, String resourceName,
+                              @Types.ResourceType int resourceType, String expiryTime,
+                              String[] accessControlPolicyIds, String[] labels) {
         super(resourceId, resourceName, resourceType, expiryTime, accessControlPolicyIds, labels);
     }
 
@@ -104,5 +108,13 @@ public class NonBlockingResource extends RegularResource {
 
     public void setTarget(String target) {
         this.target = target;
+    }
+
+    public ResponseHolder getPrimitiveContent() {
+        return Resource.gson.fromJson(primitiveContent, ResponseHolder.class);
+    }
+
+    public void setPrimitiveContent(String primitiveContent) {
+        this.primitiveContent = primitiveContent;
     }
 }

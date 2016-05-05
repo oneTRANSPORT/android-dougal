@@ -16,7 +16,6 @@ import com.interdigital.android.dougal.network.request.RequestHolder;
 import com.interdigital.android.dougal.network.response.ResponseHolder;
 import com.interdigital.android.dougal.resource.callback.NonBlockingIdCallback;
 import com.interdigital.android.dougal.shared.FilterCriteria;
-import com.interdigital.android.dougal.shared.OperationResult;
 
 import java.lang.annotation.Retention;
 import java.util.HashMap;
@@ -222,12 +221,14 @@ public class Resource {
                 RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH, filterCriteria, callback);
     }
 
-    public static OperationResult retrievePayloadNonBlockingBase(
+    public static ResponseHolder retrievePayloadNonBlockingBase(
             String aeId, String baseUrl, String path, String userName, String password)
             throws Exception {
-        return ((NonBlockingResource) retrieveBase(aeId, baseUrl, path,
-                userName, password, RESPONSE_TYPE_BLOCKING_REQUEST, null).body().getResource())
-                .getOperationResult();
+        NonBlockingRequest nonBlockingRequest = (NonBlockingRequest) retrieveBase(aeId, baseUrl, path,
+                userName, password, RESPONSE_TYPE_BLOCKING_REQUEST, null).body().getResource();
+        ResponseHolder responseHolder = nonBlockingRequest.getPrimitiveContent();
+        responseHolder.setStatusCode(nonBlockingRequest.getOperationResult().getResponseStatusCode());
+        return responseHolder;
     }
 
 

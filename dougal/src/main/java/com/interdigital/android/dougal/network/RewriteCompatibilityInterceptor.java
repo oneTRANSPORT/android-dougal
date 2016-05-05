@@ -103,6 +103,9 @@ public class RewriteCompatibilityInterceptor implements Interceptor {
             // Rewrite [""] to [].  The CSE wrongly sends back empty lists with a single
             // string element.
             content = maybeConvertEmptyLists(content);
+            // In the event that a primitive content field is returned in a non-blocking request
+            // response, we have to add the missing "m2m:" prefix to the type.
+            content = maybeAddM2MPrefix(content);
         }
         return content;
     }
@@ -139,6 +142,18 @@ public class RewriteCompatibilityInterceptor implements Interceptor {
     private String maybeConvertEmptyLists(String content) {
         String newContent = content.replace("[\"\"]", "[]");
         return newContent;
+    }
+
+    private String maybeAddM2MPrefix(String content) {
+        if (content.startsWith("{\"m2m:req\":")) {
+            // This is a non-blocking request response.
+            // Rewrite the pc content.
+            for (String type : new String[]{"acp", "ae", "cin", "cnt", "discovery", "grp"}) {
+                content = content.replace(",\"pc\":\"{\\\"" + type + "\\\":",
+                        ",\"pc\":\"{\\\"m2m:" + type + "\\\":");
+            }
+        }
+        return content;
     }
 
     private boolean isJson(String s) {

@@ -8,7 +8,7 @@ import com.interdigital.android.dougal.resource.Container;
 import com.interdigital.android.dougal.resource.ContentInstance;
 import com.interdigital.android.dougal.resource.Discovery;
 import com.interdigital.android.dougal.resource.Group;
-import com.interdigital.android.dougal.resource.NonBlockingResource;
+import com.interdigital.android.dougal.resource.NonBlockingRequest;
 import com.interdigital.android.dougal.resource.Resource;
 
 import okhttp3.Headers;
@@ -38,7 +38,7 @@ public class ResponseHolder {
     private Discovery discovery;
     @Expose
     @SerializedName("m2m:req")
-    private NonBlockingResource nonBlockingResource;
+    private NonBlockingRequest nonBlockingRequest;
     @Expose
     @SerializedName("m2m:grp")
     private Group group;
@@ -86,8 +86,8 @@ public class ResponseHolder {
         if (discovery != null) {
             return discovery;
         }
-        if (nonBlockingResource != null) {
-            return nonBlockingResource;
+        if (nonBlockingRequest != null) {
+            return nonBlockingRequest;
         }
         if (group != null) {
             return group;
@@ -138,12 +138,12 @@ public class ResponseHolder {
         this.discovery = discovery;
     }
 
-    public NonBlockingResource getNonBlockingResource() {
-        return nonBlockingResource;
+    public NonBlockingRequest getNonBlockingRequest() {
+        return nonBlockingRequest;
     }
 
-    public void setNonBlockingResource(NonBlockingResource nonBlockingResource) {
-        this.nonBlockingResource = nonBlockingResource;
+    public void setNonBlockingRequest(NonBlockingRequest nonBlockingRequest) {
+        this.nonBlockingRequest = nonBlockingRequest;
     }
 
     public Group getGroup() {

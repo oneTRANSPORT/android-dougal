@@ -8,9 +8,11 @@ import com.interdigital.android.dougal.Types;
 import com.interdigital.android.dougal.network.response.ResponseHolder;
 import com.interdigital.android.dougal.resource.callback.CreateCallback;
 import com.interdigital.android.dougal.resource.callback.DeleteCallback;
+import com.interdigital.android.dougal.resource.callback.NonBlockingIdCallback;
 import com.interdigital.android.dougal.resource.callback.RetrieveCallback;
 import com.interdigital.android.dougal.resource.callback.UpdateCallback;
 import com.interdigital.android.dougal.shared.FilterCriteria;
+import com.interdigital.android.dougal.shared.OperationResult;
 
 import retrofit2.Response;
 
@@ -48,6 +50,19 @@ public class AccessControlPolicy extends AnnounceableSubordinateResource {
                 RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
+    public Resource createNonBlocking(String baseUrl, String path, String userName, String password)
+            throws Exception {
+        return create(getAeId(), baseUrl, path, userName, password,
+                RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH).body().getResource();
+    }
+
+    public void createNonBlockingAsync(
+            String baseUrl, String path, String userName, String password, DougalCallback dougalCallback) {
+        createAsync(getAeId(), baseUrl, path, userName, password,
+                new NonBlockingIdCallback<>(dougalCallback),
+                RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH);
+    }
+
     public static AccessControlPolicy retrieve(String aeId, String baseUrl, String path,
                                                String userName, String password, FilterCriteria filterCriteria)
             throws Exception {
@@ -71,6 +86,24 @@ public class AccessControlPolicy extends AnnounceableSubordinateResource {
         Response<ResponseHolder> response = update(getResourceId(), userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST);
         setLastModifiedTime(response.body().getAccessControlPolicy().getLastModifiedTime());
+    }
+
+    public static AccessControlPolicy retrievePayloadNonBlocking(
+            String aeId, String baseUrl, String path, String userName, String password)
+            throws Exception {
+        ResponseHolder responseHolder = retrievePayloadNonBlockingBase(aeId, baseUrl, path,
+                userName, password);
+        if (responseHolder != null) {
+            return responseHolder.getAccessControlPolicy();
+        }
+        return null;
+    }
+
+    public static void retrievePayloadNonBlockingAsync(String aeId, String baseUrl, String path,
+                                                       String userName, String password, DougalCallback dougalCallback) {
+        retrieveBaseAsync(aeId, baseUrl, path, userName, password,
+                RESPONSE_TYPE_BLOCKING_REQUEST, null,
+                new RetrieveCallback<AccessControlPolicy>(baseUrl, path, dougalCallback));
     }
 
     public void updateAsync(String userName, String password, DougalCallback dougalCallback) {

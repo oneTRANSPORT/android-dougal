@@ -17,7 +17,7 @@ public class OperationResult {
     private String requestIdentifier;
     @Expose
     @SerializedName("pc")
-    private String primitiveContent; // JSON string.
+    private String primitiveContent;
     @Expose
     @SerializedName("to")
     private String to;
@@ -50,8 +50,8 @@ public class OperationResult {
         this.requestIdentifier = requestIdentifier;
     }
 
-    public ResponseHolder getPrimitiveContent() {
-        return Resource.gson.fromJson(primitiveContent, ResponseHolder.class);
+    public String getPrimitiveContent() {
+        return primitiveContent;
     }
 
     public void setPrimitiveContent(String primitiveContent) {
