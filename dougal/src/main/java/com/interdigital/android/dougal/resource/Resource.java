@@ -14,6 +14,7 @@ import com.interdigital.android.dougal.network.AddHeadersInterceptor;
 import com.interdigital.android.dougal.network.RewriteCompatibilityInterceptor;
 import com.interdigital.android.dougal.network.request.RequestHolder;
 import com.interdigital.android.dougal.network.response.ResponseHolder;
+import com.interdigital.android.dougal.resource.callback.DougalCallback;
 import com.interdigital.android.dougal.resource.callback.NonBlockingIdCallback;
 import com.interdigital.android.dougal.shared.FilterCriteria;
 
