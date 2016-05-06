@@ -8,6 +8,7 @@ import com.interdigital.android.dougal.network.request.RequestHolder;
 import com.interdigital.android.dougal.resource.ApplicationEntity;
 import com.interdigital.android.dougal.resource.Container;
 import com.interdigital.android.dougal.resource.ContentInstance;
+import com.interdigital.android.dougal.resource.Group;
 import com.interdigital.android.dougal.resource.Resource;
 
 import java.io.IOException;
@@ -46,9 +47,8 @@ public class RewriteCompatibilityInterceptor implements Interceptor {
             String requestContent = readContent(originalBody);
             RequestHolder requestHolder = Resource.gson.fromJson(requestContent, RequestHolder.class);
             Resource resource = requestHolder.getResource();
-            // We remove the ri attribute from JSON in POST requests.
-            // CSE doesn't like it.
-            // Also remove ty as this is sent in the request line.
+            // Creates and updates need to have several CSE-generated attributes removed
+            // or a 4000 Bad Request will be the result.
             if (originalRequest.method().equalsIgnoreCase("post")) {
                 resource.setResourceId(null);
                 resource.setResourceType(null);
@@ -66,9 +66,12 @@ public class RewriteCompatibilityInterceptor implements Interceptor {
                     ContentInstance contentInstance = (ContentInstance) resource;
                     contentInstance.setStateTag(null);
                     contentInstance.setContentSize(null);
+                } else if (resource instanceof Group) {
+                    Group group = (Group) resource;
+                    group.setMemberTypeValidated(null);
                 }
             } else if (originalRequest.method().equalsIgnoreCase("put")) {
-                // These fields cause a Bad Request.
+                resource.setResourceName(null);
                 resource.setResourceId(null);
                 resource.setResourceType(null);
                 resource.setCreationTime(null);
@@ -79,9 +82,16 @@ public class RewriteCompatibilityInterceptor implements Interceptor {
                     ((ApplicationEntity) resource).setNodeLink(null);
                 } else if (resource instanceof Container) {
                     Container container = (Container) resource;
+                    container.setCreator(null);
                     container.setStateTag(null);
                     container.setCurrentNumberOfInstances(null);
                     container.setCurrentByteSize(null);
+                } else if (resource instanceof Group) {
+                    Group group = (Group) resource;
+                    group.setCreator(null);
+                    group.setMemberType(null);
+                    group.setMemberTypeValidated(null);
+                    group.setConsistencyStrategy(null);
                 }
             }
 

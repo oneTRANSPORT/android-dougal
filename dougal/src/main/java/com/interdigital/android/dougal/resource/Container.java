@@ -93,15 +93,9 @@ public class Container extends AnnounceableResource {
 
     public static Container retrieve(String aeId, String baseUrl, String path, String userName,
                                      String password, FilterCriteria filterCriteria) throws Exception {
-        Container container = retrieveBase(aeId, baseUrl, path, userName, password,
+        return retrieveBase(aeId, baseUrl, path, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria).body()
                 .getContainer();
-        if (container != null) {
-            container.setAeId(aeId);
-            container.setBaseUrl(baseUrl);
-            container.setPath(path);
-        }
-        return container;
     }
 
     public static void retrieveAsync(String aeId, String baseUrl, String path,

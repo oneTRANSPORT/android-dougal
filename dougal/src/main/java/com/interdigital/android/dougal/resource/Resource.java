@@ -189,6 +189,10 @@ public class Resource {
         switch (responseType) {
             case RESPONSE_TYPE_BLOCKING_REQUEST:
                 checkStatusCodes(response, Types.STATUS_CODE_OK);
+                Resource retrievedResource = response.body().getResource();
+                retrievedResource.setAeId(aeId);
+                retrievedResource.setBaseUrl(baseUrl);
+                retrievedResource.setPath(path);
                 break;
             default:
                 checkStatusCodes(response, Types.STATUS_CODE_ACCEPTED);

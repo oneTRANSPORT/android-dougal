@@ -69,16 +69,11 @@ public class ContentInstance extends AnnounceableResource {
                 RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
-    // TODO Sort out the order of parameters?
     public static ContentInstance retrieve(
             String aeId, String baseUrl, String path, String userName, String password)
             throws Exception {
-        ContentInstance contentInstance = retrieveBase(aeId, baseUrl, path, userName, password,
+        return retrieveBase(aeId, baseUrl, path, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST, null).body().getContentInstance();
-        contentInstance.setAeId(aeId);
-        contentInstance.setBaseUrl(baseUrl);
-        contentInstance.setPath(path);
-        return contentInstance;
     }
 
     public static void retrieveAsync(String aeId, String baseUrl, String path,
@@ -190,10 +185,10 @@ public class ContentInstance extends AnnounceableResource {
     }
 
     private String create(String baseUrl, String path, String userName, String password,
-                        @ResponseType int responseType)
+                          @ResponseType int responseType)
             throws Exception {
         Response<ResponseHolder> response = create(getAeId(), baseUrl, path, userName, password,
-                responseType,this);
+                responseType, this);
         switch (responseType) {
             case RESPONSE_TYPE_BLOCKING_REQUEST:
                 return null;

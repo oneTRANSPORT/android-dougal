@@ -88,11 +88,8 @@ public class ApplicationEntity extends AnnounceableResource {
     public static ApplicationEntity retrieve(
             String aeId, String baseUrl, String path, String userName, String password)
             throws Exception {
-        ApplicationEntity applicationEntity = retrieveBase(aeId, baseUrl, path, userName, password,
+        return retrieveBase(aeId, baseUrl, path, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST, null).body().getApplicationEntity();
-        applicationEntity.setBaseUrl(baseUrl);
-        applicationEntity.setPath(path);
-        return applicationEntity;
     }
 
     public static void retrieveAsync(String aeId, String baseUrl, String path,

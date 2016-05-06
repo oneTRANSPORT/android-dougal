@@ -60,12 +60,8 @@ public class AccessControlPolicy extends AnnounceableSubordinateResource {
     public static AccessControlPolicy retrieve(String aeId, String baseUrl, String path,
                                                String userName, String password, FilterCriteria filterCriteria)
             throws Exception {
-        AccessControlPolicy accessControlPolicy = retrieveBase(aeId, baseUrl, path, userName, password,
+        return retrieveBase(aeId, baseUrl, path, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria).body().getAccessControlPolicy();
-        accessControlPolicy.setAeId(aeId);
-        accessControlPolicy.setBaseUrl(baseUrl);
-        accessControlPolicy.setPath(path);
-        return accessControlPolicy;
     }
 
     public static void retrieveAsync(String aeId, String baseUrl, String path,
