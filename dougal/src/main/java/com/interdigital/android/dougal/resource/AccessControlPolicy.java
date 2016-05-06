@@ -34,15 +34,7 @@ public class AccessControlPolicy extends AnnounceableSubordinateResource {
     public void create(String baseUrl, String path, String userName, String password)
             throws Exception {
         Response<ResponseHolder> response = create(getAeId(), baseUrl, path, userName, password,
-                RESPONSE_TYPE_BLOCKING_REQUEST);
-        AccessControlPolicy accessControlPolicy = response.body().getAccessControlPolicy();
-        // Update current object.
-        // TODO Move these to super method?
-        setCreationTime(accessControlPolicy.getCreationTime());
-        setExpiryTime(accessControlPolicy.getExpiryTime());
-        setLastModifiedTime(accessControlPolicy.getLastModifiedTime());
-        setParentId(accessControlPolicy.getParentId());
-        setResourceId(accessControlPolicy.getResourceId());
+                RESPONSE_TYPE_BLOCKING_REQUEST, this);
     }
 
     public void createAsync(
@@ -51,10 +43,11 @@ public class AccessControlPolicy extends AnnounceableSubordinateResource {
                 RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
+    // TODO Non-blocking requests don't need "this".
     public Resource createNonBlocking(String baseUrl, String path, String userName, String password)
             throws Exception {
         return create(getAeId(), baseUrl, path, userName, password,
-                RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH).body().getResource();
+                RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH, this).body().getResource();
     }
 
     public void createNonBlockingAsync(

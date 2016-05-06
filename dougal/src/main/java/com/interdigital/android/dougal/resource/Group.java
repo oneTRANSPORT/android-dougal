@@ -67,14 +67,7 @@ public class Group extends AnnounceableResource {
     public void create(String baseUrl, String path, String userName, String password)
             throws Exception {
         Response<ResponseHolder> response = create(aeId, baseUrl, path, userName, password,
-                RESPONSE_TYPE_BLOCKING_REQUEST);
-        Group group = response.body().getGroup();
-        setCreationTime(group.getCreationTime());
-        setExpiryTime(group.getExpiryTime());
-        setLastModifiedTime(group.getLastModifiedTime());
-        setParentId(group.getParentId());
-        setResourceId(group.getResourceId());
-        setResourceName(group.getResourceName());
+                RESPONSE_TYPE_BLOCKING_REQUEST, this);
     }
 
     public void createAsync(
@@ -87,7 +80,7 @@ public class Group extends AnnounceableResource {
     public Resource createNonBlocking(String baseUrl, String path, String userName, String password)
             throws Exception {
         return create(aeId, baseUrl, path, userName, password,
-                RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH).body().getResource();
+                RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH, this).body().getResource();
     }
 
     // TODO Test.

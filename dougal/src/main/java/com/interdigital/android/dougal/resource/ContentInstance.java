@@ -189,20 +189,17 @@ public class ContentInstance extends AnnounceableResource {
         this.contentSize = contentSize;
     }
 
-    private void create(String baseUrl, String path, String userName, String password,
+    private String create(String baseUrl, String path, String userName, String password,
                         @ResponseType int responseType)
-            throws Exception { // TODO Add response type.
+            throws Exception {
         Response<ResponseHolder> response = create(getAeId(), baseUrl, path, userName, password,
-                RESPONSE_TYPE_BLOCKING_REQUEST);
-        ContentInstance contentInstance = response.body().getContentInstance();
-        // Update current object.
-        // TODO URL returned?
-        setCreationTime(contentInstance.getCreationTime());
-        setExpiryTime(contentInstance.getExpiryTime());
-        setLastModifiedTime(contentInstance.getLastModifiedTime());
-        setParentId(contentInstance.getParentId());
-        setResourceId(contentInstance.getResourceId());
-        setResourceName(contentInstance.getResourceName());
+                responseType,this);
+        switch (responseType) {
+            case RESPONSE_TYPE_BLOCKING_REQUEST:
+                return null;
+            default:
+                return response.body().getResource().getResourceId();
+        }
     }
 
     public Integer getStateTag() {

@@ -66,16 +66,8 @@ public class Container extends AnnounceableResource {
     public void create(String baseUrl, String path, String userName, String password)
             throws Exception {
         Response<ResponseHolder> response = create(getAeId(), baseUrl, path, userName, password,
-                RESPONSE_TYPE_BLOCKING_REQUEST);
-        Container container = response.body().getContainer();
-        // Update current object.
-        // TODO URL returned?
-        setCreationTime(container.getCreationTime());
-        setExpiryTime(container.getExpiryTime());
-        setLastModifiedTime(container.getLastModifiedTime());
-        setParentId(container.getParentId());
-        setResourceId(container.getResourceId());
-        setResourceName(container.getResourceName());
+                RESPONSE_TYPE_BLOCKING_REQUEST, this);
+        // TODO Non-blocking requests.
     }
 
     public void createAsync(
@@ -88,7 +80,7 @@ public class Container extends AnnounceableResource {
     public Resource createNonBlocking(String baseUrl, String path, String userName, String password)
             throws Exception {
         return create(getAeId(), baseUrl, path, userName, password,
-                RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH).body().getResource();
+                RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH, this).body().getResource();
     }
 
     // TODO Test.
@@ -393,7 +385,7 @@ public class Container extends AnnounceableResource {
     }
 
     public static void discoverAsync(String aeId, String baseUrl, String path,
-                                     String userName, String password,@Nullable FilterCriteria filterCriteria,
+                                     String userName, String password, @Nullable FilterCriteria filterCriteria,
                                      DougalCallback dougalCallback) {
         if (filterCriteria == null) {
             filterCriteria = new FilterCriteria();

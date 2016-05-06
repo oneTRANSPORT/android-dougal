@@ -218,37 +218,13 @@ public class ApplicationEntity extends AnnounceableResource {
                           @ResponseType int responseType)
             throws Exception {
         Response<ResponseHolder> response = create(getResourceId(), baseUrl, path, userName, password,
-                responseType);
+                responseType, this);
         switch (responseType) {
             case RESPONSE_TYPE_BLOCKING_REQUEST:
-                ApplicationEntity applicationEntity = response.body().getApplicationEntity();
-                // Update current object.
-                // TODO URL returned?
-                setCreationTime(applicationEntity.getCreationTime());
-                setExpiryTime(applicationEntity.getExpiryTime());
-                setLastModifiedTime(applicationEntity.getLastModifiedTime());
-                setParentId(applicationEntity.getParentId());
-                setResourceId(applicationEntity.getResourceId());
-                setResourceName(applicationEntity.getResourceName());
                 return null;
             default:
-                // TODO ResponseHolder needs to have a plain text sub-object.
-                return null;
+                return response.body().getResource().getResourceId();
         }
     }
 
 }
-
-//    {"m2m:ae":
-//         {"aei":"C-ANDROID",
-//           "api":"C_ANDROID",
-//           "ct":"20151203T173717",
-//           "et":"20151207T045717",
-//           "lt":"20151203T173717",
-//           "pi":"ONET-CSE-01",
-//           "ri":"C-ANDROID",
-//           "rn":"ANDROID",
-//           "rr":true,
-//           "ty":2
-//         }
-//    }

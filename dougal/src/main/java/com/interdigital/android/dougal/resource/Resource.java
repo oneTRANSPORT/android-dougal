@@ -130,11 +130,10 @@ public class Resource {
     // Delete DELETE
     // Notify POST
 
-    // TODO Need to pass responseType.
     // Need to add filtering on all RUD methods.
     protected Response<ResponseHolder> create(@NonNull String aeId, @NonNull String baseUrl,
                                               @NonNull String path, String userName, String password,
-                                              @ResponseType int responseType) throws Exception {
+                                              @ResponseType int responseType, Resource creator) throws Exception {
         maybeCreateDougalService(baseUrl);
         String auth = Credentials.basic(userName, password);
         RequestHolder requestHolder = new RequestHolder(this);
@@ -145,6 +144,12 @@ public class Resource {
         switch (responseType) {
             case RESPONSE_TYPE_BLOCKING_REQUEST:
                 checkStatusCodes(response, Types.STATUS_CODE_CREATED);
+                Resource createdResource = response.body().getResource();
+                creator.setCreationTime(createdResource.getCreationTime());
+                creator.setLastModifiedTime(createdResource.getLastModifiedTime());
+                creator.setParentId(createdResource.getParentId());
+                creator.setResourceId(createdResource.getResourceId());
+                creator.setResourceName(createdResource.getResourceName());
                 break;
             default:
                 checkStatusCodes(response, Types.STATUS_CODE_ACCEPTED);
