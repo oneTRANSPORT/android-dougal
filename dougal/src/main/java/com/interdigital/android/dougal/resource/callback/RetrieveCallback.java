@@ -10,12 +10,12 @@ public class RetrieveCallback<R extends Resource> extends BaseCallback<R, Respon
         implements Callback<ResponseHolder> {
 
     private String baseUrl;
-    private String path;
+    private String retrievePath;
 
-    public RetrieveCallback(String baseUrl, String path, DougalCallback dougalCallback) {
+    public RetrieveCallback(String baseUrl, String retrievePath, DougalCallback dougalCallback) {
         super(Types.STATUS_CODE_OK, dougalCallback);
         this.baseUrl = baseUrl;
-        this.path = path;
+        this.retrievePath = retrievePath;
     }
 
     @Override
@@ -24,7 +24,7 @@ public class RetrieveCallback<R extends Resource> extends BaseCallback<R, Respon
         if (r != null) {
             r = checkNonBlocking(r);
             r.setBaseUrl(baseUrl);
-            r.setPath(path);
+            r.setRetrievePath(retrievePath);
         }
         return r;
     }

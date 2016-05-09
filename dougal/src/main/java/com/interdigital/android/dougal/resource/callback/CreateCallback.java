@@ -4,6 +4,8 @@ import com.interdigital.android.dougal.Types;
 import com.interdigital.android.dougal.network.response.ResponseHolder;
 import com.interdigital.android.dougal.resource.Resource;
 
+import java.io.File;
+
 import retrofit2.Callback;
 
 public class CreateCallback<R extends Resource> extends BaseCallback<R, ResponseHolder>
@@ -28,6 +30,7 @@ public class CreateCallback<R extends Resource> extends BaseCallback<R, Response
             resource.setParentId(r.getParentId());
             resource.setResourceId(r.getResourceId());
             resource.setResourceName(r.getResourceName());
+            resource.setRetrievePath(resource.getCreatePath() + File.separator + r.getResourceName());
         }
         return resource;
     }

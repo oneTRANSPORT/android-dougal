@@ -1,8 +1,6 @@
 package com.interdigital.android.dougal.resource;
 
-import android.net.rtp.RtpStream;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -36,9 +34,10 @@ public class ContentInstance extends AnnounceableResource {
     private Integer stateTag = null; // Strictly an unsigned int.
 
     public ContentInstance(@NonNull String aeId, @NonNull String resourceId,
-                           @NonNull String resourceName, @Types.ResourceType int resourceType,
-                           @NonNull String baseUrl, @NonNull String createPath, @NonNull String content) {
-        super(aeId, resourceId, resourceName, resourceType, baseUrl, createPath);
+                           @NonNull String resourceName, @NonNull String baseUrl, @NonNull String createPath,
+                           @NonNull String content) {
+        super(aeId, resourceId, resourceName, Types.RESOURCE_TYPE_CONTENT_INSTANCE, baseUrl,
+                createPath);
         this.content = content;
     }
 
