@@ -34,77 +34,61 @@ public class ContentInstance extends AnnounceableResource {
     @SerializedName("st")
     private Integer stateTag = null; // Strictly an unsigned int.
 
-    public ContentInstance(String aeId, String resourceId, String resourceName, String parentId,
-                           String expiryTime, String contentInfo, String content, Long contentSize) {
-        this(aeId, resourceId, resourceName, Types.RESOURCE_TYPE_CONTENT_INSTANCE, parentId,
-                expiryTime, null, null, contentInfo, content, contentSize);
-    }
-
-    public ContentInstance(String aeId, String resourceId, String resourceName,
-                           @Types.ResourceType int resourceType, String parentId, String expiryTime,
-                           String[] accessControlPolicyIds, String[] labels, String contentInfo, String content,
-                           Long contentSize) {
-        super(resourceId, resourceName, resourceType, parentId, expiryTime, accessControlPolicyIds, labels);
-        setAeId(aeId);
-        this.contentInfo = contentInfo;
+    public ContentInstance(@NonNull String aeId, @NonNull String resourceId,
+                           @NonNull String resourceName, @Types.ResourceType int resourceType,
+                           @NonNull String baseUrl, @NonNull String path, @NonNull String content) {
+        super(aeId, resourceId, resourceName, resourceType, baseUrl, path);
         this.content = content;
-        this.contentSize = contentSize;
     }
 
-    public void create(String baseUrl, String path, String userName, String password)
-            throws Exception {
-        create(baseUrl, path, userName, password, RESPONSE_TYPE_BLOCKING_REQUEST);
+    public void create(String userName, String password) throws Exception {
+        create(userName, password, RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
-    public void createNonBlocking(String baseUrl, String path, String userName, String password)
-            throws Exception {
-        create(baseUrl, path, userName, password,
-                RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH);
+    public void createNonBlocking(String userName, String password) throws Exception {
+        create(userName, password, RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH);
     }
 
-    public void createAsync(
-            String baseUrl, String path, String userName, String password, DougalCallback dougalCallback) {
-        createAsync(getAeId(), baseUrl, path, userName, password,
-                new CreateCallback<ContentInstance>(this, dougalCallback),
+    public void createAsync(String userName, String password, DougalCallback dougalCallback) {
+        createAsync(userName, password, new CreateCallback<>(this, dougalCallback),
                 RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
-    public static ContentInstance retrieve(
-            String aeId, String baseUrl, String path, String userName, String password)
-            throws Exception {
+    public static ContentInstance retrieve(@NonNull String aeId, @NonNull String baseUrl,
+                                           @NonNull String path, String userName, String password) throws Exception {
         return retrieveBase(aeId, baseUrl, path, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST, null).body().getContentInstance();
     }
 
-    public static void retrieveAsync(String aeId, String baseUrl, String path,
+    public static void retrieveAsync(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
                                      String userName, String password, DougalCallback dougalCallback) {
         retrieveBaseAsync(aeId, baseUrl, path, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST, null,
                 new RetrieveCallback<ContentInstance>(baseUrl, path, dougalCallback));
     }
 
-    public static ContentInstance retrieveNonBlockingPayload(
-            String aeId, String baseUrl, String path, String userName, String password)
-            throws Exception {
+    public static ContentInstance retrieveNonBlockingPayload(@NonNull String aeId,
+                                                             @NonNull String baseUrl, @NonNull String path,
+                                                             String userName, String password) throws Exception {
         return ((NonBlockingRequest) retrieveBase(aeId, baseUrl, path, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST, null).body().getResource())
                 .getPrimitiveContent().getContentInstance();
     }
 
     @Override
-    public Response<ResponseHolder> update(@NonNull String aeId, String userName, String password,
+    public Response<ResponseHolder> update(String userName, String password,
                                            @ResponseType int responseType) {
         throw new UnsupportedOperationException("Content instances may not be updated");
     }
 
     @Override
-    public void updateAsync(@NonNull String aeId, String userName, String password,
-                            @ResponseType int responseType, Callback<ResponseHolder> callback) {
+    public void updateAsync(String userName, String password, @ResponseType int responseType,
+                            Callback<ResponseHolder> callback) {
         throw new UnsupportedOperationException("Content instances may not be updated");
     }
 
     public void delete(String userName, String password) throws Exception {
-        delete(getAeId(), userName, password, RESPONSE_TYPE_BLOCKING_REQUEST);
+        delete(userName, password, RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
     public static void delete(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
@@ -113,20 +97,19 @@ public class ContentInstance extends AnnounceableResource {
         delete(aeId, baseUrl, path, userName, password, RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
-    public void deleteAsync(
-            String userName, String password, DougalCallback dougalCallback) {
-        deleteAsync(getAeId(), userName, password, RESPONSE_TYPE_BLOCKING_REQUEST,
+    public void deleteAsync(String userName, String password, DougalCallback dougalCallback) {
+        deleteAsync(userName, password, RESPONSE_TYPE_BLOCKING_REQUEST,
                 new DeleteCallback(dougalCallback));
     }
 
-    public static void deleteAsync(String aeId, String baseUrl, String path,
+    public static void deleteAsync(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
                                    String userName, String password, DougalCallback dougalCallback) {
         deleteAsync(aeId, baseUrl, path, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST, new DeleteCallback(dougalCallback));
     }
 
-    public static Discovery discover(String aeId, String baseUrl, String path,
-                                     String userName, String password, @Nullable FilterCriteria filterCriteria)
+    public static Discovery discover(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
+                                     String userName, String password, FilterCriteria filterCriteria)
             throws Exception {
         if (filterCriteria == null) {
             filterCriteria = new FilterCriteria();
@@ -138,8 +121,8 @@ public class ContentInstance extends AnnounceableResource {
                 RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria).body().getDiscovery();
     }
 
-    public static void discoverAsync(String aeId, String baseUrl, String path,
-                                     String userName, String password, @Nullable FilterCriteria filterCriteria,
+    public static void discoverAsync(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
+                                     String userName, String password, FilterCriteria filterCriteria,
                                      DougalCallback dougalCallback) {
         if (filterCriteria == null) {
             filterCriteria = new FilterCriteria();
@@ -184,11 +167,9 @@ public class ContentInstance extends AnnounceableResource {
         this.contentSize = contentSize;
     }
 
-    private String create(String baseUrl, String path, String userName, String password,
-                          @ResponseType int responseType)
+    private String create(String userName, String password, @ResponseType int responseType)
             throws Exception {
-        Response<ResponseHolder> response = create(getAeId(), baseUrl, path, userName, password,
-                responseType, this);
+        Response<ResponseHolder> response = create(userName, password, responseType, this);
         switch (responseType) {
             case RESPONSE_TYPE_BLOCKING_REQUEST:
                 return null;
@@ -205,17 +186,3 @@ public class ContentInstance extends AnnounceableResource {
         this.stateTag = stateTag;
     }
 }
-
-//{"m2m:cin":{
-//        "cnf":"text/plain:0",
-//        "con":"0",
-//        "cs":1,
-//        "ct":"20151211T115813",
-//        "et":"20151214T231813",
-//        "lt":"20151211T115813",
-//        "pi":"cnt_20151127T101353_104207",
-//        "ri":"cin_20151211T115813_194",
-//        "rn":"cin_20151211T115813_195201512111158_1975461145_nm",
-//        "st":2508,
-//        "ty":4}
-//}

@@ -1,5 +1,7 @@
 package com.interdigital.android.dougal.resource;
 
+import android.support.annotation.NonNull;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.interdigital.android.dougal.Types;
@@ -16,9 +18,10 @@ public class AnnounceableSubordinateResource extends Resource {
     @SerializedName("et")
     private String expiryTime;
 
-    public AnnounceableSubordinateResource(String resourceId, String resourceName,
-                                           @Types.ResourceType int resourceType, String[] labels) {
-        super(resourceId, resourceName, resourceType,  labels);
+    public AnnounceableSubordinateResource(@NonNull String aeId, @NonNull String resourceId,
+                                           @NonNull String resourceName, @Types.ResourceType int resourceType,
+                                           @NonNull String baseUrl, @NonNull String path) {
+        super(aeId, resourceId, resourceName, resourceType, baseUrl, path);
     }
 
     public String[] getAnnounceTo() {

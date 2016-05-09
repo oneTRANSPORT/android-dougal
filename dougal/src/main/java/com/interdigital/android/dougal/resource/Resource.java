@@ -66,7 +66,10 @@ public class Resource {
 
     private static HttpLoggingInterceptor httpLoggingInterceptor;
 
+    // Must send this with every request, so keep a copy in the resource.
     private String aeId;
+    private String baseUrl;
+    private String path;
     @Expose
     @SerializedName("ri")
     private String resourceId;
@@ -90,21 +93,20 @@ public class Resource {
     @Expose
     @SerializedName("lbl")
     private String[] labels;
-    //    @Expose  We don't know what the link attribute is.
+    //    @Expose  We don't know what the link attribute is.  Nodelink?
     //    @SerializedName("")
     //    Private link
 
-    private String baseUrl;
-    private String path;
+    // TODO Check: make methods protected instead of public where necessary.
 
-    // TODO Make methods protected instead of public.
-
-    public Resource(String resourceId, String resourceName, @Types.ResourceType int resourceType,
-                    String[] labels) {
+    public Resource(@NonNull String aeId, @NonNull String resourceId, @NonNull String resourceName,
+                    @Types.ResourceType int resourceType, @NonNull String baseUrl, @NonNull String path) {
+        this.aeId = aeId;
         this.resourceId = resourceId;
         this.resourceName = resourceName;
         this.resourceType = resourceType;
-        this.labels = labels;
+        this.baseUrl = baseUrl;
+        this.path = path;
     }
 
     // CREATE
@@ -131,8 +133,7 @@ public class Resource {
     // Notify POST
 
     // Need to add filtering on all RUD methods.
-    protected Response<ResponseHolder> create(@NonNull String aeId, @NonNull String baseUrl,
-                                              @NonNull String path, String userName, String password,
+    protected Response<ResponseHolder> create(String userName, String password,
                                               @ResponseType int responseType, Resource creator) throws Exception {
         maybeCreateDougalService(baseUrl);
         String auth = Credentials.basic(userName, password);
@@ -159,8 +160,7 @@ public class Resource {
     }
 
     // TODO Callbacks need to support async ACCEPTED.
-    protected void createAsync(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
-                               String userName, String password, Callback<ResponseHolder> callback,
+    protected void createAsync(String userName, String password, Callback<ResponseHolder> callback,
                                @ResponseType int responseType) {
         maybeCreateDougalService(baseUrl);
         String auth = Credentials.basic(userName, password);
@@ -217,22 +217,24 @@ public class Resource {
         call.enqueue(callback);
     }
 
-    public static Resource retrieveIdNonBlocking(String aeId, String baseUrl, String path, String userName,
-                                                 String password, FilterCriteria filterCriteria) throws Exception {
+    public static Resource retrieveIdNonBlocking(@NonNull String aeId, @NonNull String baseUrl,
+                                                 @NonNull String path, String userName, String password,
+                                                 FilterCriteria filterCriteria) throws Exception {
         return retrieveBase(aeId, baseUrl, path, userName, password,
                 RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH, filterCriteria).body().getResource();
     }
 
-    public static void retrieveIdNonBlockingAsync(String aeId, String baseUrl, String path,
-                                                  String userName, String password, FilterCriteria filterCriteria,
-                                                  DougalCallback dougalCallback) {
+    public static void retrieveIdNonBlockingAsync(@NonNull String aeId, @NonNull String baseUrl,
+                                                  @NonNull String path, String userName, String password,
+                                                  FilterCriteria filterCriteria, DougalCallback dougalCallback) {
         NonBlockingIdCallback<Resource> callback = new NonBlockingIdCallback<>(dougalCallback);
         retrieveBaseAsync(aeId, baseUrl, path, userName, password,
                 RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH, filterCriteria, callback);
     }
 
-    public static ResponseHolder retrievePayloadNonBlockingBase(
-            String aeId, String baseUrl, String path, String userName, String password)
+    public static ResponseHolder retrievePayloadNonBlockingBase(@NonNull String aeId,
+                                                                @NonNull String baseUrl, @NonNull String path,
+                                                                String userName, String password)
             throws Exception {
         NonBlockingRequest nonBlockingRequest = (NonBlockingRequest) retrieveBase(aeId, baseUrl, path,
                 userName, password, RESPONSE_TYPE_BLOCKING_REQUEST, null).body().getResource();
@@ -241,9 +243,8 @@ public class Resource {
         return responseHolder;
     }
 
-    protected Response<ResponseHolder> update(
-            @NonNull String aeId, String userName, String password,
-            @ResponseType int responseType) throws Exception {
+    protected Response<ResponseHolder> update(String userName, String password,
+                                              @ResponseType int responseType) throws Exception {
         maybeCreateDougalService(baseUrl);
         String auth = Credentials.basic(userName, password);
         RequestHolder requestHolder = new RequestHolder(this);
@@ -263,8 +264,8 @@ public class Resource {
         return response;
     }
 
-    protected void updateAsync(@NonNull String aeId, String userName, String password,
-                               @ResponseType int responseType, Callback<ResponseHolder> callback) {
+    protected void updateAsync(String userName, String password, @ResponseType int responseType,
+                               Callback<ResponseHolder> callback) {
         maybeCreateDougalService(baseUrl);
         String auth = Credentials.basic(userName, password);
         RequestHolder requestHolder = new RequestHolder(this);
@@ -297,8 +298,8 @@ public class Resource {
         }
     }
 
-    protected void delete(@NonNull String aeId, String userName, String password,
-                          @ResponseType int responseType) throws Exception {
+    protected void delete(String userName, String password, @ResponseType int responseType)
+            throws Exception {
         maybeCreateDougalService(baseUrl);
         String auth = Credentials.basic(userName, password);
         HashMap<String, String> queryMap = new HashMap<>();
@@ -316,8 +317,8 @@ public class Resource {
         }
     }
 
-    protected static void deleteAsync(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
-                                      String userName, String password,
+    protected static void deleteAsync(@NonNull String aeId, @NonNull String baseUrl,
+                                      @NonNull String path, String userName, String password,
                                       @ResponseType int responseType, Callback<Void> callback) {
         maybeCreateDougalService(baseUrl);
         String auth = Credentials.basic(userName, password);
@@ -328,8 +329,8 @@ public class Resource {
         call.enqueue(callback);
     }
 
-    protected void deleteAsync(@NonNull String aeId, String userName, String password,
-                               @ResponseType int responseType, Callback<Void> callback) {
+    protected void deleteAsync(String userName, String password, @ResponseType int responseType,
+                               Callback<Void> callback) {
         maybeCreateDougalService(baseUrl);
         String auth = Credentials.basic(userName, password);
         HashMap<String, String> queryMap = new HashMap<>();
@@ -388,6 +389,22 @@ public class Resource {
         this.aeId = aeId;
     }
 
+    public String getBaseUrl() {
+        return baseUrl;
+    }
+
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
     public String getResourceId() {
         return resourceId;
     }
@@ -443,22 +460,6 @@ public class Resource {
 
     public void setLabels(String[] labels) {
         this.labels = labels;
-    }
-
-    public void setBaseUrl(String baseUrl) {
-        this.baseUrl = baseUrl;
-    }
-
-    public String getBaseUrl() {
-        return baseUrl;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public String getPath() {
-        return path;
     }
 
     public void setHttpLoggingLevel(HttpLoggingInterceptor.Level level) {

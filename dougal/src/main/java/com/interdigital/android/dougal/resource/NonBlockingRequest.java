@@ -39,10 +39,10 @@ public class NonBlockingRequest extends RegularResource {
     @SerializedName("pc")
     private String primitiveContent;
 
-    public NonBlockingRequest(String resourceId, String resourceName,
-                              @Types.ResourceType int resourceType, String expiryTime,
-                              String[] accessControlPolicyIds, String[] labels) {
-        super(resourceId, resourceName, resourceType, expiryTime, accessControlPolicyIds, labels);
+    public NonBlockingRequest(@NonNull String aeId, @NonNull String resourceId,
+                              @NonNull String resourceName, @Types.ResourceType int resourceType,
+                              @NonNull String baseUrl, @NonNull String path) {
+        super(aeId, resourceId, resourceName, resourceType, baseUrl, path);
     }
 
     public MetaInformation getMetaInformation() {

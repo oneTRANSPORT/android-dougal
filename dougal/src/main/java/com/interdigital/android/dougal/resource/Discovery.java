@@ -14,9 +14,7 @@ public class Discovery extends Resource {
     private boolean truncated;
 
     public Discovery() {
-        // TODO Obviously not an AE but we don't have a resource type for discovery.
-        // TODO Spec change required to make it a resource.
-        super(null, null, Types.RESOURCE_TYPE_APPLICATION_ENTITY, null);
+        super(null, null, null, Types.RESOURCE_TYPE_DISCOVERY, null, null);
     }
 
     public String[] getDiscoveredUri() {
