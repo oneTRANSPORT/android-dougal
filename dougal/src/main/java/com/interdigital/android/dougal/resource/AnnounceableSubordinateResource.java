@@ -20,8 +20,8 @@ public class AnnounceableSubordinateResource extends Resource {
 
     public AnnounceableSubordinateResource(@NonNull String aeId, @NonNull String resourceId,
                                            @NonNull String resourceName, @Types.ResourceType int resourceType,
-                                           @NonNull String baseUrl, @NonNull String path) {
-        super(aeId, resourceId, resourceName, resourceType, baseUrl, path);
+                                           @NonNull String baseUrl, @NonNull String createPath) {
+        super(aeId, resourceId, resourceName, resourceType, baseUrl, createPath);
     }
 
     public String[] getAnnounceTo() {

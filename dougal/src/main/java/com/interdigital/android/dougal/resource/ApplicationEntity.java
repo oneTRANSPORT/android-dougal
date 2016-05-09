@@ -44,9 +44,9 @@ public class ApplicationEntity extends AnnounceableResource {
 
 
     public ApplicationEntity(@NonNull String id, String appName,
-                             @NonNull String applicationId, @NonNull String baseUrl, @NonNull String path,
+                             @NonNull String applicationId, @NonNull String baseUrl, @NonNull String createPath,
                              @NonNull boolean requestReachable) {
-        super(id, id, appName, Types.RESOURCE_TYPE_APPLICATION_ENTITY, baseUrl, path);
+        super(id, id, appName, Types.RESOURCE_TYPE_APPLICATION_ENTITY, baseUrl, createPath);
         this.appName = appName;
         this.applicationId = applicationId;
         this.requestReachable = requestReachable;
@@ -73,16 +73,17 @@ public class ApplicationEntity extends AnnounceableResource {
     }
 
     public static ApplicationEntity retrieve(@NonNull String aeId, @NonNull String baseUrl,
-                                             @NonNull String path, String userName, String password) throws Exception {
-        return retrieveBase(aeId, baseUrl, path, userName, password,
+                                             @NonNull String retrievePath, String userName, String password) throws Exception {
+        return retrieveBase(aeId, baseUrl, retrievePath, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST, null).body().getApplicationEntity();
     }
 
-    public static void retrieveAsync(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
+    public static void retrieveAsync(@NonNull String aeId, @NonNull String baseUrl,
+                                     @NonNull String retrievePath,
                                      String userName, String password, DougalCallback dougalCallback) {
-        retrieveBaseAsync(aeId, baseUrl, path, userName, password,
+        retrieveBaseAsync(aeId, baseUrl, retrievePath, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST, null,
-                new RetrieveCallback<ApplicationEntity>(baseUrl, path, dougalCallback));
+                new RetrieveCallback<ApplicationEntity>(baseUrl, retrievePath, dougalCallback));
     }
 
     // TODO Add non-blocking retrieval.
@@ -112,16 +113,16 @@ public class ApplicationEntity extends AnnounceableResource {
         delete(userName, password, RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
-    public static void delete(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
-                              String userName, String password)
-            throws Exception {
-        delete(aeId, baseUrl, path, userName, password, RESPONSE_TYPE_BLOCKING_REQUEST);
+    public static void delete(@NonNull String aeId, @NonNull String baseUrl,
+                              @NonNull String retrievePath, String userName, String password) throws Exception {
+        delete(aeId, baseUrl, retrievePath, userName, password, RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
-    public static void deleteAsync(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
-                                   String userName, String password, DougalCallback dougalCallback) {
-        deleteAsync(aeId, baseUrl, path, userName, password, RESPONSE_TYPE_BLOCKING_REQUEST,
-                new DeleteCallback(dougalCallback));
+    public static void deleteAsync(@NonNull String aeId, @NonNull String baseUrl,
+                                   @NonNull String retrievePath, String userName, String password,
+                                   DougalCallback dougalCallback) {
+        deleteAsync(aeId, baseUrl, retrievePath, userName, password,
+                RESPONSE_TYPE_BLOCKING_REQUEST, new DeleteCallback(dougalCallback));
     }
 
     public void deleteAsync(String userName, String password, DougalCallback dougalCallback) {
@@ -129,19 +130,21 @@ public class ApplicationEntity extends AnnounceableResource {
                 new DeleteCallback(dougalCallback));
     }
 
-    public static Discovery discover(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
-                                     String userName, String password, FilterCriteria filterCriteria) throws Exception {
+    public static Discovery discover(@NonNull String aeId, @NonNull String baseUrl,
+                                     @NonNull String retrievePath, String userName, String password,
+                                     FilterCriteria filterCriteria) throws Exception {
         if (filterCriteria == null) {
             filterCriteria = new FilterCriteria();
         }
         if (filterCriteria.getResourceType() == null) {
             filterCriteria.putResourceType(Types.RESOURCE_TYPE_APPLICATION_ENTITY);
         }
-        return discoverBase(aeId, baseUrl, path, userName, password,
+        return discoverBase(aeId, baseUrl, retrievePath, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria).body().getDiscovery();
     }
 
-    public static void discoverAsync(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
+    public static void discoverAsync(@NonNull String aeId, @NonNull String baseUrl,
+                                     @NonNull String retrievePath,
                                      String userName, String password, FilterCriteria filterCriteria,
                                      DougalCallback dougalCallback) {
         if (filterCriteria == null) {
@@ -150,9 +153,9 @@ public class ApplicationEntity extends AnnounceableResource {
         if (filterCriteria.getResourceType() == null) {
             filterCriteria.putResourceType(Types.RESOURCE_TYPE_APPLICATION_ENTITY);
         }
-        discoverAsyncBase(aeId, baseUrl, path, userName, password,
+        discoverAsyncBase(aeId, baseUrl,retrievePath, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria,
-                new RetrieveCallback<Discovery>(baseUrl, path, dougalCallback));
+                new RetrieveCallback<Discovery>(baseUrl, retrievePath, dougalCallback));
     }
 
     public String getApplicationId() {

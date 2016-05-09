@@ -49,9 +49,9 @@ public class Group extends AnnounceableResource {
     private String fanOutPoint;
 
     public Group(@NonNull String aeId, @NonNull String resourceId, @NonNull String resourceName,
-                 @NonNull String baseUrl, @NonNull String path, @NonNull Integer maxNumberOfMembers,
+                 @NonNull String baseUrl, @NonNull String createPath, @NonNull Integer maxNumberOfMembers,
                  @NonNull String[] memberIds) {
-        super(aeId, resourceId, resourceName, Types.RESOURCE_TYPE_GROUP, baseUrl, path);
+        super(aeId, resourceId, resourceName, Types.RESOURCE_TYPE_GROUP, baseUrl, createPath);
         this.maxNumberOfMembers = maxNumberOfMembers;
         this.memberIds = memberIds;
     }
@@ -84,9 +84,9 @@ public class Group extends AnnounceableResource {
         delete(userName, password, RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
-    public static void delete(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
-                              String userName, String password) throws Exception {
-        delete(aeId, baseUrl, path, userName, password, RESPONSE_TYPE_BLOCKING_REQUEST);
+    public static void delete(@NonNull String aeId, @NonNull String baseUrl,
+                              @NonNull String retrievePath, String userName, String password) throws Exception {
+        delete(aeId, baseUrl, retrievePath, userName, password, RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
     public void deleteAsync(String userName, String password, DougalCallback dougalCallback) {
@@ -94,9 +94,10 @@ public class Group extends AnnounceableResource {
                 new DeleteCallback(dougalCallback));
     }
 
-    public static void deleteAsync(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
-                                   String userName, String password, DougalCallback dougalCallback) {
-        deleteAsync(aeId, baseUrl, path, userName, password, RESPONSE_TYPE_BLOCKING_REQUEST,
+    public static void deleteAsync(@NonNull String aeId, @NonNull String baseUrl,
+                                   @NonNull String retrievePath, String userName, String password,
+                                   DougalCallback dougalCallback) {
+        deleteAsync(aeId, baseUrl, retrievePath, userName, password, RESPONSE_TYPE_BLOCKING_REQUEST,
                 new DeleteCallback(dougalCallback));
     }
 

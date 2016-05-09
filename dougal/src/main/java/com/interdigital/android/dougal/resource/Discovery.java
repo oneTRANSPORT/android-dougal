@@ -33,13 +33,3 @@ public class Discovery extends Resource {
         this.truncated = truncated;
     }
 }
-
-//{"m2m:discovery":{
-//        "discoveredURI":[
-//        "/ONETCSE01/ANDROID",
-//        "/ONETCSE01/BUCKS-IMPORT",
-//        "/ONETCSE01/CPAULANDROID1",
-//        "/ONETCSE01/C_ANDROID",
-//        "/ONETCSE01/Feed_Import"],
-//        "truncated":"false"}
-//}

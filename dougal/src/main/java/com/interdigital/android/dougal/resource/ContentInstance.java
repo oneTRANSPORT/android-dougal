@@ -1,5 +1,6 @@
 package com.interdigital.android.dougal.resource;
 
+import android.net.rtp.RtpStream;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -36,8 +37,8 @@ public class ContentInstance extends AnnounceableResource {
 
     public ContentInstance(@NonNull String aeId, @NonNull String resourceId,
                            @NonNull String resourceName, @Types.ResourceType int resourceType,
-                           @NonNull String baseUrl, @NonNull String path, @NonNull String content) {
-        super(aeId, resourceId, resourceName, resourceType, baseUrl, path);
+                           @NonNull String baseUrl, @NonNull String createPath, @NonNull String content) {
+        super(aeId, resourceId, resourceName, resourceType, baseUrl, createPath);
         this.content = content;
     }
 
@@ -55,22 +56,23 @@ public class ContentInstance extends AnnounceableResource {
     }
 
     public static ContentInstance retrieve(@NonNull String aeId, @NonNull String baseUrl,
-                                           @NonNull String path, String userName, String password) throws Exception {
-        return retrieveBase(aeId, baseUrl, path, userName, password,
+                                           @NonNull String retrievePath, String userName, String password) throws Exception {
+        return retrieveBase(aeId, baseUrl, retrievePath, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST, null).body().getContentInstance();
     }
 
-    public static void retrieveAsync(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
+    public static void retrieveAsync(@NonNull String aeId, @NonNull String baseUrl,
+                                     @NonNull String retrievePath,
                                      String userName, String password, DougalCallback dougalCallback) {
-        retrieveBaseAsync(aeId, baseUrl, path, userName, password,
+        retrieveBaseAsync(aeId, baseUrl, retrievePath, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST, null,
-                new RetrieveCallback<ContentInstance>(baseUrl, path, dougalCallback));
+                new RetrieveCallback<ContentInstance>(baseUrl, retrievePath, dougalCallback));
     }
 
     public static ContentInstance retrieveNonBlockingPayload(@NonNull String aeId,
-                                                             @NonNull String baseUrl, @NonNull String path,
+                                                             @NonNull String baseUrl, @NonNull String retrievePath,
                                                              String userName, String password) throws Exception {
-        return ((NonBlockingRequest) retrieveBase(aeId, baseUrl, path, userName, password,
+        return ((NonBlockingRequest) retrieveBase(aeId, baseUrl, retrievePath, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST, null).body().getResource())
                 .getPrimitiveContent().getContentInstance();
     }
@@ -91,10 +93,9 @@ public class ContentInstance extends AnnounceableResource {
         delete(userName, password, RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
-    public static void delete(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
-                              String userName, String password)
-            throws Exception {
-        delete(aeId, baseUrl, path, userName, password, RESPONSE_TYPE_BLOCKING_REQUEST);
+    public static void delete(@NonNull String aeId, @NonNull String baseUrl,
+                              @NonNull String retrievePath, String userName, String password) throws Exception {
+        delete(aeId, baseUrl, retrievePath, userName, password, RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
     public void deleteAsync(String userName, String password, DougalCallback dougalCallback) {
@@ -102,14 +103,16 @@ public class ContentInstance extends AnnounceableResource {
                 new DeleteCallback(dougalCallback));
     }
 
-    public static void deleteAsync(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
-                                   String userName, String password, DougalCallback dougalCallback) {
-        deleteAsync(aeId, baseUrl, path, userName, password,
+    public static void deleteAsync(@NonNull String aeId, @NonNull String baseUrl,
+                                   @NonNull String retrievePath, String userName, String password,
+                                   DougalCallback dougalCallback) {
+        deleteAsync(aeId, baseUrl, retrievePath, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST, new DeleteCallback(dougalCallback));
     }
 
-    public static Discovery discover(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
-                                     String userName, String password, FilterCriteria filterCriteria)
+    public static Discovery discover(@NonNull String aeId, @NonNull String baseUrl,
+                                     @NonNull String retrievePath, String userName, String password,
+                                     FilterCriteria filterCriteria)
             throws Exception {
         if (filterCriteria == null) {
             filterCriteria = new FilterCriteria();
@@ -117,22 +120,22 @@ public class ContentInstance extends AnnounceableResource {
         if (filterCriteria.getResourceType() == null) {
             filterCriteria.putResourceType(Types.RESOURCE_TYPE_CONTENT_INSTANCE);
         }
-        return discoverBase(aeId, baseUrl, path, userName, password,
+        return discoverBase(aeId, baseUrl, retrievePath, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria).body().getDiscovery();
     }
 
-    public static void discoverAsync(@NonNull String aeId, @NonNull String baseUrl, @NonNull String path,
-                                     String userName, String password, FilterCriteria filterCriteria,
-                                     DougalCallback dougalCallback) {
+    public static void discoverAsync(@NonNull String aeId, @NonNull String baseUrl,
+                                     @NonNull String retrievePath, String userName, String password,
+                                     FilterCriteria filterCriteria, DougalCallback dougalCallback) {
         if (filterCriteria == null) {
             filterCriteria = new FilterCriteria();
         }
         if (filterCriteria.getResourceType() == null) {
             filterCriteria.putResourceType(Types.RESOURCE_TYPE_CONTENT_INSTANCE);
         }
-        discoverAsyncBase(aeId, baseUrl, path, userName, password,
+        discoverAsyncBase(aeId, baseUrl, retrievePath, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria,
-                new RetrieveCallback<Discovery>(baseUrl, path, dougalCallback));
+                new RetrieveCallback<Discovery>(baseUrl, retrievePath, dougalCallback));
     }
 
     public String getCreator() {
