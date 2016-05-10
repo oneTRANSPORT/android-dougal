@@ -70,7 +70,7 @@ public class AccessControlPolicy extends AnnounceableSubordinateResource {
                                      FilterCriteria filterCriteria, DougalCallback dougalCallback) {
         retrieveBaseAsync(aeId, baseUrl, retrievePath, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria,
-                new RetrieveCallback<AccessControlPolicy>(baseUrl, retrievePath, dougalCallback));
+                new RetrieveCallback<AccessControlPolicy>(aeId, baseUrl, retrievePath, dougalCallback));
     }
 
     public static AccessControlPolicy retrievePayloadNonBlocking(@NonNull String aeId,
@@ -89,7 +89,7 @@ public class AccessControlPolicy extends AnnounceableSubordinateResource {
                                                        DougalCallback dougalCallback) {
         retrieveBaseAsync(aeId, baseUrl, retrievePath, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST, null,
-                new RetrieveCallback<AccessControlPolicy>(baseUrl, retrievePath, dougalCallback));
+                new RetrieveCallback<AccessControlPolicy>(aeId, baseUrl, retrievePath, dougalCallback));
     }
 
     public void update(String userName, String password) throws Exception {
@@ -161,7 +161,7 @@ public class AccessControlPolicy extends AnnounceableSubordinateResource {
         }
         discoverAsyncBase(aeId, baseUrl, retrievePath, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria,
-                new RetrieveCallback<Discovery>(baseUrl, retrievePath, dougalCallback));
+                new RetrieveCallback<Discovery>(aeId, baseUrl, retrievePath, dougalCallback));
     }
 
 

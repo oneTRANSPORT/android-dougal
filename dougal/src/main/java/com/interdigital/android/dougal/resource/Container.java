@@ -88,7 +88,7 @@ public class Container extends AnnounceableResource {
                                      FilterCriteria filterCriteria, DougalCallback dougalCallback) {
         retrieveBaseAsync(aeId, baseUrl, retrievePath, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria,
-                new RetrieveCallback<Container>(baseUrl, retrievePath, dougalCallback));
+                new RetrieveCallback<Container>(aeId, baseUrl, retrievePath, dougalCallback));
     }
 
     public static Container retrievePayloadNonBlocking(@NonNull String aeId, @NonNull String baseUrl,
@@ -107,7 +107,7 @@ public class Container extends AnnounceableResource {
                                                        DougalCallback dougalCallback) {
         retrieveBaseAsync(aeId, baseUrl, retrievePath, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST, null,
-                new RetrieveCallback<Container>(baseUrl, retrievePath, dougalCallback));
+                new RetrieveCallback<Container>(aeId, baseUrl, retrievePath, dougalCallback));
     }
 
     public static ContentInstance retrieveLatest(@NonNull String aeId, @NonNull String baseUrl,
@@ -122,7 +122,7 @@ public class Container extends AnnounceableResource {
                                            DougalCallback dougalCallback) {
         retrieveBaseAsync(aeId, baseUrl, retrievePath + LATEST_SUFFIX, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST, null,
-                new RetrieveCallback<ContentInstance>(baseUrl, retrievePath + LATEST_SUFFIX,
+                new RetrieveCallback<ContentInstance>(aeId, baseUrl, retrievePath + LATEST_SUFFIX,
                         dougalCallback));
     }
 
@@ -140,7 +140,7 @@ public class Container extends AnnounceableResource {
                                                         DougalCallback dougalCallback) {
         retrieveBaseAsync(aeId, baseUrl, retrievePath + LATEST_SUFFIX, userName, password,
                 RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH, null,
-                new RetrieveCallback<ContentInstance>(baseUrl, retrievePath + LATEST_SUFFIX,
+                new RetrieveCallback<ContentInstance>(aeId, baseUrl, retrievePath + LATEST_SUFFIX,
                         dougalCallback));
     }
 
@@ -156,7 +156,7 @@ public class Container extends AnnounceableResource {
                                            DougalCallback dougalCallback) {
         retrieveBaseAsync(aeId, baseUrl, retrievePath + OLDEST_SUFFIX, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST, null,
-                new RetrieveCallback<ContentInstance>(baseUrl, retrievePath + OLDEST_SUFFIX,
+                new RetrieveCallback<ContentInstance>(aeId, baseUrl, retrievePath + OLDEST_SUFFIX,
                         dougalCallback));
     }
 
@@ -174,7 +174,7 @@ public class Container extends AnnounceableResource {
                                                         DougalCallback dougalCallback) {
         retrieveBaseAsync(aeId, baseUrl, retrievePath + OLDEST_SUFFIX, userName, password,
                 RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH, null,
-                new RetrieveCallback<ContentInstance>(baseUrl, retrievePath + OLDEST_SUFFIX,
+                new RetrieveCallback<ContentInstance>(aeId, baseUrl, retrievePath + OLDEST_SUFFIX,
                         dougalCallback));
     }
 
@@ -389,7 +389,7 @@ public class Container extends AnnounceableResource {
         }
         discoverAsyncBase(aeId, baseUrl, retrievePath, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria,
-                new RetrieveCallback<Discovery>(baseUrl, retrievePath, dougalCallback));
+                new RetrieveCallback<Discovery>(aeId, baseUrl, retrievePath, dougalCallback));
     }
 
     // TODO Test.  Should this be in the base class?
@@ -419,7 +419,7 @@ public class Container extends AnnounceableResource {
         }
         discoverAsyncBase(aeId, baseUrl, retrievePath, userName, password,
                 RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH, filterCriteria,
-                new RetrieveCallback<Discovery>(baseUrl, retrievePath, dougalCallback));
+                new RetrieveCallback<Discovery>(aeId, baseUrl, retrievePath, dougalCallback));
     }
 
     public String getCreator() {

@@ -83,7 +83,7 @@ public class ApplicationEntity extends AnnounceableResource {
                                      String userName, String password, DougalCallback dougalCallback) {
         retrieveBaseAsync(aeId, baseUrl, retrievePath, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST, null,
-                new RetrieveCallback<ApplicationEntity>(baseUrl, retrievePath, dougalCallback));
+                new RetrieveCallback<ApplicationEntity>(aeId, baseUrl, retrievePath, dougalCallback));
     }
 
     // TODO Add non-blocking retrieval.
@@ -155,7 +155,7 @@ public class ApplicationEntity extends AnnounceableResource {
         }
         discoverAsyncBase(aeId, baseUrl,retrievePath, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria,
-                new RetrieveCallback<Discovery>(baseUrl, retrievePath, dougalCallback));
+                new RetrieveCallback<Discovery>(aeId, baseUrl, retrievePath, dougalCallback));
     }
 
     public String getApplicationId() {
