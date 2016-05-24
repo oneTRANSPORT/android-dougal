@@ -2,6 +2,7 @@ package com.interdigital.android.dougal.resource;
 
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -26,6 +27,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Credentials;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
@@ -496,28 +498,44 @@ public class Resource {
         return 0;
     }
 
+    public static void addInterceptors(String baseUrl, Interceptor[] interceptors) {
+        // Override current service if any.
+        createDougalService(baseUrl, interceptors);
+    }
+
     private static void maybeCreateDougalService(String baseUrl) {
         if (!dougalServiceMap.containsKey(baseUrl)) {
-            httpLoggingInterceptor = new HttpLoggingInterceptor();
-            httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-            OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                    .addInterceptor(new AddHeadersInterceptor())
-                    .addInterceptor(new RewriteCompatibilityInterceptor())
-                    .addInterceptor(httpLoggingInterceptor)
-                    .connectTimeout(30, TimeUnit.SECONDS)
-                    .readTimeout(30, TimeUnit.SECONDS)
-                    .writeTimeout(30, TimeUnit.SECONDS)
-                    .build();
-            if (gson == null) {
-                gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-            }
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(baseUrl)
-                    .client(okHttpClient)
-                    .addConverterFactory(GsonConverterFactory.create(gson))
-                    .build();
-            dougalServiceMap.put(baseUrl, retrofit.create(DougalService.class));
+            createDougalService(baseUrl, null);
         }
+    }
+
+    private static void createDougalService(String baseUrl, Interceptor[] interceptors) {
+        httpLoggingInterceptor = new HttpLoggingInterceptor();
+        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient.Builder builder = new OkHttpClient.Builder()
+                .addInterceptor(new AddHeadersInterceptor())
+                .addInterceptor(new RewriteCompatibilityInterceptor());
+        if (interceptors != null) {
+            for (Interceptor interceptor : interceptors) {
+                builder.addInterceptor(interceptor);
+            }
+        }
+        OkHttpClient okHttpClient = builder
+                .addInterceptor(httpLoggingInterceptor)
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
+                .build();
+        if (gson == null) {
+            gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        }
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .client(okHttpClient)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+        dougalServiceMap.put(baseUrl, retrofit.create(DougalService.class));
+        Log.i("Resource", "Created service: " + baseUrl);
     }
 
     private static void checkStatusCodes(Response<?> response,
