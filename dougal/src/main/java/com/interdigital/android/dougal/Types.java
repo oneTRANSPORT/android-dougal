@@ -201,4 +201,50 @@ public class Types {
     public static final int ACCESS_CONTROL_OPERATION_DELETE = 8;
     public static final int ACCESS_CONTROL_OPERATION_NOTIFY = 16;
     public static final int ACCESS_CONTROL_OPERATION_DISCOVERY = 32;
+
+    @Retention(SOURCE)
+    @IntDef({PENDING_NOTIFICATION_SEND_LATEST,
+            PENDING_NOTIFICATION_SEND_ALL_PENDING})
+    public @interface PendingNotification {
+    }
+
+    public static final int PENDING_NOTIFICATION_SEND_LATEST = 1;
+    public static final int PENDING_NOTIFICATION_SEND_ALL_PENDING = 2;
+
+    @Retention(SOURCE)
+    @IntDef({NOTIFICATION_CONTENT_TYPE_ALL_ATTRIBUTES,
+            NOTIFICATION_CONTENT_TYPE_MODIFIED_ATTRIBUTES,
+            NOTIFICATION_CONTENT_TYPE_RESOURCE_ID})
+    public @interface NotificationContentType {
+    }
+
+    public static final int NOTIFICATION_CONTENT_TYPE_ALL_ATTRIBUTES = 1;
+    public static final int NOTIFICATION_CONTENT_TYPE_MODIFIED_ATTRIBUTES = 2;
+    public static final int NOTIFICATION_CONTENT_TYPE_RESOURCE_ID = 3;
+
+    @Retention(SOURCE)
+    @IntDef({NOTIFICATION_EVENT_TYPE_UPDATE,
+            NOTIFICATION_EVENT_TYPE_DELETE,
+            NOTIFICATION_EVENT_TYPE_CREATE_CHILD,
+            NOTIFICATION_EVENT_TYPE_DELETE_CHILD})
+    public @interface NotificationEventType {
+    }
+
+    public static final int NOTIFICATION_EVENT_TYPE_UPDATE = 1;
+    public static final int NOTIFICATION_EVENT_TYPE_DELETE = 2;
+    public static final int NOTIFICATION_EVENT_TYPE_CREATE_CHILD = 3;
+    public static final int NOTIFICATION_EVENT_TYPE_DELETE_CHILD = 4;
+
+    @Retention(SOURCE)
+    @IntDef({OPERATION_CREATE, OPERATION_RETRIEVE, OPERATION_UPDATE,
+            OPERATION_DELETE, OPERATION_NOTIFY})
+    public @interface Operation {
+    }
+
+    public static final int OPERATION_CREATE = 1;
+    public static final int OPERATION_RETRIEVE = 2;
+    public static final int OPERATION_UPDATE = 3;
+    public static final int OPERATION_DELETE = 4;
+    public static final int OPERATION_NOTIFY = 5;
+
 }

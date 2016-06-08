@@ -10,6 +10,7 @@ import com.interdigital.android.dougal.resource.Discovery;
 import com.interdigital.android.dougal.resource.Group;
 import com.interdigital.android.dougal.resource.NonBlockingRequest;
 import com.interdigital.android.dougal.resource.Resource;
+import com.interdigital.android.dougal.resource.Subscription;
 
 import okhttp3.Headers;
 
@@ -45,6 +46,9 @@ public class ResponseHolder {
     @Expose
     @SerializedName("m2m:acp")
     private AccessControlPolicy accessControlPolicy;
+    @Expose
+    @SerializedName("m2m:sub")
+    private Subscription subscription;
 
     public int getStatusCode() {
         return statusCode;
@@ -94,6 +98,9 @@ public class ResponseHolder {
         }
         if (accessControlPolicy != null) {
             return accessControlPolicy;
+        }
+        if (subscription != null) {
+            return subscription;
         }
         return null;
     }
@@ -160,5 +167,13 @@ public class ResponseHolder {
 
     public void setAccessControlPolicy(AccessControlPolicy accessControlPolicy) {
         this.accessControlPolicy = accessControlPolicy;
+    }
+
+    public Subscription getSubscription() {
+        return subscription;
+    }
+
+    public void setSubscription(Subscription subscription) {
+        this.subscription = subscription;
     }
 }

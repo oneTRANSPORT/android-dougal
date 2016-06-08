@@ -169,6 +169,14 @@ public class ContentInstance extends AnnounceableResource {
         this.contentSize = contentSize;
     }
 
+    public Integer getStateTag() {
+        return stateTag;
+    }
+
+    public void setStateTag(Integer stateTag) {
+        this.stateTag = stateTag;
+    }
+
     private String create(String userName, String password, @ResponseType int responseType)
             throws Exception {
         Response<ResponseHolder> response = create(userName, password, responseType, this);
@@ -178,13 +186,5 @@ public class ContentInstance extends AnnounceableResource {
             default:
                 return response.body().getResource().getResourceId();
         }
-    }
-
-    public Integer getStateTag() {
-        return stateTag;
-    }
-
-    public void setStateTag(Integer stateTag) {
-        this.stateTag = stateTag;
     }
 }
