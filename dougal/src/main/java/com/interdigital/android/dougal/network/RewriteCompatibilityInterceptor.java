@@ -10,6 +10,7 @@ import com.interdigital.android.dougal.resource.Container;
 import com.interdigital.android.dougal.resource.ContentInstance;
 import com.interdigital.android.dougal.resource.Group;
 import com.interdigital.android.dougal.resource.Resource;
+import com.interdigital.android.dougal.resource.Subscription;
 
 import java.io.IOException;
 
@@ -92,6 +93,11 @@ public class RewriteCompatibilityInterceptor implements Interceptor {
                     group.setMemberType(null);
                     group.setMemberTypeValidated(null);
                     group.setConsistencyStrategy(null);
+                } else if (resource instanceof Subscription) {
+                    Subscription subscription = (Subscription) resource;
+                    subscription.setPreSubscriptionNotify(null);
+                    subscription.setCreator(null);
+                    subscription.setSubscriberUri(null);
                 }
             }
 

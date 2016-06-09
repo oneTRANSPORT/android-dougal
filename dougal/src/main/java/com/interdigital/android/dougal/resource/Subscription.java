@@ -25,13 +25,13 @@ public class Subscription extends RegularResource {
     private Integer expirationCounter; // Unsigned int.
     @Expose
     @SerializedName("nu")
-    private String notificationURI;
+    private String notificationUri;
     @Expose
     @SerializedName("gpi")
-    private String groupID;
+    private String groupId;
     @Expose
     @SerializedName("nfu")
-    private String notificationForwardingURI;
+    private String notificationForwardingUri;
     @Expose
     @SerializedName("bn")
     private BatchNotify batchNotify;
@@ -63,12 +63,12 @@ public class Subscription extends RegularResource {
     private String creator;
     @Expose
     @SerializedName("su")
-    private String subscriberURI;
+    private String subscriberUri;
 
     public Subscription(@NonNull String aeId, @NonNull String resourceId,
-                        @NonNull String resourceName, @Types.ResourceType int resourceType,
-                        @NonNull String baseUrl, @NonNull String createPath) {
-        super(aeId, resourceId, resourceName, resourceType, baseUrl, createPath);
+                        @NonNull String resourceName, @NonNull String baseUrl, @NonNull String createPath) {
+        super(aeId, resourceId, resourceName, Types.RESOURCE_TYPE_SUBSCRIPTION, baseUrl,
+                createPath);
     }
 
     // TODO    Superclass?
@@ -186,28 +186,28 @@ public class Subscription extends RegularResource {
         this.expirationCounter = expirationCounter;
     }
 
-    public String getNotificationURI() {
-        return notificationURI;
+    public String getNotificationUri() {
+        return notificationUri;
     }
 
-    public void setNotificationURI(String notificationURI) {
-        this.notificationURI = notificationURI;
+    public void setNotificationUri(String notificationUri) {
+        this.notificationUri = notificationUri;
     }
 
-    public String getGroupID() {
-        return groupID;
+    public String getGroupId() {
+        return groupId;
     }
 
-    public void setGroupID(String groupID) {
-        this.groupID = groupID;
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
     }
 
-    public String getNotificationForwardingURI() {
-        return notificationForwardingURI;
+    public String getNotificationForwardingUri() {
+        return notificationForwardingUri;
     }
 
-    public void setNotificationForwardingURI(String notificationForwardingURI) {
-        this.notificationForwardingURI = notificationForwardingURI;
+    public void setNotificationForwardingUri(String notificationForwardingUri) {
+        this.notificationForwardingUri = notificationForwardingUri;
     }
 
     public BatchNotify getBatchNotify() {
@@ -282,12 +282,12 @@ public class Subscription extends RegularResource {
         this.creator = creator;
     }
 
-    public String getSubscriberURI() {
-        return subscriberURI;
+    public String getSubscriberUri() {
+        return subscriberUri;
     }
 
-    public void setSubscriberURI(String subscriberURI) {
-        this.subscriberURI = subscriberURI;
+    public void setSubscriberUri(String subscriberUri) {
+        this.subscriberUri = subscriberUri;
     }
 
     // TODO    Should this be in a superclass?

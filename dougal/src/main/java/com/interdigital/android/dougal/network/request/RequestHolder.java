@@ -9,6 +9,7 @@ import com.interdigital.android.dougal.resource.Container;
 import com.interdigital.android.dougal.resource.ContentInstance;
 import com.interdigital.android.dougal.resource.Group;
 import com.interdigital.android.dougal.resource.Resource;
+import com.interdigital.android.dougal.resource.Subscription;
 
 public class RequestHolder {
 
@@ -27,6 +28,9 @@ public class RequestHolder {
     @Expose
     @SerializedName("acp")
     private AccessControlPolicy accessControlPolicy;
+    @Expose
+    @SerializedName("sub")
+    private Subscription subscription;
 
     public RequestHolder() {
     }
@@ -50,6 +54,9 @@ public class RequestHolder {
         }
         if (accessControlPolicy != null) {
             return accessControlPolicy;
+        }
+        if (subscription != null) {
+            return subscription;
         }
         return null;
     }
@@ -107,6 +114,7 @@ public class RequestHolder {
             case Types.RESOURCE_TYPE_STATS_CONFIG:
                 break;
             case Types.RESOURCE_TYPE_SUBSCRIPTION:
+                setSubscription((Subscription) resource);
                 break;
             case Types.RESOURCE_TYPE_ACCESS_CONTROL_POLICY_ANNC:
                 break;
@@ -153,5 +161,9 @@ public class RequestHolder {
 
     public void setAccessControlPolicy(AccessControlPolicy accessControlPolicy) {
         this.accessControlPolicy = accessControlPolicy;
+    }
+
+    public void setSubscription(Subscription subscription) {
+        this.subscription = subscription;
     }
 }
