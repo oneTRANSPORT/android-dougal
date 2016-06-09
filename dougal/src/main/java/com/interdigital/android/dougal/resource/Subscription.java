@@ -11,6 +11,7 @@ import com.interdigital.android.dougal.resource.callback.DeleteCallback;
 import com.interdigital.android.dougal.resource.callback.DougalCallback;
 import com.interdigital.android.dougal.resource.callback.RetrieveCallback;
 import com.interdigital.android.dougal.resource.callback.UpdateCallback;
+import com.interdigital.android.dougal.shared.FilterCriteria;
 
 import retrofit2.Response;
 
@@ -140,7 +141,33 @@ public class Subscription extends RegularResource {
                 RESPONSE_TYPE_BLOCKING_REQUEST, new DeleteCallback(dougalCallback));
     }
 
-    // TODO    Discovery?
+    public static Discovery discover(@NonNull String aeId, @NonNull String baseUrl,
+                                     @NonNull String retrievePath, String userName, String password,
+                                     FilterCriteria filterCriteria)
+            throws Exception {
+        if (filterCriteria == null) {
+            filterCriteria = new FilterCriteria();
+        }
+        if (filterCriteria.getResourceType() == null) {
+            filterCriteria.putResourceType(Types.RESOURCE_TYPE_SUBSCRIPTION);
+        }
+        return discoverBase(aeId, baseUrl, retrievePath, userName, password,
+                RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria).body().getDiscovery();
+    }
+
+    public static void discoverAsync(@NonNull String aeId, @NonNull String baseUrl,
+                                     @NonNull String retrievePath, String userName, String password,
+                                     FilterCriteria filterCriteria, DougalCallback dougalCallback) {
+        if (filterCriteria == null) {
+            filterCriteria = new FilterCriteria();
+        }
+        if (filterCriteria.getResourceType() == null) {
+            filterCriteria.putResourceType(Types.RESOURCE_TYPE_SUBSCRIPTION);
+        }
+        discoverAsyncBase(aeId, baseUrl, retrievePath, userName, password,
+                RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria,
+                new RetrieveCallback<Discovery>(aeId, baseUrl, retrievePath, dougalCallback));
+    }
 
 
     public EventNotificationCriteria getEventNotificationCriteria() {

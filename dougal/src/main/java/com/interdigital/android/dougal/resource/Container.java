@@ -392,7 +392,6 @@ public class Container extends AnnounceableResource {
                 new RetrieveCallback<Discovery>(aeId, baseUrl, retrievePath, dougalCallback));
     }
 
-    // TODO Test.  Should this be in the base class?
     public static Resource discoverNonBlocking(String aeId, String baseUrl, String retrievePath,
                                                String userName, String password, FilterCriteria filterCriteria)
             throws Exception {
