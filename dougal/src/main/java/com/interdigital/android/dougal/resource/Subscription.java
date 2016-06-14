@@ -25,7 +25,7 @@ public class Subscription extends RegularResource {
     private Integer expirationCounter; // Unsigned int.
     @Expose
     @SerializedName("nu")
-    private String notificationUri;
+    private String[] notificationUris;
     @Expose
     @SerializedName("gpi")
     private String groupId;
@@ -186,12 +186,12 @@ public class Subscription extends RegularResource {
         this.expirationCounter = expirationCounter;
     }
 
-    public String getNotificationUri() {
-        return notificationUri;
+    public String[] getNotificationUris() {
+        return notificationUris;
     }
 
-    public void setNotificationUri(String notificationUri) {
-        this.notificationUri = notificationUri;
+    public void setNotificationUris(String[] notificationUris) {
+        this.notificationUris = notificationUris;
     }
 
     public String getGroupId() {
