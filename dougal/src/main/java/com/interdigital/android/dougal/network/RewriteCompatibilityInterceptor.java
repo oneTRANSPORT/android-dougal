@@ -70,6 +70,7 @@ public class RewriteCompatibilityInterceptor implements Interceptor {
                 } else if (resource instanceof Group) {
                     Group group = (Group) resource;
                     group.setMemberTypeValidated(null);
+                    group.setCurrentNumberOfMembers(null);
                 }
             } else if (originalRequest.method().equalsIgnoreCase("put")) {
                 resource.setResourceName(null);
@@ -92,6 +93,7 @@ public class RewriteCompatibilityInterceptor implements Interceptor {
                     group.setCreator(null);
                     group.setMemberType(null);
                     group.setMemberTypeValidated(null);
+                    group.setCurrentNumberOfMembers(null);
                     group.setConsistencyStrategy(null);
                 } else if (resource instanceof Subscription) {
                     Subscription subscription = (Subscription) resource;
