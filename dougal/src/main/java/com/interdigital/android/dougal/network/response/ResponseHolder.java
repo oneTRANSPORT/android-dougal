@@ -10,6 +10,7 @@ import com.interdigital.android.dougal.resource.Discovery;
 import com.interdigital.android.dougal.resource.Group;
 import com.interdigital.android.dougal.resource.NonBlockingRequest;
 import com.interdigital.android.dougal.resource.Resource;
+import com.interdigital.android.dougal.resource.Schedule;
 import com.interdigital.android.dougal.resource.Subscription;
 
 import okhttp3.Headers;
@@ -49,6 +50,9 @@ public class ResponseHolder {
     @Expose
     @SerializedName("m2m:sub")
     private Subscription subscription;
+    @Expose
+    @SerializedName("m2m:sch")
+    private Schedule schedule;
 
     public int getStatusCode() {
         return statusCode;
@@ -101,6 +105,9 @@ public class ResponseHolder {
         }
         if (subscription != null) {
             return subscription;
+        }
+        if (schedule != null) {
+            return schedule;
         }
         return null;
     }
@@ -175,5 +182,13 @@ public class ResponseHolder {
 
     public void setSubscription(Subscription subscription) {
         this.subscription = subscription;
+    }
+
+    public Schedule getSchedule() {
+        return schedule;
+    }
+
+    public void setSchedule(Schedule schedule) {
+        this.schedule = schedule;
     }
 }

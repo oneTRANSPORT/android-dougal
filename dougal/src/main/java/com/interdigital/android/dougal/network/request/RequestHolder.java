@@ -9,6 +9,7 @@ import com.interdigital.android.dougal.resource.Container;
 import com.interdigital.android.dougal.resource.ContentInstance;
 import com.interdigital.android.dougal.resource.Group;
 import com.interdigital.android.dougal.resource.Resource;
+import com.interdigital.android.dougal.resource.Schedule;
 import com.interdigital.android.dougal.resource.Subscription;
 
 public class RequestHolder {
@@ -31,6 +32,9 @@ public class RequestHolder {
     @Expose
     @SerializedName("sub")
     private Subscription subscription;
+    @Expose
+    @SerializedName("sch")
+    private Schedule schedule;
 
     public RequestHolder() {
     }
@@ -57,6 +61,9 @@ public class RequestHolder {
         }
         if (subscription != null) {
             return subscription;
+        }
+        if (schedule != null) {
+            return schedule;
         }
         return null;
     }
@@ -104,6 +111,7 @@ public class RequestHolder {
             case Types.RESOURCE_TYPE_REQUEST:
                 break;
             case Types.RESOURCE_TYPE_SCHEDULE:
+                setSchedule((Schedule) resource);
                 break;
             case Types.RESOURCE_TYPE_SERVICE_SUBSCRIBED_APP_RULE:
                 break;
@@ -165,5 +173,9 @@ public class RequestHolder {
 
     public void setSubscription(Subscription subscription) {
         this.subscription = subscription;
+    }
+
+    public void setSchedule(Schedule schedule) {
+        this.schedule = schedule;
     }
 }
