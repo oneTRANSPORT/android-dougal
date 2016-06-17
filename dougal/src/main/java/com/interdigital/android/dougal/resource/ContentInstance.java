@@ -7,7 +7,6 @@ import com.google.gson.annotations.SerializedName;
 import com.interdigital.android.dougal.Types;
 import com.interdigital.android.dougal.network.response.ResponseHolder;
 import com.interdigital.android.dougal.resource.callback.CreateCallback;
-import com.interdigital.android.dougal.resource.callback.DeleteCallback;
 import com.interdigital.android.dougal.resource.callback.DougalCallback;
 import com.interdigital.android.dougal.resource.callback.RetrieveCallback;
 import com.interdigital.android.dougal.shared.FilterCriteria;
@@ -86,27 +85,6 @@ public class ContentInstance extends AnnounceableResource {
     public void updateAsync(String userName, String password, @ResponseType int responseType,
                             Callback<ResponseHolder> callback) {
         throw new UnsupportedOperationException("Content instances may not be updated");
-    }
-
-    public void delete(String userName, String password) throws Exception {
-        delete(userName, password, RESPONSE_TYPE_BLOCKING_REQUEST);
-    }
-
-    public static void delete(@NonNull String aeId, @NonNull String baseUrl,
-                              @NonNull String retrievePath, String userName, String password) throws Exception {
-        delete(aeId, baseUrl, retrievePath, userName, password, RESPONSE_TYPE_BLOCKING_REQUEST);
-    }
-
-    public void deleteAsync(String userName, String password, DougalCallback dougalCallback) {
-        deleteAsync(userName, password, RESPONSE_TYPE_BLOCKING_REQUEST,
-                new DeleteCallback(dougalCallback));
-    }
-
-    public static void deleteAsync(@NonNull String aeId, @NonNull String baseUrl,
-                                   @NonNull String retrievePath, String userName, String password,
-                                   DougalCallback dougalCallback) {
-        deleteAsync(aeId, baseUrl, retrievePath, userName, password,
-                RESPONSE_TYPE_BLOCKING_REQUEST, new DeleteCallback(dougalCallback));
     }
 
     public static Discovery discover(@NonNull String aeId, @NonNull String baseUrl,

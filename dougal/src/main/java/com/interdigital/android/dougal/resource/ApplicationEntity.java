@@ -109,27 +109,6 @@ public class ApplicationEntity extends AnnounceableResource {
         return null;
     }
 
-    public void delete(String userName, String password) throws Exception {
-        delete(userName, password, RESPONSE_TYPE_BLOCKING_REQUEST);
-    }
-
-    public static void delete(@NonNull String aeId, @NonNull String baseUrl,
-                              @NonNull String retrievePath, String userName, String password) throws Exception {
-        delete(aeId, baseUrl, retrievePath, userName, password, RESPONSE_TYPE_BLOCKING_REQUEST);
-    }
-
-    public static void deleteAsync(@NonNull String aeId, @NonNull String baseUrl,
-                                   @NonNull String retrievePath, String userName, String password,
-                                   DougalCallback dougalCallback) {
-        deleteAsync(aeId, baseUrl, retrievePath, userName, password,
-                RESPONSE_TYPE_BLOCKING_REQUEST, new DeleteCallback(dougalCallback));
-    }
-
-    public void deleteAsync(String userName, String password, DougalCallback dougalCallback) {
-        deleteAsync(userName, password, RESPONSE_TYPE_BLOCKING_REQUEST,
-                new DeleteCallback(dougalCallback));
-    }
-
     public static Discovery discover(@NonNull String aeId, @NonNull String baseUrl,
                                      @NonNull String retrievePath, String userName, String password,
                                      FilterCriteria filterCriteria) throws Exception {

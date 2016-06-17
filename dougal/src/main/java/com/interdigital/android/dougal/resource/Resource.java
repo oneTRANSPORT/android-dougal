@@ -15,6 +15,7 @@ import com.interdigital.android.dougal.network.AddHeadersInterceptor;
 import com.interdigital.android.dougal.network.RewriteCompatibilityInterceptor;
 import com.interdigital.android.dougal.network.request.RequestHolder;
 import com.interdigital.android.dougal.network.response.ResponseHolder;
+import com.interdigital.android.dougal.resource.callback.DeleteCallback;
 import com.interdigital.android.dougal.resource.callback.DougalCallback;
 import com.interdigital.android.dougal.resource.callback.NonBlockingIdCallback;
 import com.interdigital.android.dougal.shared.FilterCriteria;
@@ -285,6 +286,27 @@ public class Resource {
     }
 
     // TODO Non-blocking updates.
+
+    public void delete(String userName, String password) throws Exception {
+        delete(userName, password, RESPONSE_TYPE_BLOCKING_REQUEST);
+    }
+
+    public static void delete(@NonNull String aeId, @NonNull String baseUrl,
+                              @NonNull String retrievePath, String userName, String password) throws Exception {
+        delete(aeId, baseUrl, retrievePath, userName, password, RESPONSE_TYPE_BLOCKING_REQUEST);
+    }
+
+    public void deleteAsync(String userName, String password, DougalCallback dougalCallback) {
+        deleteAsync(userName, password, RESPONSE_TYPE_BLOCKING_REQUEST,
+                new DeleteCallback(dougalCallback));
+    }
+
+    public static void deleteAsync(@NonNull String aeId, @NonNull String baseUrl,
+                                   @NonNull String retrievePath, String userName, String password,
+                                   DougalCallback dougalCallback) {
+        deleteAsync(aeId, baseUrl, retrievePath, userName, password,
+                RESPONSE_TYPE_BLOCKING_REQUEST, new DeleteCallback(dougalCallback));
+    }
 
     protected static void delete(@NonNull String aeId, @NonNull String baseUrl,
                                  @NonNull String retrievePath, String userName, String password,

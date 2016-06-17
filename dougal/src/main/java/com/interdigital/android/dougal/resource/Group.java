@@ -7,7 +7,6 @@ import com.google.gson.annotations.SerializedName;
 import com.interdigital.android.dougal.Types;
 import com.interdigital.android.dougal.network.response.ResponseHolder;
 import com.interdigital.android.dougal.resource.callback.CreateCallback;
-import com.interdigital.android.dougal.resource.callback.DeleteCallback;
 import com.interdigital.android.dougal.resource.callback.DougalCallback;
 import com.interdigital.android.dougal.resource.callback.NonBlockingIdCallback;
 
@@ -78,27 +77,6 @@ public class Group extends AnnounceableResource {
                                        DougalCallback dougalCallback) {
         createAsync(userName, password, new NonBlockingIdCallback<>(dougalCallback),
                 RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH);
-    }
-
-    public void delete(String userName, String password) throws Exception {
-        delete(userName, password, RESPONSE_TYPE_BLOCKING_REQUEST);
-    }
-
-    public static void delete(@NonNull String aeId, @NonNull String baseUrl,
-                              @NonNull String retrievePath, String userName, String password) throws Exception {
-        delete(aeId, baseUrl, retrievePath, userName, password, RESPONSE_TYPE_BLOCKING_REQUEST);
-    }
-
-    public void deleteAsync(String userName, String password, DougalCallback dougalCallback) {
-        deleteAsync(userName, password, RESPONSE_TYPE_BLOCKING_REQUEST,
-                new DeleteCallback(dougalCallback));
-    }
-
-    public static void deleteAsync(@NonNull String aeId, @NonNull String baseUrl,
-                                   @NonNull String retrievePath, String userName, String password,
-                                   DougalCallback dougalCallback) {
-        deleteAsync(aeId, baseUrl, retrievePath, userName, password, RESPONSE_TYPE_BLOCKING_REQUEST,
-                new DeleteCallback(dougalCallback));
     }
 
     public String getCreator() {
