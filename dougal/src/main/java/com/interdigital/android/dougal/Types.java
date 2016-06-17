@@ -247,4 +247,14 @@ public class Types {
     public static final int OPERATION_DELETE = 4;
     public static final int OPERATION_NOTIFY = 5;
 
+    @Retention(SOURCE)
+    @IntDef({LOCATION_SOURCE_NETWORK, LOCATION_SOURCE_DEVICE,
+            LOCATION_SOURCE_SHARING})
+    public @interface LocationSource {
+    }
+
+    public static final int LOCATION_SOURCE_NETWORK = 1;
+    public static final int LOCATION_SOURCE_DEVICE = 2;
+    public static final int LOCATION_SOURCE_SHARING = 3;
+
 }

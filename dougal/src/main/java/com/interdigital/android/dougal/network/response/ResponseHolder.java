@@ -8,6 +8,7 @@ import com.interdigital.android.dougal.resource.Container;
 import com.interdigital.android.dougal.resource.ContentInstance;
 import com.interdigital.android.dougal.resource.Discovery;
 import com.interdigital.android.dougal.resource.Group;
+import com.interdigital.android.dougal.resource.LocationPolicy;
 import com.interdigital.android.dougal.resource.NonBlockingRequest;
 import com.interdigital.android.dougal.resource.Resource;
 import com.interdigital.android.dougal.resource.Schedule;
@@ -53,6 +54,9 @@ public class ResponseHolder {
     @Expose
     @SerializedName("m2m:sch")
     private Schedule schedule;
+    @Expose
+    @SerializedName("m2m:lcp")
+    private LocationPolicy locationPolicy;
 
     public int getStatusCode() {
         return statusCode;
@@ -108,6 +112,9 @@ public class ResponseHolder {
         }
         if (schedule != null) {
             return schedule;
+        }
+        if (locationPolicy != null) {
+            return locationPolicy;
         }
         return null;
     }
@@ -190,5 +197,13 @@ public class ResponseHolder {
 
     public void setSchedule(Schedule schedule) {
         this.schedule = schedule;
+    }
+
+    public LocationPolicy getLocationPolicy() {
+        return locationPolicy;
+    }
+
+    public void setLocationPolicy(LocationPolicy locationPolicy) {
+        this.locationPolicy = locationPolicy;
     }
 }

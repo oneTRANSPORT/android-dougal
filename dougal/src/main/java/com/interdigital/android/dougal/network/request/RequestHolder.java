@@ -8,6 +8,7 @@ import com.interdigital.android.dougal.resource.ApplicationEntity;
 import com.interdigital.android.dougal.resource.Container;
 import com.interdigital.android.dougal.resource.ContentInstance;
 import com.interdigital.android.dougal.resource.Group;
+import com.interdigital.android.dougal.resource.LocationPolicy;
 import com.interdigital.android.dougal.resource.Resource;
 import com.interdigital.android.dougal.resource.Schedule;
 import com.interdigital.android.dougal.resource.Subscription;
@@ -35,6 +36,9 @@ public class RequestHolder {
     @Expose
     @SerializedName("sch")
     private Schedule schedule;
+    @Expose
+    @SerializedName("lcp")
+    private LocationPolicy locationPolicy;
 
     public RequestHolder() {
     }
@@ -64,6 +68,9 @@ public class RequestHolder {
         }
         if (schedule != null) {
             return schedule;
+        }
+        if (locationPolicy != null) {
+            return locationPolicy;
         }
         return null;
     }
@@ -95,6 +102,7 @@ public class RequestHolder {
                 setGroup((Group) resource);
                 break;
             case Types.RESOURCE_TYPE_LOCATION_POLICY:
+                setLocationPolicy((LocationPolicy) resource);
                 break;
             case Types.RESOURCE_TYPE_M2M_SERVICE_SUBSCRIPTION_PROFILE:
                 break;
@@ -177,5 +185,9 @@ public class RequestHolder {
 
     public void setSchedule(Schedule schedule) {
         this.schedule = schedule;
+    }
+
+    public void setLocationPolicy(LocationPolicy locationPolicy) {
+        this.locationPolicy = locationPolicy;
     }
 }
