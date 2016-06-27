@@ -10,7 +10,7 @@ import static java.lang.annotation.RetentionPolicy.SOURCE;
 public class Types {
 
     @Retention(SOURCE)
-    @IntDef({RESOURCE_TYPE_DISCOVERY, RESOURCE_TYPE_ACCESS_CONTROL_POLICY,
+    @IntDef({RESOURCE_TYPE_NONE, RESOURCE_TYPE_ACCESS_CONTROL_POLICY,
             RESOURCE_TYPE_APPLICATION_ENTITY, RESOURCE_TYPE_CONTAINER,
             RESOURCE_TYPE_CONTENT_INSTANCE, RESOURCE_TYPE_CSE_BASE,
             RESOURCE_TYPE_DELIVERY, RESOURCE_TYPE_EVENT_CONFIG,
@@ -33,7 +33,7 @@ public class Types {
     public @interface ResourceType {
     }
 
-    public static final int RESOURCE_TYPE_DISCOVERY = -1; // Made up.  Should change spec.
+    public static final int RESOURCE_TYPE_NONE = -1; // Made up.  Should change spec.
     public static final int RESOURCE_TYPE_ACCESS_CONTROL_POLICY = 1;
     public static final int RESOURCE_TYPE_APPLICATION_ENTITY = 2;
     public static final int RESOURCE_TYPE_CONTAINER = 3;

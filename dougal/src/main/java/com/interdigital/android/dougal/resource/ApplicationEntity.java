@@ -109,7 +109,7 @@ public class ApplicationEntity extends AnnounceableResource {
         return null;
     }
 
-    public static Discovery discover(@NonNull String aeId, @NonNull String baseUrl,
+    public static UriList discover(@NonNull String aeId, @NonNull String baseUrl,
                                      @NonNull String retrievePath, String userName, String password,
                                      FilterCriteria filterCriteria) throws Exception {
         if (filterCriteria == null) {
@@ -119,7 +119,7 @@ public class ApplicationEntity extends AnnounceableResource {
             filterCriteria.putResourceType(Types.RESOURCE_TYPE_APPLICATION_ENTITY);
         }
         return discoverBase(aeId, baseUrl, retrievePath, userName, password,
-                RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria).body().getDiscovery();
+                RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria).body().getUriList();
     }
 
     public static void discoverAsync(@NonNull String aeId, @NonNull String baseUrl,
@@ -134,7 +134,7 @@ public class ApplicationEntity extends AnnounceableResource {
         }
         discoverAsyncBase(aeId, baseUrl,retrievePath, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria,
-                new RetrieveCallback<Discovery>(aeId, baseUrl, retrievePath, dougalCallback));
+                new RetrieveCallback<UriList>(aeId, baseUrl, retrievePath, dougalCallback));
     }
 
     public String getApplicationId() {

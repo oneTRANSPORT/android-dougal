@@ -6,13 +6,13 @@ import com.interdigital.android.dougal.resource.AccessControlPolicy;
 import com.interdigital.android.dougal.resource.ApplicationEntity;
 import com.interdigital.android.dougal.resource.Container;
 import com.interdigital.android.dougal.resource.ContentInstance;
-import com.interdigital.android.dougal.resource.Discovery;
 import com.interdigital.android.dougal.resource.Group;
 import com.interdigital.android.dougal.resource.LocationPolicy;
 import com.interdigital.android.dougal.resource.NonBlockingRequest;
 import com.interdigital.android.dougal.resource.Resource;
 import com.interdigital.android.dougal.resource.Schedule;
 import com.interdigital.android.dougal.resource.Subscription;
+import com.interdigital.android.dougal.resource.UriList;
 
 import okhttp3.Headers;
 
@@ -36,9 +36,9 @@ public class ResponseHolder {
     @Expose
     @SerializedName("m2m:cin")
     private ContentInstance contentInstance;
-    @Expose
-    @SerializedName("m2m:discovery")
-    private Discovery discovery;
+    //    @Expose
+//    @SerializedName("m2m:discovery")
+//    private Discovery discovery;
     @Expose
     @SerializedName("m2m:req")
     private NonBlockingRequest nonBlockingRequest;
@@ -57,6 +57,9 @@ public class ResponseHolder {
     @Expose
     @SerializedName("m2m:lcp")
     private LocationPolicy locationPolicy;
+    @Expose
+    @SerializedName("m2m:uril")
+    private UriList uriList;
 
     public int getStatusCode() {
         return statusCode;
@@ -95,9 +98,9 @@ public class ResponseHolder {
         if (contentInstance != null) {
             return contentInstance;
         }
-        if (discovery != null) {
-            return discovery;
-        }
+//        if (discovery != null) {
+//            return discovery;
+//        }
         if (nonBlockingRequest != null) {
             return nonBlockingRequest;
         }
@@ -115,6 +118,9 @@ public class ResponseHolder {
         }
         if (locationPolicy != null) {
             return locationPolicy;
+        }
+        if (uriList != null) {
+            return uriList;
         }
         return null;
     }
@@ -151,13 +157,13 @@ public class ResponseHolder {
         this.contentInstance = contentInstance;
     }
 
-    public Discovery getDiscovery() {
-        return discovery;
-    }
+//    public Discovery getDiscovery() {
+//        return discovery;
+//    }
 
-    public void setDiscovery(Discovery discovery) {
-        this.discovery = discovery;
-    }
+//    public void setDiscovery(Discovery discovery) {
+//        this.discovery = discovery;
+//    }
 
     public NonBlockingRequest getNonBlockingRequest() {
         return nonBlockingRequest;
@@ -205,5 +211,13 @@ public class ResponseHolder {
 
     public void setLocationPolicy(LocationPolicy locationPolicy) {
         this.locationPolicy = locationPolicy;
+    }
+
+    public UriList getUriList() {
+        return uriList;
+    }
+
+    public void setUriList(UriList uriList) {
+        this.uriList = uriList;
     }
 }

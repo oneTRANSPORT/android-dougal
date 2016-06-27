@@ -136,7 +136,7 @@ public class AccessControlPolicy extends AnnounceableSubordinateResource {
                 RESPONSE_TYPE_BLOCKING_REQUEST, new DeleteCallback(dougalCallback));
     }
 
-    public static Discovery discover(@NonNull String aeId, @NonNull String baseUrl,
+    public static UriList discover(@NonNull String aeId, @NonNull String baseUrl,
                                      @NonNull String retrievePath, String userName, String password,
                                      FilterCriteria filterCriteria) throws Exception {
         // TODO Move this to resource base class.
@@ -147,7 +147,7 @@ public class AccessControlPolicy extends AnnounceableSubordinateResource {
             filterCriteria.putResourceType(Types.RESOURCE_TYPE_ACCESS_CONTROL_POLICY);
         }
         return discoverBase(aeId, baseUrl, retrievePath, userName, password,
-                RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria).body().getDiscovery();
+                RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria).body().getUriList();
     }
 
     public static void discoverAsync(@NonNull String aeId, @NonNull String baseUrl,
@@ -161,7 +161,7 @@ public class AccessControlPolicy extends AnnounceableSubordinateResource {
         }
         discoverAsyncBase(aeId, baseUrl, retrievePath, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria,
-                new RetrieveCallback<Discovery>(aeId, baseUrl, retrievePath, dougalCallback));
+                new RetrieveCallback<UriList>(aeId, baseUrl, retrievePath, dougalCallback));
     }
 
 

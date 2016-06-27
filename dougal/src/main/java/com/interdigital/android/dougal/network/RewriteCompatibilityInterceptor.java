@@ -3,6 +3,7 @@ package com.interdigital.android.dougal.network;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.interdigital.android.dougal.network.request.RequestHolder;
 import com.interdigital.android.dougal.resource.ApplicationEntity;
@@ -120,10 +121,15 @@ public class RewriteCompatibilityInterceptor implements Interceptor {
             content = maybeWrapPlainText(content);
             // Rewrite [""] to [].  The CSE wrongly sends back empty lists with a single
             // string element.
-            content = maybeConvertEmptyLists(content);
+            // I believe this has now been fixed.
+//            content = maybeConvertEmptyLists(content);
             // In the event that a primitive content field is returned in a non-blocking request
             // response, we have to add the missing "m2m:" prefix to the type.
             content = maybeAddM2MPrefix(content);
+            // In the event of a URI list being returned, change the array parameter to an object
+            // as follows:
+            // {"m2m:uril":["..."]} -> {"m2m:uril":{"list":["..."}}
+            content = maybeWrapArray(content);
         }
         return content;
     }
@@ -157,10 +163,11 @@ public class RewriteCompatibilityInterceptor implements Interceptor {
         return content;
     }
 
-    private String maybeConvertEmptyLists(String content) {
-        String newContent = content.replace("[\"\"]", "[]");
-        return newContent;
-    }
+    // TODO    Remove this in a future release.
+//    private String maybeConvertEmptyLists(String content) {
+//        String newContent = content.replace("[\"\"]", "[]");
+//        return newContent;
+//    }
 
     private String maybeAddM2MPrefix(String content) {
         if (content.startsWith("{\"m2m:req\":")) {
@@ -170,6 +177,14 @@ public class RewriteCompatibilityInterceptor implements Interceptor {
                 content = content.replace(",\"pc\":\"{\\\"" + type + "\\\":",
                         ",\"pc\":\"{\\\"m2m:" + type + "\\\":");
             }
+        }
+        return content;
+    }
+
+    private String maybeWrapArray(String content) {
+        if (content.contains("uril")) {
+            Log.i("RWCI", "JSON wrap: " + content.replaceFirst("\\[", "{\"list\":[").trim() + "}");
+            return content.replaceFirst("\\[", "{\"list\":[").trim() + "}";
         }
         return content;
     }

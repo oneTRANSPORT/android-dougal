@@ -342,9 +342,10 @@ public class Container extends AnnounceableResource {
                 new DeleteCallback(dougalCallback));
     }
 
-    public static Discovery discover(@NonNull String aeId, @NonNull String baseUrl,
-                                     @NonNull String retrievePath, String userName, String password,
-                                     FilterCriteria filterCriteria)
+    // TODO    Move this to base class with type parameter.
+    public static UriList discover(@NonNull String aeId, @NonNull String baseUrl,
+                                   @NonNull String retrievePath, String userName, String password,
+                                   FilterCriteria filterCriteria)
             throws Exception {
         if (filterCriteria == null) {
             filterCriteria = new FilterCriteria();
@@ -353,7 +354,7 @@ public class Container extends AnnounceableResource {
             filterCriteria.putResourceType(Types.RESOURCE_TYPE_CONTAINER);
         }
         return discoverBase(aeId, baseUrl, retrievePath, userName, password,
-                RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria).body().getDiscovery();
+                RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria).body().getUriList();
     }
 
     public static void discoverAsync(String aeId, String baseUrl, String retrievePath,
@@ -367,7 +368,7 @@ public class Container extends AnnounceableResource {
         }
         discoverAsyncBase(aeId, baseUrl, retrievePath, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria,
-                new RetrieveCallback<Discovery>(aeId, baseUrl, retrievePath, dougalCallback));
+                new RetrieveCallback<UriList>(aeId, baseUrl, retrievePath, dougalCallback));
     }
 
     public static Resource discoverNonBlocking(String aeId, String baseUrl, String retrievePath,
@@ -396,7 +397,7 @@ public class Container extends AnnounceableResource {
         }
         discoverAsyncBase(aeId, baseUrl, retrievePath, userName, password,
                 RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH, filterCriteria,
-                new RetrieveCallback<Discovery>(aeId, baseUrl, retrievePath, dougalCallback));
+                new RetrieveCallback<UriList>(aeId, baseUrl, retrievePath, dougalCallback));
     }
 
     public String getCreator() {

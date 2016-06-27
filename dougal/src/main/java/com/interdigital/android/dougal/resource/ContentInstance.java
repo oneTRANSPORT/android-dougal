@@ -87,9 +87,9 @@ public class ContentInstance extends AnnounceableResource {
         throw new UnsupportedOperationException("Content instances may not be updated");
     }
 
-    public static Discovery discover(@NonNull String aeId, @NonNull String baseUrl,
-                                     @NonNull String retrievePath, String userName, String password,
-                                     FilterCriteria filterCriteria)
+    public static UriList discover(@NonNull String aeId, @NonNull String baseUrl,
+                                   @NonNull String retrievePath, String userName, String password,
+                                   FilterCriteria filterCriteria)
             throws Exception {
         if (filterCriteria == null) {
             filterCriteria = new FilterCriteria();
@@ -98,7 +98,7 @@ public class ContentInstance extends AnnounceableResource {
             filterCriteria.putResourceType(Types.RESOURCE_TYPE_CONTENT_INSTANCE);
         }
         return discoverBase(aeId, baseUrl, retrievePath, userName, password,
-                RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria).body().getDiscovery();
+                RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria).body().getUriList();
     }
 
     public static void discoverAsync(@NonNull String aeId, @NonNull String baseUrl,
@@ -112,7 +112,7 @@ public class ContentInstance extends AnnounceableResource {
         }
         discoverAsyncBase(aeId, baseUrl, retrievePath, userName, password,
                 RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria,
-                new RetrieveCallback<Discovery>(aeId, baseUrl, retrievePath, dougalCallback));
+                new RetrieveCallback<UriList>(aeId, baseUrl, retrievePath, dougalCallback));
     }
 
     public String getCreator() {
