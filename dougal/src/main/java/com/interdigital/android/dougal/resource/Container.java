@@ -42,6 +42,9 @@ public class Container extends AnnounceableResource {
     @Expose
     @SerializedName("st")
     private Integer stateTag = null; // Strictly an unsigned int.
+    @Expose
+    @SerializedName("ch")
+    private ResourceChild[] resourceChildren; // The result of appending ?rcn=6.
 
     public Container(@NonNull String aeId, @NonNull String resourceId, @NonNull String resourceName,
                      @NonNull String baseUrl, @NonNull String createPath) {
@@ -176,6 +179,13 @@ public class Container extends AnnounceableResource {
                 RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH, null,
                 new RetrieveCallback<ContentInstance>(aeId, baseUrl, retrievePath + OLDEST_SUFFIX,
                         dougalCallback));
+    }
+
+    public static Container retrieveChildren(@NonNull String aeId, @NonNull String baseUrl,
+                                             @NonNull String retrievePath, String userName, String password)
+            throws Exception {
+        return retrieveChildren(aeId, baseUrl, retrievePath, userName, password,
+                RESPONSE_TYPE_BLOCKING_REQUEST).body().getContainer();
     }
 
     public void update(String userName, String password) throws Exception {
@@ -454,6 +464,14 @@ public class Container extends AnnounceableResource {
 
     public void setStateTag(Integer stateTag) {
         this.stateTag = stateTag;
+    }
+
+    public ResourceChild[] getResourceChildren() {
+        return resourceChildren;
+    }
+
+    public void setResourceChildren(ResourceChild[] resourceChildren) {
+        this.resourceChildren = resourceChildren;
     }
 }
 

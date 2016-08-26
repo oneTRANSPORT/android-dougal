@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/OneM2MSdk.iml" filepath="$PROJECT_DIR$/OneM2MSdk.iml" />
-      <module fileurl="file://$PROJECT_DIR$/oneM2MSdk/oneM2MSdk.iml" filepath="$PROJECT_DIR$/oneM2MSdk/oneM2MSdk.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dougal.iml" filepath="$PROJECT_DIR$/dougal.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dougal/dougal-dougal.iml" filepath="$PROJECT_DIR$/dougal/dougal-dougal.iml" />
     </modules>
   </component>
 </project>

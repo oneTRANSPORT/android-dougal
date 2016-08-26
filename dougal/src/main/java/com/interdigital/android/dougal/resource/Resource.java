@@ -252,6 +252,30 @@ public class Resource {
         return responseHolder;
     }
 
+    protected static Response<ResponseHolder> retrieveChildren(@NonNull String aeId,
+                                                           @NonNull String baseUrl, @NonNull String retrievePath,
+                                                           String userName, String password, @ResponseType int responseType)
+            throws Exception {
+        maybeCreateDougalService(baseUrl);
+        String auth = Credentials.basic(userName, password);
+        Map<String, String> queryMap = new HashMap<>();
+        queryMap.put("rcn","6");
+        queryMap.put(KEY_RESPONSE_TYPE, String.valueOf(responseType));
+        Call<ResponseHolder> call = dougalServiceMap.get(baseUrl)
+                .retrieve(aeId, retrievePath, auth, getRequestId(), queryMap);
+        Response<ResponseHolder> response = call.execute();
+        switch (responseType) {
+            case RESPONSE_TYPE_BLOCKING_REQUEST:
+                checkStatusCodes(response, Types.STATUS_CODE_OK);
+                Resource retrievedResource = response.body().getResource();
+                break;
+            default:
+                checkStatusCodes(response, Types.STATUS_CODE_ACCEPTED);
+                break;
+        }
+        return response;
+    }
+
     protected Response<ResponseHolder> update(String userName, String password,
                                               @ResponseType int responseType) throws Exception {
         maybeCreateDougalService(baseUrl);
