@@ -28,55 +28,55 @@ public class Schedule extends AnnounceableSubordinateResource {
         this.scheduleEntries = scheduleEntries;
     }
 
-    public void create(String userName, String password) throws Exception {
-        create(userName, password, RESPONSE_TYPE_BLOCKING_REQUEST);
+    public void create(String token) throws Exception {
+        create(token, RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
-    public void createNonBlocking(String userName, String password) throws Exception {
-        create(userName, password, RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH);
+    public void createNonBlocking(String token) throws Exception {
+        create(token, RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH);
     }
 
-    public void createAsync(String userName, String password, DougalCallback dougalCallback) {
-        createAsync(userName, password, new CreateCallback<>(this, dougalCallback),
+    public void createAsync(String token, DougalCallback dougalCallback) {
+        createAsync(token, new CreateCallback<>(this, dougalCallback),
                 RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
     public static Schedule retrieve(@NonNull String aeId, @NonNull String baseUrl,
-                                    @NonNull String retrievePath, String userName, String password)
+                                    @NonNull String retrievePath, String token)
             throws Exception {
-        return retrieveBase(aeId, baseUrl, retrievePath, userName, password,
+        return retrieveBase(aeId, baseUrl, retrievePath, token,
                 RESPONSE_TYPE_BLOCKING_REQUEST, null).body().getSchedule();
     }
 
     public static void retrieveAsync(@NonNull String aeId, @NonNull String baseUrl,
                                      @NonNull String retrievePath,
-                                     String userName, String password, DougalCallback dougalCallback) {
-        retrieveBaseAsync(aeId, baseUrl, retrievePath, userName, password,
+                                     String token, DougalCallback dougalCallback) {
+        retrieveBaseAsync(aeId, baseUrl, retrievePath, token,
                 RESPONSE_TYPE_BLOCKING_REQUEST, null,
                 new RetrieveCallback<Schedule>(aeId, baseUrl, retrievePath, dougalCallback));
     }
 
     public static Schedule retrieveNonBlockingPayload(@NonNull String aeId,
                                                       @NonNull String baseUrl, @NonNull String retrievePath,
-                                                      String userName, String password) throws Exception {
-        return ((NonBlockingRequest) retrieveBase(aeId, baseUrl, retrievePath, userName, password,
+                                                      String token) throws Exception {
+        return ((NonBlockingRequest) retrieveBase(aeId, baseUrl, retrievePath, token,
                 RESPONSE_TYPE_BLOCKING_REQUEST, null).body().getResource())
                 .getPrimitiveContent().getSchedule();
     }
 
-    public void update(String userName, String password) throws Exception {
-        Response<ResponseHolder> response = update(userName, password,
+    public void update(String token) throws Exception {
+        Response<ResponseHolder> response = update(token,
                 RESPONSE_TYPE_BLOCKING_REQUEST);
         setLastModifiedTime(response.body().getSchedule().getLastModifiedTime());
     }
 
-    public void updateAsync(String userName, String password, DougalCallback dougalCallback) {
-        updateAsync(userName, password, RESPONSE_TYPE_BLOCKING_REQUEST,
+    public void updateAsync(String token, DougalCallback dougalCallback) {
+        updateAsync(token, RESPONSE_TYPE_BLOCKING_REQUEST,
                 new UpdateCallback<>(this, dougalCallback));
     }
 
     public static UriList discover(@NonNull String aeId, @NonNull String baseUrl,
-                                   @NonNull String retrievePath, String userName, String password,
+                                   @NonNull String retrievePath, String token,
                                    FilterCriteria filterCriteria)
             throws Exception {
         if (filterCriteria == null) {
@@ -85,12 +85,12 @@ public class Schedule extends AnnounceableSubordinateResource {
         if (filterCriteria.getResourceType() == null) {
             filterCriteria.putResourceType(Types.RESOURCE_TYPE_SCHEDULE);
         }
-        return discoverBase(aeId, baseUrl, retrievePath, userName, password,
+        return discoverBase(aeId, baseUrl, retrievePath, token,
                 RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria).body().getUriList();
     }
 
     public static void discoverAsync(@NonNull String aeId, @NonNull String baseUrl,
-                                     @NonNull String retrievePath, String userName, String password,
+                                     @NonNull String retrievePath, String token,
                                      FilterCriteria filterCriteria, DougalCallback dougalCallback) {
         if (filterCriteria == null) {
             filterCriteria = new FilterCriteria();
@@ -98,7 +98,7 @@ public class Schedule extends AnnounceableSubordinateResource {
         if (filterCriteria.getResourceType() == null) {
             filterCriteria.putResourceType(Types.RESOURCE_TYPE_SCHEDULE);
         }
-        discoverAsyncBase(aeId, baseUrl, retrievePath, userName, password,
+        discoverAsyncBase(aeId, baseUrl, retrievePath, token,
                 RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria,
                 new RetrieveCallback<UriList>(aeId, baseUrl, retrievePath, dougalCallback));
     }
@@ -112,9 +112,9 @@ public class Schedule extends AnnounceableSubordinateResource {
     }
 
     // TODO    Should this be in a superclass?
-    private String create(String userName, String password, @ResponseType int responseType)
+    private String create(String token, @ResponseType int responseType)
             throws Exception {
-        Response<ResponseHolder> response = create(userName, password, responseType, this);
+        Response<ResponseHolder> response = create(token, responseType, this);
         switch (responseType) {
             case RESPONSE_TYPE_BLOCKING_REQUEST:
                 return null;

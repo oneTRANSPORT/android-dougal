@@ -35,49 +35,49 @@ public class AccessControlPolicy extends AnnounceableSubordinateResource {
         this.selfPrivileges = selfPrivileges;
     }
 
-    public void create(String userName, String password) throws Exception {
-        Response<ResponseHolder> response = create(userName, password,
+    public void create(String token) throws Exception {
+        Response<ResponseHolder> response = create(token, 
                 RESPONSE_TYPE_BLOCKING_REQUEST, this);
     }
 
-    public void createAsync(String userName, String password, DougalCallback dougalCallback) {
-        createAsync(userName, password, new CreateCallback<>(this, dougalCallback),
+    public void createAsync(String token,  DougalCallback dougalCallback) {
+        createAsync(token,  new CreateCallback<>(this, dougalCallback),
                 RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
     // TODO Non-blocking requests don't need "this".
-    public Resource createNonBlocking(String userName, String password) throws Exception {
-        return create(userName, password, RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH,
+    public Resource createNonBlocking(String token) throws Exception {
+        return create(token,  RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH,
                 this).body().getResource();
     }
 
-    public void createNonBlockingAsync(String userName, String password,
+    public void createNonBlockingAsync(String token, 
                                        DougalCallback dougalCallback) {
-        createAsync(userName, password, new NonBlockingIdCallback<>(dougalCallback),
+        createAsync(token,  new NonBlockingIdCallback<>(dougalCallback),
                 RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH);
     }
 
     public static AccessControlPolicy retrieve(@NonNull String aeId, @NonNull String baseUrl,
-                                               @NonNull String retrievePath, String userName, String password,
+                                               @NonNull String retrievePath, String token, 
                                                FilterCriteria filterCriteria)
             throws Exception {
-        return retrieveBase(aeId, baseUrl, retrievePath, userName, password,
+        return retrieveBase(aeId, baseUrl, retrievePath, token, 
                 RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria).body().getAccessControlPolicy();
     }
 
     public static void retrieveAsync(@NonNull String aeId, @NonNull String baseUrl,
-                                     @NonNull String retrievePath, String userName, String password,
+                                     @NonNull String retrievePath, String token, 
                                      FilterCriteria filterCriteria, DougalCallback dougalCallback) {
-        retrieveBaseAsync(aeId, baseUrl, retrievePath, userName, password,
+        retrieveBaseAsync(aeId, baseUrl, retrievePath, token, 
                 RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria,
                 new RetrieveCallback<AccessControlPolicy>(aeId, baseUrl, retrievePath, dougalCallback));
     }
 
     public static AccessControlPolicy retrievePayloadNonBlocking(@NonNull String aeId,
                                                                  @NonNull String baseUrl, @NonNull String retrievePath,
-                                                                 String userName, String password) throws Exception {
+                                                                 String token) throws Exception {
         ResponseHolder responseHolder = retrievePayloadNonBlockingBase(aeId, baseUrl, retrievePath,
-                userName, password);
+                token);
         if (responseHolder != null) {
             return responseHolder.getAccessControlPolicy();
         }
@@ -85,59 +85,59 @@ public class AccessControlPolicy extends AnnounceableSubordinateResource {
     }
 
     public static void retrievePayloadNonBlockingAsync(@NonNull String aeId, @NonNull String baseUrl,
-                                                       @NonNull String retrievePath, String userName, String password,
+                                                       @NonNull String retrievePath, String token, 
                                                        DougalCallback dougalCallback) {
-        retrieveBaseAsync(aeId, baseUrl, retrievePath, userName, password,
+        retrieveBaseAsync(aeId, baseUrl, retrievePath, token, 
                 RESPONSE_TYPE_BLOCKING_REQUEST, null,
                 new RetrieveCallback<AccessControlPolicy>(aeId, baseUrl, retrievePath, dougalCallback));
     }
 
-    public void update(String userName, String password) throws Exception {
-        Response<ResponseHolder> response = update(userName, password,
+    public void update(String token) throws Exception {
+        Response<ResponseHolder> response = update(token, 
                 RESPONSE_TYPE_BLOCKING_REQUEST);
         // TODO Should go in resource base class?
         setLastModifiedTime(response.body().getAccessControlPolicy().getLastModifiedTime());
     }
 
-    public void updateAsync(String userName, String password, DougalCallback dougalCallback) {
-        updateAsync(userName, password, RESPONSE_TYPE_BLOCKING_REQUEST,
+    public void updateAsync(String token,  DougalCallback dougalCallback) {
+        updateAsync(token,  RESPONSE_TYPE_BLOCKING_REQUEST,
                 new UpdateCallback<>(this, dougalCallback));
     }
 
-    public Resource updateNonBlocking(String userName, String password) throws Exception {
-        return update(userName, password,
+    public Resource updateNonBlocking(String token) throws Exception {
+        return update(token, 
                 RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH).body().getResource();
     }
 
-    public void updateNonBlockingAsync(String userName, String password,
+    public void updateNonBlockingAsync(String token, 
                                        DougalCallback dougalCallback) {
-        updateAsync(userName, password, RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH,
+        updateAsync(token,  RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH,
                 new UpdateCallback<>(this, dougalCallback));
     }
 
-    public void delete(String userName, String password) throws Exception {
-        delete(userName, password, RESPONSE_TYPE_BLOCKING_REQUEST);
+    public void delete(String token) throws Exception {
+        delete(token,  RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
     public static void delete(@NonNull String aeId, @NonNull String baseUrl,
-                              @NonNull String retrievePath, String userName, String password) throws Exception {
-        delete(aeId, baseUrl, retrievePath, userName, password, RESPONSE_TYPE_BLOCKING_REQUEST);
+                              @NonNull String retrievePath, String token) throws Exception {
+        delete(aeId, baseUrl, retrievePath, token,  RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
-    public void deleteAsync(String userName, String password, DougalCallback dougalCallback) {
-        deleteAsync(userName, password, RESPONSE_TYPE_BLOCKING_REQUEST,
+    public void deleteAsync(String token,  DougalCallback dougalCallback) {
+        deleteAsync(token,  RESPONSE_TYPE_BLOCKING_REQUEST,
                 new DeleteCallback(dougalCallback));
     }
 
     public static void deleteAsync(@NonNull String aeId, @NonNull String baseUrl,
-                                   @NonNull String retrievePath, String userName, String password,
+                                   @NonNull String retrievePath, String token, 
                                    DougalCallback dougalCallback) {
-        deleteAsync(aeId, baseUrl, retrievePath, userName, password,
+        deleteAsync(aeId, baseUrl, retrievePath, token, 
                 RESPONSE_TYPE_BLOCKING_REQUEST, new DeleteCallback(dougalCallback));
     }
 
     public static UriList discover(@NonNull String aeId, @NonNull String baseUrl,
-                                     @NonNull String retrievePath, String userName, String password,
+                                     @NonNull String retrievePath, String token, 
                                      FilterCriteria filterCriteria) throws Exception {
         // TODO Move this to resource base class.
         if (filterCriteria == null) {
@@ -146,12 +146,12 @@ public class AccessControlPolicy extends AnnounceableSubordinateResource {
         if (filterCriteria.getResourceType() == null) {
             filterCriteria.putResourceType(Types.RESOURCE_TYPE_ACCESS_CONTROL_POLICY);
         }
-        return discoverBase(aeId, baseUrl, retrievePath, userName, password,
+        return discoverBase(aeId, baseUrl, retrievePath, token, 
                 RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria).body().getUriList();
     }
 
     public static void discoverAsync(@NonNull String aeId, @NonNull String baseUrl,
-                                     @NonNull String retrievePath, String userName, String password,
+                                     @NonNull String retrievePath, String token, 
                                      FilterCriteria filterCriteria, DougalCallback dougalCallback) {
         if (filterCriteria == null) {
             filterCriteria = new FilterCriteria();
@@ -159,7 +159,7 @@ public class AccessControlPolicy extends AnnounceableSubordinateResource {
         if (filterCriteria.getResourceType() == null) {
             filterCriteria.putResourceType(Types.RESOURCE_TYPE_ACCESS_CONTROL_POLICY);
         }
-        discoverAsyncBase(aeId, baseUrl, retrievePath, userName, password,
+        discoverAsyncBase(aeId, baseUrl, retrievePath, token, 
                 RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria,
                 new RetrieveCallback<UriList>(aeId, baseUrl, retrievePath, dougalCallback));
     }

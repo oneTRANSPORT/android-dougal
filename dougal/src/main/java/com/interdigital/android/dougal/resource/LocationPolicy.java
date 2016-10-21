@@ -44,16 +44,16 @@ public class LocationPolicy extends AnnounceableResource {
         this.locationSource = locationSource;
     }
 
-    public void create(String userName, String password) throws Exception {
-        create(userName, password, RESPONSE_TYPE_BLOCKING_REQUEST);
+    public void create(String token) throws Exception {
+        create(token, RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
-    public void createNonBlocking(String userName, String password) throws Exception {
-        create(userName, password, RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH);
+    public void createNonBlocking(String token) throws Exception {
+        create(token, RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH);
     }
 
-    public void createAsync(String userName, String password, DougalCallback dougalCallback) {
-        createAsync(userName, password, new CreateCallback<>(this, dougalCallback),
+    public void createAsync(String token, DougalCallback dougalCallback) {
+        createAsync(token, new CreateCallback<>(this, dougalCallback),
                 RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
@@ -113,9 +113,9 @@ public class LocationPolicy extends AnnounceableResource {
         this.locationStatus = locationStatus;
     }
 
-    private String create(String userName, String password, @ResponseType int responseType)
+    private String create(String token, @ResponseType int responseType)
             throws Exception {
-        Response<ResponseHolder> response = create(userName, password, responseType, this);
+        Response<ResponseHolder> response = create(token, responseType, this);
         switch (responseType) {
             case RESPONSE_TYPE_BLOCKING_REQUEST:
                 return null;

@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.Credentials;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -44,6 +43,7 @@ public class Resource {
     // TODO Move these somewhere better.
     public static final String NO_AUTH = "HTTP 401 Not Authorized";
     public static final int NO_AUTH_CODE = 401;
+    public static final String BEARER_PREFIX = "Bearer ";
 
     @Retention(SOURCE)
     @IntDef({RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH,
@@ -140,10 +140,10 @@ public class Resource {
     // Notify POST
 
     // Need to add filtering on all RUD methods.
-    protected Response<ResponseHolder> create(String userName, String password,
+    protected Response<ResponseHolder> create(String token,
                                               @ResponseType int responseType, Resource creator) throws Exception {
         maybeCreateDougalService(baseUrl);
-        String auth = Credentials.basic(userName, password);
+        String auth = getAuthString(token);
         RequestHolder requestHolder = new RequestHolder(this);
         String contentType = CONTENT_TYPE_PREFIX + resourceType;
         Call<ResponseHolder> call = dougalServiceMap.get(baseUrl).create(aeId, createPath, auth,
@@ -168,10 +168,10 @@ public class Resource {
     }
 
     // TODO Callbacks need to support async ACCEPTED.
-    protected void createAsync(String userName, String password, Callback<ResponseHolder> callback,
+    protected void createAsync(String token, Callback<ResponseHolder> callback,
                                @ResponseType int responseType) {
         maybeCreateDougalService(baseUrl);
-        String auth = Credentials.basic(userName, password);
+        String auth = getAuthString(token);
         RequestHolder requestHolder = new RequestHolder(this);
         String contentType = CONTENT_TYPE_PREFIX + resourceType;
         Call<ResponseHolder> call = dougalServiceMap.get(baseUrl).create(aeId, createPath, auth,
@@ -180,12 +180,11 @@ public class Resource {
     }
 
     protected static Response<ResponseHolder> retrieveBase(@NonNull String aeId,
-                                                           @NonNull String baseUrl, @NonNull String retrievePath,
-                                                           String userName, String password,
+                                                           @NonNull String baseUrl, @NonNull String retrievePath, String token,
                                                            @ResponseType int responseType, FilterCriteria filterCriteria)
             throws Exception {
         maybeCreateDougalService(baseUrl);
-        String auth = Credentials.basic(userName, password);
+        String auth = getAuthString(token);
         Map<String, String> queryMap = new HashMap<>();
         if (filterCriteria != null) {
             queryMap = filterCriteria.getQueryMap();
@@ -210,11 +209,11 @@ public class Resource {
     }
 
     protected static void retrieveBaseAsync(@NonNull String aeId, @NonNull String baseUrl,
-                                            @NonNull String retrievePath, String userName, String password,
+                                            @NonNull String retrievePath, String token,
                                             @ResponseType int responseType, FilterCriteria filterCriteria,
                                             Callback<ResponseHolder> callback) {
         maybeCreateDougalService(baseUrl);
-        String auth = Credentials.basic(userName, password);
+        String auth = getAuthString(token);
         Map<String, String> queryMap = new HashMap<>();
         if (filterCriteria != null) {
             queryMap = filterCriteria.getQueryMap();
@@ -226,26 +225,26 @@ public class Resource {
     }
 
     public static Resource retrieveIdNonBlocking(@NonNull String aeId, @NonNull String baseUrl,
-                                                 @NonNull String retrievePath, String userName, String password,
-                                                 FilterCriteria filterCriteria) throws Exception {
-        return retrieveBase(aeId, baseUrl, retrievePath, userName, password,
+                                                 @NonNull String retrievePath, String token, FilterCriteria filterCriteria)
+            throws Exception {
+        return retrieveBase(aeId, baseUrl, retrievePath, token,
                 RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH, filterCriteria).body().getResource();
     }
 
     public static void retrieveIdNonBlockingAsync(@NonNull String aeId, @NonNull String baseUrl,
-                                                  @NonNull String retrievePath, String userName, String password,
-                                                  FilterCriteria filterCriteria, DougalCallback dougalCallback) {
+                                                  @NonNull String retrievePath, String token, FilterCriteria filterCriteria,
+                                                  DougalCallback dougalCallback) {
         NonBlockingIdCallback<Resource> callback = new NonBlockingIdCallback<>(dougalCallback);
-        retrieveBaseAsync(aeId, baseUrl, retrievePath, userName, password,
+        retrieveBaseAsync(aeId, baseUrl, retrievePath, token,
                 RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH, filterCriteria, callback);
     }
 
     public static ResponseHolder retrievePayloadNonBlockingBase(@NonNull String aeId,
                                                                 @NonNull String baseUrl, @NonNull String retrievePath,
-                                                                String userName, String password)
+                                                                String token)
             throws Exception {
         NonBlockingRequest nonBlockingRequest = (NonBlockingRequest) retrieveBase(aeId, baseUrl,
-                retrievePath, userName, password, RESPONSE_TYPE_BLOCKING_REQUEST, null)
+                retrievePath, token, RESPONSE_TYPE_BLOCKING_REQUEST, null)
                 .body().getResource();
         ResponseHolder responseHolder = nonBlockingRequest.getPrimitiveContent();
         responseHolder.setStatusCode(nonBlockingRequest.getOperationResult().getResponseStatusCode());
@@ -253,13 +252,13 @@ public class Resource {
     }
 
     protected static Response<ResponseHolder> retrieveChildren(@NonNull String aeId,
-                                                           @NonNull String baseUrl, @NonNull String retrievePath,
-                                                           String userName, String password, @ResponseType int responseType)
+                                                               @NonNull String baseUrl, @NonNull String retrievePath,
+                                                               String token, @ResponseType int responseType)
             throws Exception {
         maybeCreateDougalService(baseUrl);
-        String auth = Credentials.basic(userName, password);
+        String auth = getAuthString(token);
         Map<String, String> queryMap = new HashMap<>();
-        queryMap.put("rcn","6");
+        queryMap.put("rcn", "6");
         queryMap.put(KEY_RESPONSE_TYPE, String.valueOf(responseType));
         Call<ResponseHolder> call = dougalServiceMap.get(baseUrl)
                 .retrieve(aeId, retrievePath, auth, getRequestId(), queryMap);
@@ -276,10 +275,10 @@ public class Resource {
         return response;
     }
 
-    protected Response<ResponseHolder> update(String userName, String password,
-                                              @ResponseType int responseType) throws Exception {
+    protected Response<ResponseHolder> update(String token, @ResponseType int responseType)
+            throws Exception {
         maybeCreateDougalService(baseUrl);
-        String auth = Credentials.basic(userName, password);
+        String auth = getAuthString(token);
         RequestHolder requestHolder = new RequestHolder(this);
         HashMap<String, String> queryMap = new HashMap<>();
         queryMap.put(KEY_RESPONSE_TYPE, String.valueOf(responseType));
@@ -297,10 +296,10 @@ public class Resource {
         return response;
     }
 
-    protected void updateAsync(String userName, String password, @ResponseType int responseType,
+    protected void updateAsync(String token, @ResponseType int responseType,
                                Callback<ResponseHolder> callback) {
         maybeCreateDougalService(baseUrl);
-        String auth = Credentials.basic(userName, password);
+        String auth = getAuthString(token);
         RequestHolder requestHolder = new RequestHolder(this);
         HashMap<String, String> queryMap = new HashMap<>();
         queryMap.put(KEY_RESPONSE_TYPE, String.valueOf(responseType));
@@ -311,32 +310,32 @@ public class Resource {
 
     // TODO Non-blocking updates.
 
-    public void delete(String userName, String password) throws Exception {
-        delete(userName, password, RESPONSE_TYPE_BLOCKING_REQUEST);
+    public void delete(String token) throws Exception {
+        delete(token, RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
     public static void delete(@NonNull String aeId, @NonNull String baseUrl,
-                              @NonNull String retrievePath, String userName, String password) throws Exception {
-        delete(aeId, baseUrl, retrievePath, userName, password, RESPONSE_TYPE_BLOCKING_REQUEST);
+                              @NonNull String retrievePath, String token) throws Exception {
+        delete(aeId, baseUrl, retrievePath, token, RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
-    public void deleteAsync(String userName, String password, DougalCallback dougalCallback) {
-        deleteAsync(userName, password, RESPONSE_TYPE_BLOCKING_REQUEST,
+    public void deleteAsync(String token, DougalCallback dougalCallback) {
+        deleteAsync(token, RESPONSE_TYPE_BLOCKING_REQUEST,
                 new DeleteCallback(dougalCallback));
     }
 
     public static void deleteAsync(@NonNull String aeId, @NonNull String baseUrl,
-                                   @NonNull String retrievePath, String userName, String password,
+                                   @NonNull String retrievePath, String token,
                                    DougalCallback dougalCallback) {
-        deleteAsync(aeId, baseUrl, retrievePath, userName, password,
+        deleteAsync(aeId, baseUrl, retrievePath, token,
                 RESPONSE_TYPE_BLOCKING_REQUEST, new DeleteCallback(dougalCallback));
     }
 
     protected static void delete(@NonNull String aeId, @NonNull String baseUrl,
-                                 @NonNull String retrievePath, String userName, String password,
-                                 @ResponseType int responseType) throws Exception {
+                                 @NonNull String retrievePath, String token, @ResponseType int responseType)
+            throws Exception {
         maybeCreateDougalService(baseUrl);
-        String auth = Credentials.basic(userName, password);
+        String auth = getAuthString(token);
         HashMap<String, String> queryMap = new HashMap<>();
         queryMap.put(KEY_RESPONSE_TYPE, String.valueOf(responseType));
         Call<Void> call = dougalServiceMap.get(baseUrl).delete(aeId, retrievePath, auth, getRequestId(),
@@ -352,10 +351,9 @@ public class Resource {
         }
     }
 
-    protected void delete(String userName, String password, @ResponseType int responseType)
-            throws Exception {
+    protected void delete(String token, @ResponseType int responseType) throws Exception {
         maybeCreateDougalService(baseUrl);
-        String auth = Credentials.basic(userName, password);
+        String auth = getAuthString(token);
         HashMap<String, String> queryMap = new HashMap<>();
         queryMap.put(KEY_RESPONSE_TYPE, String.valueOf(responseType));
         Call<Void> call = dougalServiceMap.get(baseUrl).delete(aeId, retrievePath, auth, getRequestId(),
@@ -372,10 +370,10 @@ public class Resource {
     }
 
     protected static void deleteAsync(@NonNull String aeId, @NonNull String baseUrl,
-                                      @NonNull String retrievePath, String userName, String password,
-                                      @ResponseType int responseType, Callback<Void> callback) {
+                                      @NonNull String retrievePath, String token, @ResponseType int responseType,
+                                      Callback<Void> callback) {
         maybeCreateDougalService(baseUrl);
-        String auth = Credentials.basic(userName, password);
+        String auth = getAuthString(token);
         HashMap<String, String> queryMap = new HashMap<>();
         queryMap.put(KEY_RESPONSE_TYPE, String.valueOf(responseType));
         Call<Void> call = dougalServiceMap.get(baseUrl).delete(aeId, retrievePath, auth, getRequestId(),
@@ -383,10 +381,9 @@ public class Resource {
         call.enqueue(callback);
     }
 
-    protected void deleteAsync(String userName, String password, @ResponseType int responseType,
-                               Callback<Void> callback) {
+    protected void deleteAsync(String token, @ResponseType int responseType, Callback<Void> callback) {
         maybeCreateDougalService(baseUrl);
-        String auth = Credentials.basic(userName, password);
+        String auth = getAuthString(token);
         HashMap<String, String> queryMap = new HashMap<>();
         queryMap.put(KEY_RESPONSE_TYPE, String.valueOf(responseType));
         Call<Void> call = dougalServiceMap.get(baseUrl).delete(aeId, retrievePath, auth, getRequestId(),
@@ -396,10 +393,10 @@ public class Resource {
 
     protected static Response<ResponseHolder> discoverBase(@NonNull String aeId,
                                                            @NonNull String baseUrl, @NonNull String retrievePath,
-                                                           String userName, String password, @ResponseType int responseType,
+                                                           String token, @ResponseType int responseType,
                                                            FilterCriteria filterCriteria) throws Exception {
         maybeCreateDougalService(baseUrl);
-        String auth = Credentials.basic(userName, password);
+        String auth = getAuthString(token);
         Map<String, String> queryMap = new HashMap<>();
         if (filterCriteria != null) {
             queryMap = filterCriteria.getQueryMap();
@@ -420,11 +417,10 @@ public class Resource {
     }
 
     protected static void discoverAsyncBase(@NonNull String aeId, @NonNull String baseUrl,
-                                            @NonNull String retrievePath, String userName, String password,
-                                            @ResponseType int responseType, FilterCriteria filterCriteria,
-                                            Callback<ResponseHolder> callback) {
+                                            @NonNull String retrievePath, String token, @ResponseType int responseType,
+                                            FilterCriteria filterCriteria, Callback<ResponseHolder> callback) {
         maybeCreateDougalService(baseUrl);
-        String auth = Credentials.basic(userName, password);
+        String auth = getAuthString(token);
         Map<String, String> queryMap = new HashMap<>();
         if (filterCriteria != null) {
             queryMap = filterCriteria.getQueryMap();
@@ -601,5 +597,8 @@ public class Resource {
     private static synchronized String getRequestId() {
         return UUID.randomUUID().toString();
     }
-}
 
+    private static String getAuthString(String token) {
+        return BEARER_PREFIX + token;
+    }
+}

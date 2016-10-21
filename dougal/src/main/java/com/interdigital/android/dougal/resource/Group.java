@@ -56,26 +56,25 @@ public class Group extends AnnounceableResource {
     }
 
     // TODO Finish this.
-    public void create(String userName, String password) throws Exception {
-        Response<ResponseHolder> response = create(userName, password,
-                RESPONSE_TYPE_BLOCKING_REQUEST, this);
+    public void create(String token) throws Exception {
+        Response<ResponseHolder> response = create(token, RESPONSE_TYPE_BLOCKING_REQUEST, this);
     }
 
-    public void createAsync(String userName, String password, DougalCallback dougalCallback) {
-        createAsync(userName, password, new CreateCallback<>(this, dougalCallback),
+    public void createAsync(String token, DougalCallback dougalCallback) {
+        createAsync(token, new CreateCallback<>(this, dougalCallback),
                 RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
     // TODO Test.
-    public Resource createNonBlocking(String userName, String password) throws Exception {
-        return create(userName, password, RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH,
+    public Resource createNonBlocking(String token) throws Exception {
+        return create(token, RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH,
                 this).body().getResource();
     }
 
     // TODO Test.
-    public void createNonBlockingAsync(String userName, String password,
+    public void createNonBlockingAsync(String token,
                                        DougalCallback dougalCallback) {
-        createAsync(userName, password, new NonBlockingIdCallback<>(dougalCallback),
+        createAsync(token, new NonBlockingIdCallback<>(dougalCallback),
                 RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH);
     }
 

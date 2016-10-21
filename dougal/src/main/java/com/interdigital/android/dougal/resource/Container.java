@@ -52,53 +52,53 @@ public class Container extends AnnounceableResource {
                 createPath);
     }
 
-    public void create(String userName, String password)
+    public void create(String token)
             throws Exception {
-        Response<ResponseHolder> response = create(userName, password,
+        Response<ResponseHolder> response = create(token,
                 RESPONSE_TYPE_BLOCKING_REQUEST, this);
         // TODO Non-blocking requests.
     }
 
-    public void createAsync(String userName, String password, DougalCallback dougalCallback) {
-        createAsync(userName, password, new CreateCallback<>(this, dougalCallback),
+    public void createAsync(String token, DougalCallback dougalCallback) {
+        createAsync(token, new CreateCallback<>(this, dougalCallback),
                 RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
     // TODO Test.
-    public Resource createNonBlocking(String userName, String password)
+    public Resource createNonBlocking(String token)
             throws Exception {
-        return create(userName, password,
+        return create(token,
                 RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH, this).body().getResource();
     }
 
     // TODO Test.
-    public void createNonBlockingAsync(String userName, String password,
+    public void createNonBlockingAsync(String token,
                                        DougalCallback dougalCallback) {
-        createAsync(userName, password, new NonBlockingIdCallback<>(dougalCallback),
+        createAsync(token, new NonBlockingIdCallback<>(dougalCallback),
                 RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH);
     }
 
     public static Container retrieve(@NonNull String aeId, @NonNull String baseUrl,
-                                     @NonNull String retrievePath, String userName, String password,
+                                     @NonNull String retrievePath, String token,
                                      FilterCriteria filterCriteria) throws Exception {
-        return retrieveBase(aeId, baseUrl, retrievePath, userName, password,
+        return retrieveBase(aeId, baseUrl, retrievePath, token,
                 RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria).body()
                 .getContainer();
     }
 
     public static void retrieveAsync(@NonNull String aeId, @NonNull String baseUrl,
-                                     @NonNull String retrievePath, String userName, String password,
+                                     @NonNull String retrievePath, String token,
                                      FilterCriteria filterCriteria, DougalCallback dougalCallback) {
-        retrieveBaseAsync(aeId, baseUrl, retrievePath, userName, password,
+        retrieveBaseAsync(aeId, baseUrl, retrievePath, token,
                 RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria,
                 new RetrieveCallback<Container>(aeId, baseUrl, retrievePath, dougalCallback));
     }
 
     public static Container retrievePayloadNonBlocking(@NonNull String aeId, @NonNull String baseUrl,
-                                                       @NonNull String retrievePath, String userName, String password)
+                                                       @NonNull String retrievePath, String token)
             throws Exception {
         ResponseHolder responseHolder = retrievePayloadNonBlockingBase(aeId, baseUrl, retrievePath,
-                userName, password);
+                token);
         if (responseHolder != null) {
             return responseHolder.getContainer();
         }
@@ -106,24 +106,23 @@ public class Container extends AnnounceableResource {
     }
 
     public static void retrievePayloadNonBlockingAsync(@NonNull String aeId, @NonNull String baseUrl,
-                                                       @NonNull String retrievePath, String userName, String password,
+                                                       @NonNull String retrievePath, String token,
                                                        DougalCallback dougalCallback) {
-        retrieveBaseAsync(aeId, baseUrl, retrievePath, userName, password,
+        retrieveBaseAsync(aeId, baseUrl, retrievePath, token,
                 RESPONSE_TYPE_BLOCKING_REQUEST, null,
                 new RetrieveCallback<Container>(aeId, baseUrl, retrievePath, dougalCallback));
     }
 
     public static ContentInstance retrieveLatest(@NonNull String aeId, @NonNull String baseUrl,
-                                                 @NonNull String retrievePath, String userName, String password)
+                                                 @NonNull String retrievePath, String token)
             throws Exception {
-        return ContentInstance.retrieve(aeId, baseUrl, retrievePath + LATEST_SUFFIX, userName,
-                password);
+        return ContentInstance.retrieve(aeId, baseUrl, retrievePath + LATEST_SUFFIX, token);
     }
 
     public static void retrieveLatestAsync(@NonNull String aeId, @NonNull String baseUrl,
-                                           @NonNull String retrievePath, String userName, String password,
+                                           @NonNull String retrievePath, String token,
                                            DougalCallback dougalCallback) {
-        retrieveBaseAsync(aeId, baseUrl, retrievePath + LATEST_SUFFIX, userName, password,
+        retrieveBaseAsync(aeId, baseUrl, retrievePath + LATEST_SUFFIX, token,
                 RESPONSE_TYPE_BLOCKING_REQUEST, null,
                 new RetrieveCallback<ContentInstance>(aeId, baseUrl, retrievePath + LATEST_SUFFIX,
                         dougalCallback));
@@ -131,33 +130,31 @@ public class Container extends AnnounceableResource {
 
     // TODO Test.
     public static Resource retrieveLatestIdNonBlocking(@NonNull String aeId, @NonNull String baseUrl,
-                                                       @NonNull String retrievePath, String userName, String password)
+                                                       @NonNull String retrievePath, String token)
             throws Exception {
-        return Resource.retrieveIdNonBlocking(aeId, baseUrl, retrievePath + LATEST_SUFFIX, userName,
-                password, null);
+        return Resource.retrieveIdNonBlocking(aeId, baseUrl, retrievePath + LATEST_SUFFIX, token,
+                null);
     }
 
     // TODO Test.
     public static void retrieveLatestIdNonBlockingAsync(@NonNull String aeId, @NonNull String baseUrl,
-                                                        @NonNull String retrievePath, String userName, String password,
+                                                        @NonNull String retrievePath, String token,
                                                         DougalCallback dougalCallback) {
-        retrieveBaseAsync(aeId, baseUrl, retrievePath + LATEST_SUFFIX, userName, password,
+        retrieveBaseAsync(aeId, baseUrl, retrievePath + LATEST_SUFFIX, token,
                 RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH, null,
                 new RetrieveCallback<ContentInstance>(aeId, baseUrl, retrievePath + LATEST_SUFFIX,
                         dougalCallback));
     }
 
     public static ContentInstance retrieveOldest(@NonNull String aeId, @NonNull String baseUrl,
-                                                 @NonNull String retrievePath, String userName, String password)
-            throws Exception {
-        return ContentInstance.retrieve(aeId, baseUrl, retrievePath + OLDEST_SUFFIX, userName,
-                password);
+                                                 @NonNull String retrievePath, String token) throws Exception {
+        return ContentInstance.retrieve(aeId, baseUrl, retrievePath + OLDEST_SUFFIX, token);
     }
 
     public static void retrieveOldestAsync(@NonNull String aeId, @NonNull String baseUrl,
-                                           @NonNull String retrievePath, String userName, String password,
+                                           @NonNull String retrievePath, String token,
                                            DougalCallback dougalCallback) {
-        retrieveBaseAsync(aeId, baseUrl, retrievePath + OLDEST_SUFFIX, userName, password,
+        retrieveBaseAsync(aeId, baseUrl, retrievePath + OLDEST_SUFFIX, token,
                 RESPONSE_TYPE_BLOCKING_REQUEST, null,
                 new RetrieveCallback<ContentInstance>(aeId, baseUrl, retrievePath + OLDEST_SUFFIX,
                         dougalCallback));
@@ -165,37 +162,37 @@ public class Container extends AnnounceableResource {
 
     // TODO Test.
     public static Resource retrieveOldestIdNonBlocking(@NonNull String aeId, @NonNull String baseUrl,
-                                                       @NonNull String retrievePath, String userName, String password)
+                                                       @NonNull String retrievePath, String token)
             throws Exception {
-        return Resource.retrieveIdNonBlocking(aeId, baseUrl, retrievePath + OLDEST_SUFFIX, userName,
-                password, null);
+        return Resource.retrieveIdNonBlocking(aeId, baseUrl, retrievePath + OLDEST_SUFFIX, token,
+                null);
     }
 
     // TODO Test.
     public static void retrieveOldestIdNonBlockingAsync(@NonNull String aeId, @NonNull String baseUrl,
-                                                        @NonNull String retrievePath, String userName, String password,
+                                                        @NonNull String retrievePath, String token,
                                                         DougalCallback dougalCallback) {
-        retrieveBaseAsync(aeId, baseUrl, retrievePath + OLDEST_SUFFIX, userName, password,
+        retrieveBaseAsync(aeId, baseUrl, retrievePath + OLDEST_SUFFIX, token,
                 RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH, null,
                 new RetrieveCallback<ContentInstance>(aeId, baseUrl, retrievePath + OLDEST_SUFFIX,
                         dougalCallback));
     }
 
     public static Container retrieveChildren(@NonNull String aeId, @NonNull String baseUrl,
-                                             @NonNull String retrievePath, String userName, String password)
+                                             @NonNull String retrievePath, String token)
             throws Exception {
-        return retrieveChildren(aeId, baseUrl, retrievePath, userName, password,
+        return retrieveChildren(aeId, baseUrl, retrievePath, token,
                 RESPONSE_TYPE_BLOCKING_REQUEST).body().getContainer();
     }
 
-    public void update(String userName, String password) throws Exception {
-        Response<ResponseHolder> response = update(userName, password,
+    public void update(String token) throws Exception {
+        Response<ResponseHolder> response = update(token,
                 RESPONSE_TYPE_BLOCKING_REQUEST);
         setLastModifiedTime(response.body().getContainer().getLastModifiedTime());
     }
 
-    public void updateAsync(String userName, String password, DougalCallback dougalCallback) {
-        updateAsync(userName, password, RESPONSE_TYPE_BLOCKING_REQUEST,
+    public void updateAsync(String token, DougalCallback dougalCallback) {
+        updateAsync(token, RESPONSE_TYPE_BLOCKING_REQUEST,
                 new UpdateCallback<>(this, dougalCallback));
     }
 
@@ -210,151 +207,151 @@ public class Container extends AnnounceableResource {
     }
 
     // TODO Test.
-    public void deleteNonBlocking(String userName, String password) throws Exception {
-        delete(userName, password, RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH);
+    public void deleteNonBlocking(String token) throws Exception {
+        delete(token, RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH);
     }
 
     // TODO Test.
     public static void deleteNonBlocking(@NonNull String aeId, @NonNull String baseUrl,
-                                         @NonNull String retrievePath, String userName, String password)
+                                         @NonNull String retrievePath, String token)
             throws Exception {
-        delete(aeId, baseUrl, retrievePath, userName, password,
+        delete(aeId, baseUrl, retrievePath, token,
                 RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH);
     }
 
     // TODO Test, callback.
-    public void deleteNonBlockingAsync(String userName, String password,
+    public void deleteNonBlockingAsync(String token,
                                        DougalCallback dougalCallback) {
-        deleteAsync(userName, password, RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH,
+        deleteAsync(token, RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH,
                 new DeleteCallback(dougalCallback));
     }
 
     // TODO Test.
     public static void deleteNonBlockingAsync(@NonNull String aeId, @NonNull String baseUrl,
-                                              @NonNull String retrievePath, String userName, String password,
+                                              @NonNull String retrievePath, String token,
                                               DougalCallback dougalCallback) {
-        deleteAsync(aeId, baseUrl, retrievePath, userName, password,
+        deleteAsync(aeId, baseUrl, retrievePath, token,
                 RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH,
                 new DeleteCallback(dougalCallback));
     }
 
-    public void deleteLatest(String userName, String password) throws Exception {
-        delete(getAeId(), getBaseUrl(), getRetrievePath() + LATEST_SUFFIX, userName, password,
+    public void deleteLatest(String token) throws Exception {
+        delete(getAeId(), getBaseUrl(), getRetrievePath() + LATEST_SUFFIX, token,
                 RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
     public static void deleteLatest(@NonNull String aeId, @NonNull String baseUrl,
-                                    @NonNull String retrievePath, String userName, String password)
+                                    @NonNull String retrievePath, String token)
             throws Exception {
-        delete(aeId, baseUrl, retrievePath + LATEST_SUFFIX, userName, password,
+        delete(aeId, baseUrl, retrievePath + LATEST_SUFFIX, token,
                 RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
-    public void deleteLatestAsync(String userName, String password, DougalCallback dougalCallback) {
-        deleteAsync(getAeId(), getBaseUrl(), getRetrievePath() + LATEST_SUFFIX, userName, password,
+    public void deleteLatestAsync(String token, DougalCallback dougalCallback) {
+        deleteAsync(getAeId(), getBaseUrl(), getRetrievePath() + LATEST_SUFFIX, token,
                 RESPONSE_TYPE_BLOCKING_REQUEST,
                 new DeleteCallback(dougalCallback));
     }
 
     public static void deleteLatestAsync(@NonNull String aeId, @NonNull String baseUrl,
-                                         @NonNull String retrievePath, String userName, String password,
+                                         @NonNull String retrievePath, String token,
                                          DougalCallback dougalCallback) {
-        deleteAsync(aeId, baseUrl, retrievePath + LATEST_SUFFIX, userName, password,
+        deleteAsync(aeId, baseUrl, retrievePath + LATEST_SUFFIX, token,
                 RESPONSE_TYPE_BLOCKING_REQUEST,
                 new DeleteCallback(dougalCallback));
     }
 
     // TODO Test.  Note only last argument differs.  Merge with above?
-    public void deleteLatestNonBlocking(String userName, String password) throws Exception {
-        delete(getAeId(), getBaseUrl(), getRetrievePath() + LATEST_SUFFIX, userName, password,
+    public void deleteLatestNonBlocking(String token) throws Exception {
+        delete(getAeId(), getBaseUrl(), getRetrievePath() + LATEST_SUFFIX, token,
                 RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH);
     }
 
     // TODO Test.
     public static void deleteLatestNonBlocking(@NonNull String aeId, @NonNull String baseUrl,
-                                               @NonNull String retrievePath, String userName, String password)
+                                               @NonNull String retrievePath, String token)
             throws Exception {
-        delete(aeId, baseUrl, retrievePath + LATEST_SUFFIX, userName, password,
+        delete(aeId, baseUrl, retrievePath + LATEST_SUFFIX, token,
                 RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH);
     }
 
     // TODO Test.
-    public void deleteLatestNonBlockingAsync(String userName, String password,
+    public void deleteLatestNonBlockingAsync(String token,
                                              DougalCallback dougalCallback) {
-        deleteAsync(getAeId(), getBaseUrl(), getRetrievePath() + LATEST_SUFFIX, userName, password,
+        deleteAsync(getAeId(), getBaseUrl(), getRetrievePath() + LATEST_SUFFIX, token,
                 RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH,
                 new DeleteCallback(dougalCallback));
     }
 
     // TODO Test.
     public static void deleteLatestNonBlockingAsync(@NonNull String aeId, @NonNull String baseUrl,
-                                                    @NonNull String retrievePath, String userName, String password,
+                                                    @NonNull String retrievePath, String token,
                                                     DougalCallback dougalCallback) {
-        deleteAsync(aeId, baseUrl, retrievePath + LATEST_SUFFIX, userName, password,
+        deleteAsync(aeId, baseUrl, retrievePath + LATEST_SUFFIX, token,
                 RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH,
                 new DeleteCallback(dougalCallback));
     }
 
-    public void deleteOldest(String userName, String password) throws Exception {
-        delete(getAeId(), getBaseUrl(), getRetrievePath() + OLDEST_SUFFIX, userName, password,
+    public void deleteOldest(String token) throws Exception {
+        delete(getAeId(), getBaseUrl(), getRetrievePath() + OLDEST_SUFFIX, token,
                 RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
     public static void deleteOldest(@NonNull String aeId, @NonNull String baseUrl,
-                                    @NonNull String retrievePath, String userName, String password)
+                                    @NonNull String retrievePath, String token)
             throws Exception {
-        delete(aeId, baseUrl, retrievePath + OLDEST_SUFFIX, userName, password,
+        delete(aeId, baseUrl, retrievePath + OLDEST_SUFFIX, token,
                 RESPONSE_TYPE_BLOCKING_REQUEST);
     }
 
-    public void deleteOldestAsync(String userName, String password, DougalCallback dougalCallback) {
-        deleteAsync(getAeId(), getBaseUrl(), getRetrievePath() + OLDEST_SUFFIX, userName, password,
+    public void deleteOldestAsync(String token, DougalCallback dougalCallback) {
+        deleteAsync(getAeId(), getBaseUrl(), getRetrievePath() + OLDEST_SUFFIX, token,
                 RESPONSE_TYPE_BLOCKING_REQUEST,
                 new DeleteCallback(dougalCallback));
     }
 
     public static void deleteOldestAsync(@NonNull String aeId, @NonNull String baseUrl,
-                                         @NonNull String retrivePath, String userName, String password,
+                                         @NonNull String retrivePath, String token,
                                          DougalCallback dougalCallback) {
-        deleteAsync(aeId, baseUrl, retrivePath + OLDEST_SUFFIX, userName, password,
+        deleteAsync(aeId, baseUrl, retrivePath + OLDEST_SUFFIX, token,
                 RESPONSE_TYPE_BLOCKING_REQUEST,
                 new DeleteCallback(dougalCallback));
     }
 
     // TODO Test.
-    public void deleteOldestNonBlocking(String userName, String password) throws Exception {
-        delete(getAeId(), getBaseUrl(), getRetrievePath() + OLDEST_SUFFIX, userName, password,
+    public void deleteOldestNonBlocking(String token) throws Exception {
+        delete(getAeId(), getBaseUrl(), getRetrievePath() + OLDEST_SUFFIX, token,
                 RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH);
     }
 
     // TODO Test.
     public static void deleteOldestNonBlocking(@NonNull String aeId, @NonNull String baseUrl,
-                                               @NonNull String retrievePath, String userName, String password)
+                                               @NonNull String retrievePath, String token)
             throws Exception {
-        delete(aeId, baseUrl, retrievePath + OLDEST_SUFFIX, userName, password,
+        delete(aeId, baseUrl, retrievePath + OLDEST_SUFFIX, token,
                 RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH);
     }
 
     // TODO Test.
-    public void deleteOldestNonBlockingAsync(String userName, String password,
+    public void deleteOldestNonBlockingAsync(String token,
                                              DougalCallback dougalCallback) {
-        deleteAsync(getAeId(), getBaseUrl(), getRetrievePath() + OLDEST_SUFFIX, userName, password,
+        deleteAsync(getAeId(), getBaseUrl(), getRetrievePath() + OLDEST_SUFFIX, token,
                 RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH,
                 new DeleteCallback(dougalCallback));
     }
 
     // TODO Test.
     public static void deleteOldestNonBlockingAsync(@NonNull String aeId, @NonNull String baseUrl,
-                                                    @NonNull String retrievePath, String userName, String password,
+                                                    @NonNull String retrievePath, String token,
                                                     DougalCallback dougalCallback) {
-        deleteAsync(aeId, baseUrl, retrievePath + OLDEST_SUFFIX, userName, password,
+        deleteAsync(aeId, baseUrl, retrievePath + OLDEST_SUFFIX, token,
                 RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH,
                 new DeleteCallback(dougalCallback));
     }
 
     // TODO    Move this to base class with type parameter.
     public static UriList discover(@NonNull String aeId, @NonNull String baseUrl,
-                                   @NonNull String retrievePath, String userName, String password,
+                                   @NonNull String retrievePath, String token,
                                    FilterCriteria filterCriteria)
             throws Exception {
         if (filterCriteria == null) {
@@ -363,12 +360,12 @@ public class Container extends AnnounceableResource {
         if (filterCriteria.getResourceType() == null) {
             filterCriteria.putResourceType(Types.RESOURCE_TYPE_CONTAINER);
         }
-        return discoverBase(aeId, baseUrl, retrievePath, userName, password,
+        return discoverBase(aeId, baseUrl, retrievePath, token,
                 RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria).body().getUriList();
     }
 
     public static void discoverAsync(String aeId, String baseUrl, String retrievePath,
-                                     String userName, String password, FilterCriteria filterCriteria,
+                                     String token, FilterCriteria filterCriteria,
                                      DougalCallback dougalCallback) {
         if (filterCriteria == null) {
             filterCriteria = new FilterCriteria();
@@ -376,13 +373,13 @@ public class Container extends AnnounceableResource {
         if (filterCriteria.getResourceType() == null) {
             filterCriteria.putResourceType(Types.RESOURCE_TYPE_CONTAINER);
         }
-        discoverAsyncBase(aeId, baseUrl, retrievePath, userName, password,
+        discoverAsyncBase(aeId, baseUrl, retrievePath, token,
                 RESPONSE_TYPE_BLOCKING_REQUEST, filterCriteria,
                 new RetrieveCallback<UriList>(aeId, baseUrl, retrievePath, dougalCallback));
     }
 
     public static Resource discoverNonBlocking(String aeId, String baseUrl, String retrievePath,
-                                               String userName, String password, FilterCriteria filterCriteria)
+                                               String token, FilterCriteria filterCriteria)
             throws Exception {
         if (filterCriteria == null) {
             filterCriteria = new FilterCriteria();
@@ -390,14 +387,14 @@ public class Container extends AnnounceableResource {
         if (filterCriteria.getResourceType() == null) {
             filterCriteria.putResourceType(Types.RESOURCE_TYPE_CONTAINER);
         }
-        return discoverBase(aeId, baseUrl, retrievePath, userName, password,
+        return discoverBase(aeId, baseUrl, retrievePath, token,
                 RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH, filterCriteria)
                 .body().getResource();
     }
 
     // TODO Test.  Base class?
     public static void discoverNonBlockingAsync(String aeId, String baseUrl, String retrievePath,
-                                                String userName, String password, FilterCriteria filterCriteria,
+                                                String token, FilterCriteria filterCriteria,
                                                 DougalCallback dougalCallback) {
         if (filterCriteria == null) {
             filterCriteria = new FilterCriteria();
@@ -405,7 +402,7 @@ public class Container extends AnnounceableResource {
         if (filterCriteria.getResourceType() == null) {
             filterCriteria.putResourceType(Types.RESOURCE_TYPE_CONTAINER);
         }
-        discoverAsyncBase(aeId, baseUrl, retrievePath, userName, password,
+        discoverAsyncBase(aeId, baseUrl, retrievePath, token,
                 RESPONSE_TYPE_NON_BLOCKING_REQUEST_SYNCH, filterCriteria,
                 new RetrieveCallback<UriList>(aeId, baseUrl, retrievePath, dougalCallback));
     }
@@ -474,20 +471,3 @@ public class Container extends AnnounceableResource {
         this.resourceChildren = resourceChildren;
     }
 }
-
-//{"m2m:cnt":{
-//        "cbs":3275,
-//        "cni":5,
-//        "ct":"20151118T171858",
-//        "et":"20151122T043858",
-//        "lbl":["myContainerInCCURL"],
-//        "lt":"20151118T171858",
-//        "mbs":60000000,
-//        "mia":1600,
-//        "mni":4,
-//        "pi":"C-BUCKS-IMPORT",
-//        "ri":"cnt_20151118T171858_7",
-//        "rn":"carpark",
-//        "st":284,
-//        "ty":3}
-//}
